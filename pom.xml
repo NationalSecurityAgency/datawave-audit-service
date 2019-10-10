@@ -5,6 +5,7 @@
         <artifactId>datawave-microservice-parent</artifactId>
         <groupId>gov.nsa.datawave.microservice</groupId>
         <version>1.5</version>
+        <relativePath />
     </parent>
     <artifactId>audit-service-parent</artifactId>
     <version>1.8-SNAPSHOT</version>

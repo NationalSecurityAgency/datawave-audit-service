@@ -5,6 +5,7 @@ import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 
+import javax.annotation.CheckReturnValue;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -53,6 +54,7 @@ public class StatusCache {
     }
     
     @CacheEvict(key = "#id")
+    @CheckReturnValue
     public String delete(String id) {
         return "Evicted " + id;
     }

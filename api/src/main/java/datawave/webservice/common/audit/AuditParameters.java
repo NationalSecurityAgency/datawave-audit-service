@@ -18,6 +18,8 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 
 import com.google.common.base.Preconditions;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 public class AuditParameters {
     
     public static final String USER_DN = "auditUserDN";
@@ -190,7 +192,7 @@ public class AuditParameters {
         }
         map.put(QUERY_AUTHORIZATIONS, this.auths);
         map.put(QUERY_AUDIT_TYPE, this.auditType.name());
-        map.put(QUERY_SECURITY_MARKING_COLVIZ, new String(this.colviz.flatten()));
+        map.put(QUERY_SECURITY_MARKING_COLVIZ, new String(this.colviz.flatten(), UTF_8));
         map.put(AUDIT_ID, this.auditId);
         if (this.logicClass != null) {
             map.put(QUERY_LOGIC_CLASS, this.logicClass);

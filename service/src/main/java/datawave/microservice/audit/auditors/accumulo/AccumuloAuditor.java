@@ -17,6 +17,8 @@ import org.slf4j.LoggerFactory;
 import java.text.SimpleDateFormat;
 import java.util.concurrent.TimeUnit;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 /**
  * An implementation for {@link Auditor}, which writes audit messages to Accumulo.
  */
@@ -53,7 +55,7 @@ public class AccumuloAuditor implements Auditor {
             try (BatchWriter writer = connector.createBatchWriter(tableName,
                             new BatchWriterConfig().setMaxLatency(10, TimeUnit.SECONDS).setMaxMemory(10240L).setMaxWriteThreads(1))) {
                 Mutation m = new Mutation(formatter.format(msg.getQueryDate()));
-                m.put(new Text(msg.getUserDn()), new Text(""), msg.getColviz(), new Value(msg.toString().getBytes()));
+                m.put(new Text(msg.getUserDn()), new Text(""), msg.getColviz(), new Value(msg.toString().getBytes(UTF_8)));
                 writer.addMutation(m);
                 writer.flush();
             }

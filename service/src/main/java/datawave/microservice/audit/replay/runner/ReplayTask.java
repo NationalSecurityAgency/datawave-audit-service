@@ -27,6 +27,7 @@ import java.util.stream.Collectors;
 import static datawave.microservice.audit.replay.status.Status.ReplayState;
 import static datawave.microservice.audit.replay.status.Status.FileState;
 import static datawave.webservice.common.audit.AuditParameters.AUDIT_ID;
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 /**
  * The replay task is responsible for reading the audit messages from disk, parsing them from JSON, and processing them through the audit controller.
@@ -149,7 +150,7 @@ public abstract class ReplayTask implements Runnable {
         BufferedReader reader = null;
         try {
             // read each audit message, and process via the audit service
-            reader = new BufferedReader(new InputStreamReader(filesystem.open(file)));
+            reader = new BufferedReader(new InputStreamReader(filesystem.open(file), UTF_8));
             TypeReference<HashMap<String,String>> typeRef = new TypeReference<HashMap<String,String>>() {};
             
             String line;

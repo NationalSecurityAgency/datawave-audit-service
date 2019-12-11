@@ -1,15 +1,15 @@
 package datawave.microservice.audit.auditors.accumulo;
 
+import datawave.accumulo.inmemory.InMemoryAccumuloClient;
 import datawave.accumulo.inmemory.InMemoryInstance;
 import datawave.microservice.audit.auditors.accumulo.config.AccumuloAuditProperties;
+import datawave.microservice.audit.auditors.accumulo.config.AccumuloAuditProperties.Accumulo;
 import datawave.webservice.common.audit.AuditParameters;
 import datawave.webservice.common.audit.Auditor;
+import org.apache.accumulo.core.client.AccumuloClient;
 import org.apache.accumulo.core.client.AccumuloException;
 import org.apache.accumulo.core.client.AccumuloSecurityException;
-import org.apache.accumulo.core.client.Connector;
-import org.apache.accumulo.core.client.Instance;
 import org.apache.accumulo.core.client.Scanner;
-import org.apache.accumulo.core.client.security.tokens.PasswordToken;
 import org.apache.accumulo.core.data.Key;
 import org.apache.accumulo.core.data.Value;
 import org.apache.accumulo.core.security.Authorizations;
@@ -47,7 +47,7 @@ public class AccumuloAuditorTest {
     private AccumuloAuditProperties accumuloAuditProperties;
     
     @Autowired
-    private Connector connector;
+    private AccumuloClient accumuloClient;
     
     @Autowired
     private ApplicationContext context;
@@ -61,23 +61,23 @@ public class AccumuloAuditorTest {
     @Test
     public void testInit() throws Exception {
         String tableName = "QueryAuditTable";
-        if (connector.tableOperations().exists(tableName))
-            connector.tableOperations().delete(tableName);
+        if (accumuloClient.tableOperations().exists(tableName))
+            accumuloClient.tableOperations().delete(tableName);
         
-        assertFalse(tableName + " already exists before test", connector.tableOperations().exists(tableName));
+        assertFalse(tableName + " already exists before test", accumuloClient.tableOperations().exists(tableName));
         
-        Auditor accumuloAuditor = new AccumuloAuditor(tableName, connector);
+        Auditor accumuloAuditor = new AccumuloAuditor(tableName, accumuloClient);
         
-        assertTrue(tableName + " doesn't exist after test", connector.tableOperations().exists(tableName));
+        assertTrue(tableName + " doesn't exist after test", accumuloClient.tableOperations().exists(tableName));
         
-        accumuloAuditor = new AccumuloAuditor(tableName, connector);
+        accumuloAuditor = new AccumuloAuditor(tableName, accumuloClient);
         
-        assertTrue(tableName + " doesn't exist after test", connector.tableOperations().exists(tableName));
+        assertTrue(tableName + " doesn't exist after test", accumuloClient.tableOperations().exists(tableName));
     }
     
     @Test
     public void testActiveAudit() throws Exception {
-        connector.tableOperations().deleteRows(accumuloAuditProperties.getTableName(), null, null);
+        accumuloClient.tableOperations().deleteRows(accumuloAuditProperties.getTableName(), null, null);
         
         SimpleDateFormat formatter = new SimpleDateFormat(Auditor.ISO_8601_FORMAT_STRING);
         
@@ -93,7 +93,7 @@ public class AccumuloAuditorTest {
         
         accumuloAuditor.audit(auditParams);
         
-        Scanner scanner = connector.createScanner(accumuloAuditProperties.getTableName(), new Authorizations("ALL"));
+        Scanner scanner = accumuloClient.createScanner(accumuloAuditProperties.getTableName(), new Authorizations("ALL"));
         Iterator<Map.Entry<Key,Value>> it = scanner.iterator();
         assertTrue(it.hasNext());
         Map.Entry<Key,Value> entry = it.next();
@@ -108,7 +108,7 @@ public class AccumuloAuditorTest {
     
     @Test
     public void testNoneAudit() throws Exception {
-        connector.tableOperations().deleteRows(accumuloAuditProperties.getTableName(), null, null);
+        accumuloClient.tableOperations().deleteRows(accumuloAuditProperties.getTableName(), null, null);
         
         Date date = new Date();
         
@@ -122,7 +122,7 @@ public class AccumuloAuditorTest {
         
         accumuloAuditor.audit(auditParams);
         
-        Scanner scanner = connector.createScanner(accumuloAuditProperties.getTableName(), new Authorizations("ALL"));
+        Scanner scanner = accumuloClient.createScanner(accumuloAuditProperties.getTableName(), new Authorizations("ALL"));
         Iterator<Map.Entry<Key,Value>> it = scanner.iterator();
         assertFalse(it.hasNext());
     }
@@ -160,15 +160,10 @@ public class AccumuloAuditorTest {
     @ComponentScan(basePackages = "datawave.microservice")
     public static class AccumuloAuditorTestConfiguration {
         @Bean
-        public Instance accumuloInstance(AccumuloAuditProperties accumuloAuditProperties) {
-            return new InMemoryInstance(accumuloAuditProperties.getAccumuloConfig().getInstanceName());
-        }
-        
-        @Bean
-        public Connector connector(AccumuloAuditProperties accumuloAuditProperties, Instance accumuloInstance)
-                        throws AccumuloSecurityException, AccumuloException {
-            return accumuloInstance.getConnector(accumuloAuditProperties.getAccumuloConfig().getUsername(),
-                            new PasswordToken(accumuloAuditProperties.getAccumuloConfig().getPassword()));
+        public AccumuloClient accumuloClient(AccumuloAuditProperties accumuloAuditProperties) throws AccumuloSecurityException, AccumuloException {
+            Accumulo accumulo = accumuloAuditProperties.getAccumuloConfig();
+            InMemoryAccumuloClient client = new InMemoryAccumuloClient(accumulo.getUsername(), new InMemoryInstance(accumulo.getInstanceName()));
+            return client;
         }
     }
 }

@@ -3,9 +3,6 @@ package datawave.microservice.audit.auditors.accumulo.config;
 import javax.annotation.Resource;
 
 import org.apache.accumulo.core.client.AccumuloClient;
-import org.apache.accumulo.core.client.AccumuloException;
-import org.apache.accumulo.core.client.AccumuloSecurityException;
-import org.apache.accumulo.core.client.Connector;
 import org.apache.accumulo.core.client.security.tokens.PasswordToken;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,23 +51,20 @@ public class AccumuloAuditConfig {
     }
     
     @Bean
-    public Auditor accumuloAuditor(AccumuloAuditProperties accumuloAuditProperties, Connector connector) {
-        return new AccumuloAuditor(accumuloAuditProperties.getTableName(), connector);
+    public Auditor accumuloAuditor(AccumuloAuditProperties accumuloAuditProperties, AccumuloClient client) {
+        return new AccumuloAuditor(accumuloAuditProperties.getTableName(), client);
     }
     
     @Bean
     @ConditionalOnMissingBean
-    public Connector connector(AccumuloAuditProperties accumuloAuditProperties) {
+    public AccumuloClient accumuloClient(AccumuloAuditProperties accumuloAuditProperties) {
         Accumulo accumulo = accumuloAuditProperties.getAccumuloConfig();
-        Connector connector = null;
-        try {
-            AccumuloClient client = org.apache.accumulo.core.client.Accumulo.newClient().to(accumulo.getInstanceName(), accumulo.getZookeepers())
-                            .as(accumulo.getUsername(), new PasswordToken(accumulo.getPassword())).build();
-            connector = Connector.from(client);
-        } catch (AccumuloException | AccumuloSecurityException e) {
-            log.error("Unable to contact Accumulo.", e);
-        }
-        return connector;
+        // @formatter:off
+        return org.apache.accumulo.core.client.Accumulo.newClient()
+                .to(accumulo.getInstanceName(), accumulo.getZookeepers())
+                .as(accumulo.getUsername(), new PasswordToken(accumulo.getPassword()))
+                .build();
+        // @formatter:on
     }
     
     public interface AccumuloAuditBinding {

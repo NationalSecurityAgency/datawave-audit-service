@@ -7,15 +7,13 @@ import datawave.microservice.audit.auditors.accumulo.config.AccumuloAuditPropert
 import datawave.webservice.common.audit.AuditParameters;
 import datawave.webservice.common.audit.Auditor;
 import org.apache.accumulo.core.client.AccumuloClient;
-import org.apache.accumulo.core.client.AccumuloException;
 import org.apache.accumulo.core.client.AccumuloSecurityException;
 import org.apache.accumulo.core.client.Scanner;
 import org.apache.accumulo.core.data.Key;
 import org.apache.accumulo.core.data.Value;
 import org.apache.accumulo.core.security.Authorizations;
 import org.apache.accumulo.core.security.ColumnVisibility;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ApplicationContext;
@@ -24,18 +22,17 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit4.SpringRunner;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.Map;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE, properties = "spring.main.allow-bean-definition-overriding=true")
 @ActiveProfiles({"AccumuloAuditorTest", "accumulo-enabled"})
 public class AccumuloAuditorTest {
@@ -64,15 +61,15 @@ public class AccumuloAuditorTest {
         if (accumuloClient.tableOperations().exists(tableName))
             accumuloClient.tableOperations().delete(tableName);
         
-        assertFalse(tableName + " already exists before test", accumuloClient.tableOperations().exists(tableName));
+        assertFalse(accumuloClient.tableOperations().exists(tableName), tableName + " already exists before test");
         
         Auditor accumuloAuditor = new AccumuloAuditor(tableName, accumuloClient);
         
-        assertTrue(tableName + " doesn't exist after test", accumuloClient.tableOperations().exists(tableName));
+        assertTrue(accumuloClient.tableOperations().exists(tableName), tableName + " doesn't exist after test");
         
         accumuloAuditor = new AccumuloAuditor(tableName, accumuloClient);
         
-        assertTrue(tableName + " doesn't exist after test", accumuloClient.tableOperations().exists(tableName));
+        assertTrue(accumuloClient.tableOperations().exists(tableName), tableName + " doesn't exist after test");
     }
     
     @Test
@@ -127,8 +124,8 @@ public class AccumuloAuditorTest {
         assertFalse(it.hasNext());
     }
     
-    @Test(expected = NullPointerException.class)
-    public void testMissingUserDN() throws Exception {
+    @Test
+    public void testMissingUserDN() {
         Date date = new Date();
         
         AuditParameters auditParams = new AuditParameters();
@@ -138,11 +135,11 @@ public class AccumuloAuditorTest {
         auditParams.setColviz(new ColumnVisibility("ALL"));
         auditParams.setQueryDate(date);
         
-        accumuloAuditor.audit(auditParams);
+        assertThrows(NullPointerException.class, () -> accumuloAuditor.audit(auditParams));
     }
     
-    @Test(expected = NullPointerException.class)
-    public void testMissingColViz() throws Exception {
+    @Test
+    public void testMissingColViz() {
         Date date = new Date();
         
         AuditParameters auditParams = new AuditParameters();
@@ -152,7 +149,7 @@ public class AccumuloAuditorTest {
         auditParams.setAuditType(Auditor.AuditType.ACTIVE);
         auditParams.setQueryDate(date);
         
-        accumuloAuditor.audit(auditParams);
+        assertThrows(NullPointerException.class, () -> accumuloAuditor.audit(auditParams));
     }
     
     @Configuration
@@ -160,10 +157,9 @@ public class AccumuloAuditorTest {
     @ComponentScan(basePackages = "datawave.microservice")
     public static class AccumuloAuditorTestConfiguration {
         @Bean
-        public AccumuloClient accumuloClient(AccumuloAuditProperties accumuloAuditProperties) throws AccumuloSecurityException, AccumuloException {
+        public AccumuloClient accumuloClient(AccumuloAuditProperties accumuloAuditProperties) throws AccumuloSecurityException {
             Accumulo accumulo = accumuloAuditProperties.getAccumuloConfig();
-            InMemoryAccumuloClient client = new InMemoryAccumuloClient(accumulo.getUsername(), new InMemoryInstance(accumulo.getInstanceName()));
-            return client;
+            return new InMemoryAccumuloClient(accumulo.getUsername(), new InMemoryInstance(accumulo.getInstanceName()));
         }
     }
 }

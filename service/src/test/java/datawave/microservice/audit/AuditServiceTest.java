@@ -1,6 +1,5 @@
 package datawave.microservice.audit;
 
-//import datawave.common.test.integration.IntegrationTest;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.io.Files;
@@ -17,9 +16,8 @@ import datawave.security.authorization.SubjectIssuerDNPair;
 import datawave.webservice.common.audit.AuditParameters;
 import datawave.webservice.common.audit.Auditor;
 import datawave.webservice.common.audit.Auditor.AuditType;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -38,7 +36,6 @@ import org.springframework.messaging.Message;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.HttpClientErrorException;
@@ -59,17 +56,18 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static datawave.security.authorization.DatawaveUser.UserType.USER;
 import static junit.framework.TestCase.assertNull;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 //@Category(IntegrationTest.class)
-@RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ContextConfiguration(classes = AuditServiceTest.AuditServiceTestConfiguration.class)
 @ActiveProfiles({"AuditServiceTest"})
@@ -103,7 +101,7 @@ public class AuditServiceTest {
     private static Boolean isHealthy = Boolean.TRUE;
     private static Boolean isFileAuditEnabled = Boolean.TRUE;
     
-    @Before
+    @BeforeEach
     public void setup() {
         isHealthy = true;
         isFileAuditEnabled = true;
@@ -111,7 +109,7 @@ public class AuditServiceTest {
         DN = SubjectIssuerDNPair.of(userDN, "issuerDn");
     }
     
-    @Test(expected = HttpServerErrorException.class)
+    @Test
     public void testMissingUserDN() {
         Collection<String> roles = Collections.singleton("AuthorizedUser");
         DatawaveUser uathDWUser = new DatawaveUser(DN, USER, null, roles, null, System.currentTimeMillis());
@@ -125,16 +123,16 @@ public class AuditServiceTest {
         map.add(AuditParameters.QUERY_AUDIT_TYPE, auditType.name());
         map.add(AuditParameters.QUERY_SECURITY_MARKING_COLVIZ, "ALL");
         
-        RequestEntity requestEntity = jwtRestTemplate.createRequestEntity(authUser, map, null, HttpMethod.POST, uri);
+        RequestEntity<MultiValueMap<String,String>> requestEntity = jwtRestTemplate.createRequestEntity(authUser, map, null, HttpMethod.POST, uri);
         
         try {
-            jwtRestTemplate.exchange(requestEntity, String.class);
+            assertThrows(HttpServerErrorException.class, () -> jwtRestTemplate.exchange(requestEntity, String.class));
         } finally {
             assertTrue(messageCollector.forChannel(auditSourceBinding.auditSource()).isEmpty());
         }
     }
     
-    @Test(expected = HttpServerErrorException.class)
+    @Test
     public void testMissingQuery() {
         Collection<String> roles = Collections.singleton("AuthorizedUser");
         DatawaveUser uathDWUser = new DatawaveUser(DN, USER, null, roles, null, System.currentTimeMillis());
@@ -148,16 +146,16 @@ public class AuditServiceTest {
         map.add(AuditParameters.QUERY_AUDIT_TYPE, auditType.name());
         map.add(AuditParameters.QUERY_SECURITY_MARKING_COLVIZ, "ALL");
         
-        RequestEntity requestEntity = jwtRestTemplate.createRequestEntity(authUser, map, null, HttpMethod.POST, uri);
+        RequestEntity<MultiValueMap<String,String>> requestEntity = jwtRestTemplate.createRequestEntity(authUser, map, null, HttpMethod.POST, uri);
         
         try {
-            jwtRestTemplate.exchange(requestEntity, String.class);
+            assertThrows(HttpServerErrorException.class, () -> jwtRestTemplate.exchange(requestEntity, String.class));
         } finally {
             assertTrue(messageCollector.forChannel(auditSourceBinding.auditSource()).isEmpty());
         }
     }
     
-    @Test(expected = HttpServerErrorException.class)
+    @Test
     public void testMissingAuths() {
         Collection<String> roles = Collections.singleton("AuthorizedUser");
         DatawaveUser uathDWUser = new DatawaveUser(DN, USER, null, roles, null, System.currentTimeMillis());
@@ -171,16 +169,16 @@ public class AuditServiceTest {
         map.add(AuditParameters.QUERY_AUDIT_TYPE, auditType.name());
         map.add(AuditParameters.QUERY_SECURITY_MARKING_COLVIZ, "ALL");
         
-        RequestEntity requestEntity = jwtRestTemplate.createRequestEntity(authUser, map, null, HttpMethod.POST, uri);
+        RequestEntity<MultiValueMap<String,String>> requestEntity = jwtRestTemplate.createRequestEntity(authUser, map, null, HttpMethod.POST, uri);
         
         try {
-            jwtRestTemplate.exchange(requestEntity, String.class);
+            assertThrows(HttpServerErrorException.class, () -> jwtRestTemplate.exchange(requestEntity, String.class));
         } finally {
             assertTrue(messageCollector.forChannel(auditSourceBinding.auditSource()).isEmpty());
         }
     }
     
-    @Test(expected = HttpClientErrorException.class)
+    @Test
     public void testUnauthorizedRole() {
         Collection<String> roles = Collections.singleton("UnauthorizedUser");
         DatawaveUser uathDWUser = new DatawaveUser(DN, USER, null, roles, null, System.currentTimeMillis());
@@ -195,10 +193,10 @@ public class AuditServiceTest {
         map.add(AuditParameters.QUERY_AUDIT_TYPE, auditType.name());
         map.add(AuditParameters.QUERY_SECURITY_MARKING_COLVIZ, "ALL");
         
-        RequestEntity requestEntity = jwtRestTemplate.createRequestEntity(authUser, map, null, HttpMethod.POST, uri);
+        RequestEntity<MultiValueMap<String,String>> requestEntity = jwtRestTemplate.createRequestEntity(authUser, map, null, HttpMethod.POST, uri);
         
         try {
-            jwtRestTemplate.exchange(requestEntity, String.class);
+            assertThrows(HttpClientErrorException.class, () -> jwtRestTemplate.exchange(requestEntity, String.class));
         } finally {
             assertTrue(messageCollector.forChannel(auditSourceBinding.auditSource()).isEmpty());
         }
@@ -219,7 +217,7 @@ public class AuditServiceTest {
         map.add(AuditParameters.QUERY_AUDIT_TYPE, auditType.name());
         map.add(AuditParameters.QUERY_SECURITY_MARKING_COLVIZ, "ALL");
         
-        RequestEntity requestEntity = jwtRestTemplate.createRequestEntity(authUser, map, null, HttpMethod.POST, uri);
+        RequestEntity<MultiValueMap<String,String>> requestEntity = jwtRestTemplate.createRequestEntity(authUser, map, null, HttpMethod.POST, uri);
         
         ResponseEntity<String> response = jwtRestTemplate.exchange(requestEntity, String.class);
         assertEquals(response.getStatusCode().value(), HttpStatus.OK.value());
@@ -230,7 +228,7 @@ public class AuditServiceTest {
         Map<String,String> received = msg.getPayload().getAuditParameters();
         
         for (String param : map.keySet()) {
-            assertEquals(map.get(param).get(0), received.get(param));
+            assertEquals(Objects.requireNonNull(map.get(param)).get(0), received.get(param));
             received.remove(param);
         }
         
@@ -240,7 +238,7 @@ public class AuditServiceTest {
     }
     
     @DirtiesContext
-    @Test(expected = HttpServerErrorException.class)
+    @Test
     public void testUnhealthyFileAuditDisabled() {
         isFileAuditEnabled = false;
         
@@ -264,9 +262,9 @@ public class AuditServiceTest {
         map.add(AuditParameters.QUERY_AUDIT_TYPE, auditType.name());
         map.add(AuditParameters.QUERY_SECURITY_MARKING_COLVIZ, "ALL");
         
-        RequestEntity requestEntity = jwtRestTemplate.createRequestEntity(authUser, map, null, HttpMethod.POST, uri);
+        RequestEntity<MultiValueMap<String,String>> requestEntity = jwtRestTemplate.createRequestEntity(authUser, map, null, HttpMethod.POST, uri);
         
-        jwtRestTemplate.exchange(requestEntity, String.class);
+        assertThrows(HttpServerErrorException.class, () -> jwtRestTemplate.exchange(requestEntity, String.class));
     }
     
     @DirtiesContext
@@ -293,16 +291,18 @@ public class AuditServiceTest {
         map.add(AuditParameters.QUERY_AUDIT_TYPE, auditType.name());
         map.add(AuditParameters.QUERY_SECURITY_MARKING_COLVIZ, "ALL");
         
-        RequestEntity requestEntity = jwtRestTemplate.createRequestEntity(authUser, map, null, HttpMethod.POST, uri);
+        RequestEntity<MultiValueMap<String,String>> requestEntity = jwtRestTemplate.createRequestEntity(authUser, map, null, HttpMethod.POST, uri);
         
-        ResponseEntity response = jwtRestTemplate.exchange(requestEntity, String.class);
+        ResponseEntity<String> response = jwtRestTemplate.exchange(requestEntity, String.class);
         assertEquals(response.getStatusCode().value(), HttpStatus.OK.value());
         
         @SuppressWarnings("unchecked")
         Message<AuditMessage> msg = (Message<AuditMessage>) messageCollector.forChannel(auditSourceBinding.auditSource()).poll();
         assertNull(msg);
         
-        List<File> files = Arrays.stream(new File(new File(new URI(fileAuditProperties.getPathUri())), fileAuditProperties.getSubPath()).listFiles())
+        List<File> files = Arrays
+                        .stream(Objects.requireNonNull(
+                                        new File(new File(new URI(fileAuditProperties.getPathUri())), fileAuditProperties.getSubPath()).listFiles()))
                         .filter(f -> f.getName().endsWith(".json")).collect(Collectors.toList());
         assertEquals(1, files.size());
         
@@ -317,7 +317,7 @@ public class AuditServiceTest {
         
         HashMap<String,String> auditParamsMap = new ObjectMapper().readValue(lines.get(0), new TypeReference<HashMap<String,String>>() {});
         for (String param : map.keySet()) {
-            assertEquals(map.get(param).get(0), auditParamsMap.get(param));
+            assertEquals(Objects.requireNonNull(map.get(param)).get(0), auditParamsMap.get(param));
             auditParamsMap.remove(param);
         }
         
@@ -327,7 +327,7 @@ public class AuditServiceTest {
     }
     
     @DirtiesContext
-    @Test(expected = HttpServerErrorException.class)
+    @Test
     public void testRetryMaxAttemptsFileAuditDisabled() {
         isFileAuditEnabled = false;
         
@@ -354,10 +354,10 @@ public class AuditServiceTest {
         map.add(AuditParameters.QUERY_AUDIT_TYPE, auditType.name());
         map.add(AuditParameters.QUERY_SECURITY_MARKING_COLVIZ, "ALL");
         
-        RequestEntity requestEntity = jwtRestTemplate.createRequestEntity(authUser, map, null, HttpMethod.POST, uri);
+        RequestEntity<MultiValueMap<String,String>> requestEntity = jwtRestTemplate.createRequestEntity(authUser, map, null, HttpMethod.POST, uri);
         
         long startTimeMillis = System.currentTimeMillis();
-        jwtRestTemplate.exchange(requestEntity, String.class);
+        assertThrows(HttpServerErrorException.class, () -> jwtRestTemplate.exchange(requestEntity, String.class));
         long stopTimeMillis = System.currentTimeMillis();
         
         assertTrue((stopTimeMillis - startTimeMillis) >= ((maxAttempts - 1) * backoffIntervalMillis));
@@ -389,10 +389,10 @@ public class AuditServiceTest {
         map.add(AuditParameters.QUERY_AUDIT_TYPE, auditType.name());
         map.add(AuditParameters.QUERY_SECURITY_MARKING_COLVIZ, "ALL");
         
-        RequestEntity requestEntity = jwtRestTemplate.createRequestEntity(authUser, map, null, HttpMethod.POST, uri);
+        RequestEntity<MultiValueMap<String,String>> requestEntity = jwtRestTemplate.createRequestEntity(authUser, map, null, HttpMethod.POST, uri);
         
         long startTimeMillis = System.currentTimeMillis();
-        ResponseEntity response = jwtRestTemplate.exchange(requestEntity, String.class);
+        ResponseEntity<String> response = jwtRestTemplate.exchange(requestEntity, String.class);
         long stopTimeMillis = System.currentTimeMillis();
         
         assertEquals(response.getStatusCode().value(), HttpStatus.OK.value());
@@ -402,7 +402,9 @@ public class AuditServiceTest {
         Message<AuditMessage> msg = (Message<AuditMessage>) messageCollector.forChannel(auditSourceBinding.auditSource()).poll();
         assertNull(msg);
         
-        List<File> files = Arrays.stream(new File(new File(new URI(fileAuditProperties.getPathUri())), fileAuditProperties.getSubPath()).listFiles())
+        List<File> files = Arrays
+                        .stream(Objects.requireNonNull(
+                                        new File(new File(new URI(fileAuditProperties.getPathUri())), fileAuditProperties.getSubPath()).listFiles()))
                         .filter(f -> f.getName().endsWith(".json")).collect(Collectors.toList());
         assertEquals(1, files.size());
         
@@ -417,7 +419,7 @@ public class AuditServiceTest {
         
         HashMap<String,String> auditParamsMap = new ObjectMapper().readValue(lines.get(0), new TypeReference<HashMap<String,String>>() {});
         for (String param : map.keySet()) {
-            assertEquals(map.get(param).get(0), auditParamsMap.get(param));
+            assertEquals(Objects.requireNonNull(map.get(param)).get(0), auditParamsMap.get(param));
             auditParamsMap.remove(param);
         }
         
@@ -427,7 +429,7 @@ public class AuditServiceTest {
     }
     
     @DirtiesContext
-    @Test(expected = HttpServerErrorException.class)
+    @Test
     public void testRetryFailTimeoutFileAuditDisabled() {
         isFileAuditEnabled = false;
         
@@ -453,10 +455,10 @@ public class AuditServiceTest {
         map.add(AuditParameters.QUERY_AUDIT_TYPE, auditType.name());
         map.add(AuditParameters.QUERY_SECURITY_MARKING_COLVIZ, "ALL");
         
-        RequestEntity requestEntity = jwtRestTemplate.createRequestEntity(authUser, map, null, HttpMethod.POST, uri);
+        RequestEntity<MultiValueMap<String,String>> requestEntity = jwtRestTemplate.createRequestEntity(authUser, map, null, HttpMethod.POST, uri);
         
         long startTimeMillis = System.currentTimeMillis();
-        jwtRestTemplate.exchange(requestEntity, String.class);
+        assertThrows(HttpServerErrorException.class, () -> jwtRestTemplate.exchange(requestEntity, String.class));
         long stopTimeMillis = System.currentTimeMillis();
         
         assertTrue((stopTimeMillis - startTimeMillis) >= failTimeoutMillis);
@@ -487,10 +489,10 @@ public class AuditServiceTest {
         map.add(AuditParameters.QUERY_AUDIT_TYPE, auditType.name());
         map.add(AuditParameters.QUERY_SECURITY_MARKING_COLVIZ, "ALL");
         
-        RequestEntity requestEntity = jwtRestTemplate.createRequestEntity(authUser, map, null, HttpMethod.POST, uri);
+        RequestEntity<MultiValueMap<String,String>> requestEntity = jwtRestTemplate.createRequestEntity(authUser, map, null, HttpMethod.POST, uri);
         
         long startTimeMillis = System.currentTimeMillis();
-        ResponseEntity response = jwtRestTemplate.exchange(requestEntity, String.class);
+        ResponseEntity<String> response = jwtRestTemplate.exchange(requestEntity, String.class);
         long stopTimeMillis = System.currentTimeMillis();
         
         assertEquals(response.getStatusCode().value(), HttpStatus.OK.value());
@@ -500,7 +502,9 @@ public class AuditServiceTest {
         Message<AuditMessage> msg = (Message<AuditMessage>) messageCollector.forChannel(auditSourceBinding.auditSource()).poll();
         assertNull(msg);
         
-        List<File> files = Arrays.stream(new File(new File(new URI(fileAuditProperties.getPathUri())), fileAuditProperties.getSubPath()).listFiles())
+        List<File> files = Arrays
+                        .stream(Objects.requireNonNull(
+                                        new File(new File(new URI(fileAuditProperties.getPathUri())), fileAuditProperties.getSubPath()).listFiles()))
                         .filter(f -> f.getName().endsWith(".json")).collect(Collectors.toList());
         assertEquals(1, files.size());
         
@@ -515,7 +519,7 @@ public class AuditServiceTest {
         
         HashMap<String,String> auditParamsMap = new ObjectMapper().readValue(lines.get(0), new TypeReference<HashMap<String,String>>() {});
         for (String param : map.keySet()) {
-            assertEquals(map.get(param).get(0), auditParamsMap.get(param));
+            assertEquals(Objects.requireNonNull(map.get(param)).get(0), auditParamsMap.get(param));
             auditParamsMap.remove(param);
         }
         
@@ -541,7 +545,7 @@ public class AuditServiceTest {
         map.add(AuditParameters.QUERY_SECURITY_MARKING_COLVIZ, "ALL");
         map.add(AuditParameters.AUDIT_ID, auditId);
         
-        RequestEntity requestEntity = jwtRestTemplate.createRequestEntity(authUser, map, null, HttpMethod.POST, uri);
+        RequestEntity<MultiValueMap<String,String>> requestEntity = jwtRestTemplate.createRequestEntity(authUser, map, null, HttpMethod.POST, uri);
         
         ResponseEntity<String> response = jwtRestTemplate.exchange(requestEntity, String.class);
         assertEquals(response.getStatusCode().value(), HttpStatus.OK.value());
@@ -552,7 +556,7 @@ public class AuditServiceTest {
         Map<String,String> received = msg.getPayload().getAuditParameters();
         
         for (String param : map.keySet()) {
-            assertEquals(map.get(param).get(0), received.get(param));
+            assertEquals(Objects.requireNonNull(map.get(param)).get(0), received.get(param));
             received.remove(param);
         }
         
@@ -585,7 +589,7 @@ public class AuditServiceTest {
         map.add(AuditParameters.QUERY_AUDIT_TYPE, auditType.name());
         map.add(AuditParameters.QUERY_SECURITY_MARKING_COLVIZ, "ALL");
         
-        RequestEntity requestEntity = jwtRestTemplate.createRequestEntity(authUser, map, null, HttpMethod.POST, uri);
+        RequestEntity<MultiValueMap<String,String>> requestEntity = jwtRestTemplate.createRequestEntity(authUser, map, null, HttpMethod.POST, uri);
         
         ResponseEntity<String> response = jwtRestTemplate.exchange(requestEntity, String.class);
         assertEquals(response.getStatusCode().value(), HttpStatus.OK.value());
@@ -594,7 +598,9 @@ public class AuditServiceTest {
         Message<AuditMessage> msg = (Message<AuditMessage>) messageCollector.forChannel(auditSourceBinding.auditSource()).poll();
         assertNotNull(msg);
         
-        List<File> files = Arrays.stream(new File(new File(new URI(fileAuditProperties.getPathUri())), fileAuditProperties.getSubPath()).listFiles())
+        List<File> files = Arrays
+                        .stream(Objects.requireNonNull(
+                                        new File(new File(new URI(fileAuditProperties.getPathUri())), fileAuditProperties.getSubPath()).listFiles()))
                         .filter(f -> f.getName().endsWith(".json")).collect(Collectors.toList());
         assertEquals(1, files.size());
         
@@ -609,7 +615,7 @@ public class AuditServiceTest {
         
         HashMap<String,String> auditParamsMap = new ObjectMapper().readValue(lines.get(0), new TypeReference<HashMap<String,String>>() {});
         for (String param : map.keySet()) {
-            assertEquals(map.get(param).get(0), auditParamsMap.get(param));
+            assertEquals(Objects.requireNonNull(map.get(param)).get(0), auditParamsMap.get(param));
             auditParamsMap.remove(param);
         }
         
@@ -630,6 +636,7 @@ public class AuditServiceTest {
         @Bean("fileAuditProperties")
         public FileAuditProperties fileAuditProperties() {
             FileAuditProperties fileAuditProperties = new FileAuditProperties();
+            @SuppressWarnings("UnstableApiUsage")
             File tempDir = Files.createTempDir();
             tempDir.deleteOnExit();
             fileAuditProperties.setPathUri(tempDir.toURI().toString());

@@ -1,5 +1,7 @@
 # Audit Service
 
+[![Apache License][li]][ll] ![Build Status](https://github.com/NationalSecurityAgency/datawave-audit-service/workflows/Tests/badge.svg)
+
 The audit service is a DATAWAVE microservice that provides
 query audit capabilities.
 
@@ -54,3 +56,6 @@ query audit capabilities.
 [pki-dir]:https://github.com/NationalSecurityAgency/datawave-spring-boot-starter/blob/master/src/main/resources/pki
 [audit-dev-yml]:https://github.com/NationalSecurityAgency/datawave-microservices-root/blob/master/sample_configuration/audit-dev.yml.example
 [auth-mock-yml]:https://github.com/NationalSecurityAgency/datawave-microservices-root/blob/master/sample_configuration/authorization-mock.yml
+
+[li]: http://img.shields.io/badge/license-ASL-blue.svg
+[ll]: https://www.apache.org/licenses/LICENSE-2.0

@@ -6,6 +6,7 @@ import datawave.microservice.audit.replay.config.ReplayProperties;
 import datawave.microservice.audit.replay.status.Status;
 import datawave.microservice.audit.replay.status.StatusCache;
 import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.fs.FileStatus;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.LocatedFileStatus;
 import org.apache.hadoop.fs.Path;
@@ -18,11 +19,14 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static datawave.microservice.audit.replay.status.Status.ReplayState;
 import static datawave.microservice.audit.replay.status.Status.FileState;
@@ -92,29 +96,40 @@ public abstract class ReplayTask implements Runnable {
     private List<Status.FileStatus> listFiles(boolean replayUnfinished) {
         List<Status.FileStatus> fileStatuses = new ArrayList<>();
         
-        try {
-            RemoteIterator<LocatedFileStatus> filesIter = filesystem.listFiles(new Path(status.getPathUri()), false);
-            while (filesIter.hasNext()) {
-                LocatedFileStatus locatedFile = filesIter.next();
-                String fileName = locatedFile.getPath().getName();
-                
-                if (replayUnfinished && fileName.startsWith("_" + FileState.RUNNING)) {
-                    fileStatuses.add(new Status.FileStatus(locatedFile.getPath().toString(), FileState.RUNNING));
-                } else if (replayUnfinished && fileName.startsWith("_" + FileState.QUEUED)) {
-                    fileStatuses.add(new Status.FileStatus(locatedFile.getPath().toString(), FileState.QUEUED));
-                } else if (!locatedFile.getPath().getName().startsWith("_") && !locatedFile.getPath().getName().startsWith(".")) {
-                    Path queuedFile = renameFile(FileState.QUEUED, locatedFile.getPath());
-                    if (queuedFile != null) {
-                        fileStatuses.add(new Status.FileStatus(queuedFile.toString(), FileState.QUEUED));
-                    } else {
-                        log.warn("Unable to queue file \"{}\"", locatedFile.getPath());
-                    }
+        // get the files/directories which match the pattern
+        List<FileStatus> files = checkedGlobStatus(new Path(status.getPathUri()));
+        
+        // add the contents of any folders which matched the pattern
+        files = files.stream().flatMap(x -> x.isDirectory() ? checkedGlobStatus(new Path(x.getPath(), "*")).stream().filter(FileStatus::isFile) : Stream.of(x))
+                        .collect(Collectors.toList());
+        
+        for (FileStatus file : files) {
+            String fileName = file.getPath().getName();
+            
+            if (replayUnfinished && fileName.startsWith("_" + FileState.RUNNING)) {
+                fileStatuses.add(new Status.FileStatus(file.getPath().toString(), FileState.RUNNING));
+            } else if (replayUnfinished && fileName.startsWith("_" + FileState.QUEUED)) {
+                fileStatuses.add(new Status.FileStatus(file.getPath().toString(), FileState.QUEUED));
+            } else if (!file.getPath().getName().startsWith("_") && !file.getPath().getName().startsWith(".")) {
+                Path queuedFile = renameFile(FileState.QUEUED, file.getPath());
+                if (queuedFile != null) {
+                    fileStatuses.add(new Status.FileStatus(queuedFile.toString(), FileState.QUEUED));
+                } else {
+                    log.warn("Unable to queue file \"{}\"", file.getPath());
                 }
             }
-        } catch (Exception e) {
-            log.warn("Encountered an error while listing files at [{}]", status.getPathUri());
         }
         
+        return fileStatuses;
+    }
+    
+    private List<FileStatus> checkedGlobStatus(Path path) {
+        List<FileStatus> fileStatuses = Collections.emptyList();
+        try {
+            fileStatuses = Arrays.asList(filesystem.globStatus(path));
+        } catch (Exception e) {
+            log.warn("Encountered an error while listing files at [{}]", path.toUri().toString());
+        }
         return fileStatuses;
     }
     
@@ -173,7 +188,7 @@ public abstract class ReplayTask implements Runnable {
                         // add the audit replay id for tracking purposes
                         auditParamsMap.put("replayId", status.getId());
                         
-                        if (!audit(auditParamsMap)) {
+                        if (!auditInternal(auditParamsMap)) {
                             log.warn("Failed to audit: {}", auditParamsMap.get(AUDIT_ID));
                             encounteredError = true;
                             auditsFailed++;
@@ -249,6 +264,16 @@ public abstract class ReplayTask implements Runnable {
             log.warn("Unable to rename file from \"{}\" using prefix \"{}\"", file, newState);
         }
         return null;
+    }
+    
+    private boolean auditInternal(Map<String,String> auditParamsMap) {
+        boolean success = false;
+        try {
+            success = audit(auditParamsMap);
+        } catch (Exception e) {
+            log.warn("Exception thrown while auditing: {}", auditParamsMap.get(AUDIT_ID), e);
+        }
+        return success;
     }
     
     abstract protected boolean audit(Map<String,String> auditParamsMap);

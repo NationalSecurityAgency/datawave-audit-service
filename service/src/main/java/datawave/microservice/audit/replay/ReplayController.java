@@ -42,7 +42,6 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
 import static datawave.microservice.audit.replay.status.Status.ReplayState.CREATED;
-import static datawave.microservice.audit.replay.status.Status.ReplayState.IDLE;
 import static datawave.microservice.audit.replay.status.Status.ReplayState.RUNNING;
 import static datawave.microservice.audit.replay.status.Status.ReplayState.STOPPED;
 import static io.undertow.util.StatusCodes.UNPROCESSABLE_ENTITY;
@@ -322,7 +321,6 @@ public class ReplayController {
      * @return the status of the audit replay
      */
     @ApiOperation(value = "Gets the status of an audit replay.")
-    @RolesAllowed({"AuthorizedUser", "AuthorizedServer", "InternalUser", "Administrator", "JBossAdministrator"})
     @RequestMapping(path = "/{id}/status", method = RequestMethod.GET)
     public Status status(@ApiParam("The audit replay id") @PathVariable("id") String id, HttpServletResponse response) throws IOException {
         
@@ -353,9 +351,8 @@ public class ReplayController {
     }
     
     private Status idleCheck(Status status, boolean publishEnabled) {
-        // if the replay is RUNNING, and this hasn't been updated within the timeout interval, set the state to IDLE, and send out a stop request
+        // if the replay is RUNNING, and this hasn't been updated within the timeout interval, send out a stop request
         if (status.getState() == RUNNING && (System.currentTimeMillis() - status.getLastUpdated().getTime()) > replayProperties.getIdleTimeoutMillis()) {
-            status.setState(IDLE);
             statusCache.update(status);
             stop(status, publishEnabled);
         }
@@ -369,7 +366,6 @@ public class ReplayController {
      * @return list of statuses for all audit replays
      */
     @ApiOperation(value = "Lists the status for all audit replays.")
-    @RolesAllowed({"AuthorizedUser", "AuthorizedServer", "InternalUser", "Administrator", "JBossAdministrator"})
     @RequestMapping(path = "/statusAll", method = RequestMethod.GET)
     public List<Status> statusAll() {
         
@@ -476,7 +472,7 @@ public class ReplayController {
         
         // only update if the send rate is valid
         if (sendRate >= 0) {
-            resp = updateAll(sendRate, replayProperties.isPublishEvents(), false) + "audit replays updated";
+            resp = updateAll(sendRate, replayProperties.isPublishEvents(), false) + " audit replays updated";
         } else {
             response.setStatus(UNPROCESSABLE_ENTITY);
             resp = "Send rate must be >= 0";
@@ -554,7 +550,7 @@ public class ReplayController {
     }
     
     private boolean stop(Status status, boolean publishEvent) {
-        // is the replay running?
+        // is the replay running/idle?
         if (status.getState() == RUNNING) {
             
             // if we own it, stop it. otherwise, fire an event to all of the audit services
@@ -616,7 +612,7 @@ public class ReplayController {
             if (statusCache.tryLock(statusId, replayProperties.getLockWaitTimeMillis(), replayProperties.getLockLeaseTimeMillis())) {
                 try {
                     Status status = status(statusId, false);
-                    if (status != null && status.getState() == RUNNING && stop(status, false)) {
+                    if (status != null && (status.getState() == RUNNING) && stop(status, false)) {
                         replaysStopped++;
                     }
                 } finally {
@@ -671,8 +667,8 @@ public class ReplayController {
     }
     
     private boolean resume(Status status) {
-        // if the audit replay is idle or stopped, start it
-        if (status.getState() == IDLE || status.getState() == STOPPED)
+        // if the audit replay is stopped, start it
+        if (status.getState() == STOPPED)
             runningReplays.put(status.getId(), start(status));
         else
             return false;
@@ -700,7 +696,7 @@ public class ReplayController {
             if (statusCache.tryLock(statusId, replayProperties.getLockWaitTimeMillis(), replayProperties.getLockLeaseTimeMillis())) {
                 try {
                     Status status = status(statusId, false);
-                    if (status != null && (status.getState() == IDLE || status.getState() == STOPPED)) {
+                    if (status != null && status.getState() == STOPPED) {
                         runningReplays.put(status.getId(), start(status));
                         replaysResumed++;
                     }
@@ -736,6 +732,7 @@ public class ReplayController {
                 Status status = status(id, replayProperties.isPublishEvents());
                 
                 if (status != null) {
+                    // can only be deleted if not running
                     if (status.getState() != RUNNING) {
                         statusCache.delete(status.getId());
                         resp = "Deleted audit replay with id " + id;

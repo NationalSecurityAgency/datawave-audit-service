@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 public class Status implements Serializable {
     
     public enum ReplayState {
-        CREATED, RUNNING, IDLE, STOPPED, FINISHED, FAILED
+        CREATED, RUNNING, STOPPED, FINISHED, FAILED
     }
     
     public enum FileState {

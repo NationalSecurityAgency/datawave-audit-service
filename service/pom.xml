@@ -18,7 +18,7 @@
     </scm>
     <properties>
         <version.hadoop>2.6.0</version.hadoop>
-        <version.microservice.audit-api>1.4</version.microservice.audit-api>
+        <version.microservice.audit-api>1.8-SNAPSHOT</version.microservice.audit-api>
         <version.microservice.hazelcast-client>1.5</version.microservice.hazelcast-client>
         <version.microservice.starter>1.6.3</version.microservice.starter>
     </properties>

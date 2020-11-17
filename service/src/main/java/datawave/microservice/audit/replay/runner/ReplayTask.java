@@ -8,9 +8,7 @@ import datawave.microservice.audit.replay.status.StatusCache;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileStatus;
 import org.apache.hadoop.fs.FileSystem;
-import org.apache.hadoop.fs.LocatedFileStatus;
 import org.apache.hadoop.fs.Path;
-import org.apache.hadoop.fs.RemoteIterator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,8 +26,8 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static datawave.microservice.audit.replay.status.Status.ReplayState;
 import static datawave.microservice.audit.replay.status.Status.FileState;
+import static datawave.microservice.audit.replay.status.Status.ReplayState;
 import static datawave.webservice.common.audit.AuditParameters.AUDIT_ID;
 import static java.nio.charset.StandardCharsets.UTF_8;
 

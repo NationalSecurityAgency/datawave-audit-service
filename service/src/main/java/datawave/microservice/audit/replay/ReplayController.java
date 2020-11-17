@@ -550,7 +550,7 @@ public class ReplayController {
     }
     
     private boolean stop(Status status, boolean publishEvent) {
-        // is the replay running/idle?
+        // is the replay running?
         if (status.getState() == RUNNING) {
             
             // if we own it, stop it. otherwise, fire an event to all of the audit services

@@ -5,15 +5,40 @@
 The audit service is a DATAWAVE microservice that provides
 query audit capabilities.
 
-### Root Context
+### Audit Context
 
 *https://host:port/audit/v1/*
 
 ### User API
 
-| Method | Operation | Description | Request Body |
-|:-------|:----------|:------------|:-------------|
-| `POST` | /audit    | Sends an audit request | [AuditRequest] |
+| Method | Operation | Description            | Path Param | Request Body   |
+|:-------|:----------|:-----------------------|:-----------|:---------------|
+| `POST` | /audit    | Sends an audit request | N/A        | [AuditRequest] |
+
+---
+
+### Replay Context
+
+*https://host:port/audit/v1/replay/*
+
+### Replay API
+
+| Method   | Operation       | Description                                    | Path Param | Request Body    |
+|:---------|:----------------|:-----------------------------------------------|:-----------|:----------------|
+| `POST`   | /create         | Creates an audit replay request                | N/A        | [ReplayRequest] |
+| `POST`   | /createAndStart | Creates an audit replay request, and starts it | N/A        | [ReplayRequest] |
+| `PUT`    | /{id}/start     | Starts an audit replay                         | [ReplayId] | N/A             |
+| `GET`    | /{id}/status    | Gets the status of an audit replay             | [ReplayId] | N/A             |
+| `PUT`    | /{id}/update    | Updates an audit replay                        | [ReplayId] | [SendRate]      |
+| `PUT`    | /{id}/stop      | Stops an audit replay                          | [ReplayId] | N/A             |
+| `PUT`    | /{id}/resume    | Resumes an audit replay                        | [ReplayId] | N/A             |
+| `DELETE` | /{id}/delete    | Deletes an audit replay                        | [ReplayId] | N/A             |
+| `PUT`    | /startAll       | Starts all audit replays                       | N/A        | N/A             |
+| `GET`    | /statusAll      | Gets the status for all audit replays          | N/A        | N/A             |
+| `PUT`    | /updateAll      | Updates all audit replays                      | N/A        | [SendRate]      |
+| `PUT`    | /stopAll        | Stops all audit replays                        | N/A        | N/A             |
+| `PUT`    | /resumeAll      | Resumes all audit replays                      | N/A        | N/A             |
+| `DELETE` | /deleteAll      | Deletes all audit replays                      | N/A        | N/A             |
 
 ---
 

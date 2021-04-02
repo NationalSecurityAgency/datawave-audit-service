@@ -16,7 +16,6 @@ import datawave.microservice.authorization.user.ProxiedUserDetails;
 import datawave.security.authorization.DatawaveUser;
 import datawave.security.authorization.SubjectIssuerDNPair;
 import org.apache.commons.io.FileUtils;
-import org.joda.time.format.ISODateTimeFormat;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -31,7 +30,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
-import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
@@ -48,7 +46,8 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.File;
 import java.io.IOException;
-import java.sql.Date;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -2712,11 +2711,11 @@ public class AuditReplayTest {
         Assert.assertEquals(expectedColViz, actual.get(QUERY_SECURITY_MARKING_COLVIZ));
     }
     
-    private static List<Status> toStatuses(ResponseEntity<String> responseEntity) throws IOException {
+    private static List<Status> toStatuses(ResponseEntity<String> responseEntity) throws IOException, ParseException {
         return toStatuses(responseEntity.getBody());
     }
     
-    private static List<Status> toStatuses(String stringStatus) throws IOException {
+    private static List<Status> toStatuses(String stringStatus) throws IOException, ParseException {
         List<Status> statuses = new ArrayList<>();
         Map<String,Object>[] mapArray = objectMapper.readValue(stringStatus, new TypeReference<HashMap<String,Object>[]>() {});
         for (Map<String,Object> map : mapArray) {
@@ -2725,24 +2724,24 @@ public class AuditReplayTest {
         return statuses;
     }
     
-    private static Status toStatus(ResponseEntity<String> responseEntity) throws IOException {
+    private static Status toStatus(ResponseEntity<String> responseEntity) throws IOException, ParseException {
         return toStatus(responseEntity.getBody());
     }
     
     private static ObjectMapper objectMapper = new ObjectMapper();
     
-    private static Status toStatus(String stringStatus) throws IOException {
+    private static Status toStatus(String stringStatus) throws IOException, ParseException {
         Map<String,Object> map = objectMapper.readValue(stringStatus, new TypeReference<HashMap<String,Object>>() {});
         return mapToStatus(map);
     }
     
-    private static Status mapToStatus(Map<String,Object> map) {
+    private static Status mapToStatus(Map<String,Object> map) throws ParseException {
         Status status = new Status();
         status.setId((String) map.get("id"));
         status.setState(Status.ReplayState.valueOf((String) map.get("state")));
         status.setPathUri((String) map.get("pathUri"));
         status.setSendRate(Integer.toUnsignedLong((int) map.get("sendRate")));
-        status.setLastUpdated(ISODateTimeFormat.dateTime().parseDateTime((String) map.get("lastUpdated")).toDate());
+        status.setLastUpdated(new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS").parse((String) map.get("lastUpdated")));
         status.setReplayUnfinishedFiles((boolean) map.get("replayUnfinishedFiles"));
         
         if (map.get("files") != null) {

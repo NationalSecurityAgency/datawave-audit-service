@@ -65,8 +65,7 @@ logging:
 
 ---
 
-spring:
-  profiles: log-enabled
+spring.config.activate.on-profile: log-enabled
 
 audit:
   auditors:
@@ -75,8 +74,7 @@ audit:
 
 ---
 
-spring:
-  profiles: log-disabled
+spring.config.activate.on-profile: log-disabled
 
 audit:
   auditors:
@@ -85,8 +83,7 @@ audit:
 
 ---
 
-spring:
-  profiles: accumulo-enabled
+spring.config.activate.on-profile: accumulo-enabled
 
 audit:
   auditors:
@@ -101,8 +98,7 @@ audit:
 
 ---
 
-spring:
-  profiles: accumulo-disabled
+spring.config.activate.on-profile: accumulo-disabled
 
 audit:
   auditors:
@@ -111,12 +107,10 @@ audit:
 
 ---
 
-spring:
-  profiles: missing
+spring.config.activate.on-profile: missing
 
 ---
-spring:
-  profiles: rabbit-config
+spring.config.activate.on-profile: rabbit-config
 
 audit:
   health:
@@ -155,11 +149,11 @@ audit:
       bindings:
         - destination: 'audit.log'
           destinationType: 'queue'
-          exchange: 'audit'
+          source: 'audit'
           routingKey: '#'
         - destination: 'audit.log.dlq'
           destinationType: 'queue'
-          exchange: 'DLX'
+          source: 'DLX'
           routingKey: 'audit.log'
       cluster:
         expectedNodes: 3
@@ -171,8 +165,7 @@ audit:
         uri: '/api/'
 
 ---
-spring:
-  profiles: replay-config
+spring.config.activate.on-profile: replay-config
 
 audit:
   retry:

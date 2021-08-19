@@ -28,13 +28,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.security.RolesAllowed;
-
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
-import static datawave.microservice.audit.config.AuditServiceConfig.CONFIRM_ACK_CHANNEL;
 import static datawave.webservice.common.audit.AuditParameters.AUDIT_ID;
 import static datawave.webservice.common.audit.AuditParameters.QUERY_AUDIT_TYPE;
 import static datawave.webservice.common.audit.AuditParameters.QUERY_AUTHORIZATIONS;
@@ -56,6 +54,9 @@ import static datawave.webservice.common.audit.AuditParameters.USER_DN;
 @RestController
 @RequestMapping(path = "/v1", produces = MediaType.APPLICATION_JSON_VALUE)
 public class AuditController {
+    // Note: This must match 'confirmAckChannel' in the service configuration. Default set in bootstrap.yml.
+    public static final String CONFIRM_ACK_CHANNEL = "confirmAckChannel";
+    
     private final Logger log = LoggerFactory.getLogger(this.getClass());
     
     private final AuditProperties auditProperties;

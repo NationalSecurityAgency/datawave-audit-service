@@ -1,14 +1,15 @@
 package datawave.microservice.audit;
 
 //import datawave.common.test.integration.IntegrationTest;
+
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.io.Files;
 import datawave.microservice.audit.auditors.file.FileAuditor;
 import datawave.microservice.audit.auditors.file.config.FileAuditProperties;
 import datawave.microservice.audit.common.AuditMessage;
+import datawave.microservice.audit.common.AuditMessageSupplier;
 import datawave.microservice.audit.config.AuditProperties;
-import datawave.microservice.audit.config.AuditServiceConfig;
 import datawave.microservice.audit.health.HealthChecker;
 import datawave.microservice.authorization.jwt.JWTRestTemplate;
 import datawave.microservice.authorization.user.ProxiedUserDetails;
@@ -25,10 +26,10 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.boot.web.server.LocalServerPort;
-import org.springframework.cloud.stream.test.binder.MessageCollector;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
@@ -63,8 +64,8 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static datawave.security.authorization.DatawaveUser.UserType.USER;
-import static junit.framework.TestCase.assertNull;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
@@ -83,10 +84,7 @@ public class AuditServiceTest {
     private JWTRestTemplate jwtRestTemplate;
     
     @Autowired
-    private MessageCollector messageCollector;
-    
-    @Autowired
-    private AuditServiceConfig.AuditSourceBinding auditSourceBinding;
+    public List<AuditMessage> auditMessages;
     
     @Autowired
     private AuditProperties auditProperties;
@@ -109,6 +107,7 @@ public class AuditServiceTest {
         isFileAuditEnabled = true;
         jwtRestTemplate = restTemplateBuilder.build(JWTRestTemplate.class);
         DN = SubjectIssuerDNPair.of(userDN, "issuerDn");
+        auditMessages.clear();
     }
     
     @Test(expected = HttpServerErrorException.class)
@@ -130,7 +129,7 @@ public class AuditServiceTest {
         try {
             jwtRestTemplate.exchange(requestEntity, String.class);
         } finally {
-            assertTrue(messageCollector.forChannel(auditSourceBinding.auditSource()).isEmpty());
+            assertTrue(auditMessages.isEmpty());
         }
     }
     
@@ -153,7 +152,7 @@ public class AuditServiceTest {
         try {
             jwtRestTemplate.exchange(requestEntity, String.class);
         } finally {
-            assertTrue(messageCollector.forChannel(auditSourceBinding.auditSource()).isEmpty());
+            assertTrue(auditMessages.isEmpty());
         }
     }
     
@@ -176,7 +175,7 @@ public class AuditServiceTest {
         try {
             jwtRestTemplate.exchange(requestEntity, String.class);
         } finally {
-            assertTrue(messageCollector.forChannel(auditSourceBinding.auditSource()).isEmpty());
+            assertTrue(auditMessages.isEmpty());
         }
     }
     
@@ -200,7 +199,7 @@ public class AuditServiceTest {
         try {
             jwtRestTemplate.exchange(requestEntity, String.class);
         } finally {
-            assertTrue(messageCollector.forChannel(auditSourceBinding.auditSource()).isEmpty());
+            assertTrue(auditMessages.isEmpty());
         }
     }
     
@@ -224,10 +223,7 @@ public class AuditServiceTest {
         ResponseEntity<String> response = jwtRestTemplate.exchange(requestEntity, String.class);
         assertEquals(response.getStatusCode().value(), HttpStatus.OK.value());
         
-        @SuppressWarnings("unchecked")
-        Message<AuditMessage> msg = (Message<AuditMessage>) messageCollector.forChannel(auditSourceBinding.auditSource()).poll();
-        assertNotNull(msg);
-        Map<String,String> received = msg.getPayload().getAuditParameters();
+        Map<String,String> received = auditMessages.remove(0).getAuditParameters();
         
         for (String param : map.keySet()) {
             assertEquals(map.get(param).get(0), received.get(param));
@@ -298,9 +294,7 @@ public class AuditServiceTest {
         ResponseEntity response = jwtRestTemplate.exchange(requestEntity, String.class);
         assertEquals(response.getStatusCode().value(), HttpStatus.OK.value());
         
-        @SuppressWarnings("unchecked")
-        Message<AuditMessage> msg = (Message<AuditMessage>) messageCollector.forChannel(auditSourceBinding.auditSource()).poll();
-        assertNull(msg);
+        assertTrue(auditMessages.isEmpty());
         
         List<File> files = Arrays.stream(new File(new File(new URI(fileAuditProperties.getPathUri())), fileAuditProperties.getSubPath()).listFiles())
                         .filter(f -> f.getName().endsWith(".json")).collect(Collectors.toList());
@@ -398,9 +392,7 @@ public class AuditServiceTest {
         assertEquals(response.getStatusCode().value(), HttpStatus.OK.value());
         assertTrue((stopTimeMillis - startTimeMillis) >= ((maxAttempts - 1) * backoffIntervalMillis));
         
-        @SuppressWarnings("unchecked")
-        Message<AuditMessage> msg = (Message<AuditMessage>) messageCollector.forChannel(auditSourceBinding.auditSource()).poll();
-        assertNull(msg);
+        assertTrue(auditMessages.isEmpty());
         
         List<File> files = Arrays.stream(new File(new File(new URI(fileAuditProperties.getPathUri())), fileAuditProperties.getSubPath()).listFiles())
                         .filter(f -> f.getName().endsWith(".json")).collect(Collectors.toList());
@@ -496,9 +488,7 @@ public class AuditServiceTest {
         assertEquals(response.getStatusCode().value(), HttpStatus.OK.value());
         assertTrue((stopTimeMillis - startTimeMillis) >= failTimeoutMillis);
         
-        @SuppressWarnings("unchecked")
-        Message<AuditMessage> msg = (Message<AuditMessage>) messageCollector.forChannel(auditSourceBinding.auditSource()).poll();
-        assertNull(msg);
+        assertTrue(auditMessages.isEmpty());
         
         List<File> files = Arrays.stream(new File(new File(new URI(fileAuditProperties.getPathUri())), fileAuditProperties.getSubPath()).listFiles())
                         .filter(f -> f.getName().endsWith(".json")).collect(Collectors.toList());
@@ -546,10 +536,7 @@ public class AuditServiceTest {
         ResponseEntity<String> response = jwtRestTemplate.exchange(requestEntity, String.class);
         assertEquals(response.getStatusCode().value(), HttpStatus.OK.value());
         
-        @SuppressWarnings("unchecked")
-        Message<AuditMessage> msg = (Message<AuditMessage>) messageCollector.forChannel(auditSourceBinding.auditSource()).poll();
-        assertNotNull(msg);
-        Map<String,String> received = msg.getPayload().getAuditParameters();
+        Map<String,String> received = auditMessages.remove(0).getAuditParameters();
         
         for (String param : map.keySet()) {
             assertEquals(map.get(param).get(0), received.get(param));
@@ -590,9 +577,7 @@ public class AuditServiceTest {
         ResponseEntity<String> response = jwtRestTemplate.exchange(requestEntity, String.class);
         assertEquals(response.getStatusCode().value(), HttpStatus.OK.value());
         
-        @SuppressWarnings("unchecked")
-        Message<AuditMessage> msg = (Message<AuditMessage>) messageCollector.forChannel(auditSourceBinding.auditSource()).poll();
-        assertNotNull(msg);
+        assertFalse(auditMessages.isEmpty());
         
         List<File> files = Arrays.stream(new File(new File(new URI(fileAuditProperties.getPathUri())), fileAuditProperties.getSubPath()).listFiles())
                         .filter(f -> f.getName().endsWith(".json")).collect(Collectors.toList());
@@ -657,6 +642,23 @@ public class AuditServiceTest {
                     .setPrefix(fileAuditProperties.getPrefix())
                     .build();
             // @formatter:on
+        }
+        
+        @Bean
+        public List<AuditMessage> auditMessages() {
+            return new ArrayList<>();
+        }
+        
+        @Primary
+        @Bean
+        public AuditMessageSupplier testAuditSource(List<AuditMessage> auditMessages) {
+            return new AuditMessageSupplier() {
+                @Override
+                public boolean send(Message<AuditMessage> auditMessage) {
+                    auditMessages.add(auditMessage.getPayload());
+                    return true;
+                }
+            };
         }
     }
     

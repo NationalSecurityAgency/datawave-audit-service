@@ -61,7 +61,7 @@ public class LogAuditorTest {
     
     @Test
     public void testBeansPresent() {
-        assertTrue(context.containsBean("logAuditMessageHandler"));
+        assertTrue(context.containsBean("logAuditSink"));
         assertTrue(context.containsBean("logAuditor"));
     }
     

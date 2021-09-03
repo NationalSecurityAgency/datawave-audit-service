@@ -5,8 +5,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.io.Files;
 import datawave.microservice.audit.AuditServiceTest;
 import datawave.microservice.audit.common.AuditMessage;
+import datawave.microservice.audit.common.AuditMessageSupplier;
 import datawave.microservice.audit.config.AuditProperties;
-import datawave.microservice.audit.config.AuditServiceConfig;
 import datawave.microservice.audit.health.HealthChecker;
 import datawave.microservice.audit.replay.config.ReplayProperties;
 import datawave.microservice.audit.replay.remote.Request;
@@ -25,10 +25,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.boot.web.server.LocalServerPort;
-import org.springframework.cloud.stream.test.binder.MessageCollector;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.RequestEntity;
@@ -52,6 +52,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -65,7 +66,6 @@ import static datawave.webservice.common.audit.AuditParameters.QUERY_LOGIC_CLASS
 import static datawave.webservice.common.audit.AuditParameters.QUERY_SECURITY_MARKING_COLVIZ;
 import static datawave.webservice.common.audit.AuditParameters.QUERY_STRING;
 import static datawave.webservice.common.audit.AuditParameters.USER_DN;
-import static org.junit.Assert.assertNotNull;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -82,10 +82,7 @@ public class AuditReplayTest {
     private JWTRestTemplate jwtRestTemplate;
     
     @Autowired
-    private MessageCollector messageCollector;
-    
-    @Autowired
-    private AuditServiceConfig.AuditSourceBinding auditSourceBinding;
+    public LinkedList<AuditMessage> auditMessages;
     
     @Autowired
     private AuditProperties auditProperties;
@@ -123,6 +120,7 @@ public class AuditReplayTest {
         isHealthy = true;
         jwtRestTemplate = restTemplateBuilder.build(JWTRestTemplate.class);
         DN = SubjectIssuerDNPair.of(userDN, "issuerDn");
+        auditMessages.clear();
     }
     
     // Test unauthorized user
@@ -432,11 +430,7 @@ public class AuditReplayTest {
         Assert.assertNotNull(exception);
         Assert.assertTrue(exception instanceof HttpClientErrorException);
         
-        // Verify the message collector has our audit messages
-        @SuppressWarnings("unchecked")
-        Message<AuditMessage> msg = (Message<AuditMessage>) messageCollector.forChannel(auditSourceBinding.auditSource()).poll();
-        assertNotNull(msg);
-        Map<String,String> received = msg.getPayload().getAuditParameters();
+        Map<String,String> received = auditMessages.pop().getAuditParameters();
         
         // @formatter:off
         assertAuditMessage(
@@ -451,10 +445,7 @@ public class AuditReplayTest {
                 received);
         // @formatter:on
         
-        @SuppressWarnings("unchecked")
-        Message<AuditMessage> msg2 = (Message<AuditMessage>) messageCollector.forChannel(auditSourceBinding.auditSource()).poll();
-        assertNotNull(msg2);
-        received = msg2.getPayload().getAuditParameters();
+        received = auditMessages.remove(0).getAuditParameters();
         
         // @formatter:off
         assertAuditMessage(
@@ -469,7 +460,7 @@ public class AuditReplayTest {
                 received);
         // @formatter:on
         
-        Assert.assertEquals(0, messageCollector.forChannel(auditSourceBinding.auditSource()).size());
+        Assert.assertEquals(0, auditMessages.size());
     }
     
     // Test create (0 msgs/sec), status, stop, status, update, status, resume, verify status, delete, verify file names, verify messageCollector
@@ -833,11 +824,7 @@ public class AuditReplayTest {
         Assert.assertNotNull(exception);
         Assert.assertTrue(exception instanceof HttpClientErrorException);
         
-        // Verify the message collector has our audit messages
-        @SuppressWarnings("unchecked")
-        Message<AuditMessage> msg = (Message<AuditMessage>) messageCollector.forChannel(auditSourceBinding.auditSource()).poll();
-        assertNotNull(msg);
-        Map<String,String> received = msg.getPayload().getAuditParameters();
+        Map<String,String> received = auditMessages.pop().getAuditParameters();
         
         // @formatter:off
         assertAuditMessage(
@@ -852,10 +839,7 @@ public class AuditReplayTest {
                 received);
         // @formatter:on
         
-        @SuppressWarnings("unchecked")
-        Message<AuditMessage> msg2 = (Message<AuditMessage>) messageCollector.forChannel(auditSourceBinding.auditSource()).poll();
-        assertNotNull(msg2);
-        received = msg2.getPayload().getAuditParameters();
+        received = auditMessages.pop().getAuditParameters();
         
         // @formatter:off
         assertAuditMessage(
@@ -870,10 +854,7 @@ public class AuditReplayTest {
                 received);
         // @formatter:on
         
-        @SuppressWarnings("unchecked")
-        Message<AuditMessage> msg3 = (Message<AuditMessage>) messageCollector.forChannel(auditSourceBinding.auditSource()).poll();
-        assertNotNull(msg3);
-        received = msg3.getPayload().getAuditParameters();
+        received = auditMessages.pop().getAuditParameters();
         
         // @formatter:off
         assertAuditMessage(
@@ -888,10 +869,7 @@ public class AuditReplayTest {
                 received);
         // @formatter:on
         
-        @SuppressWarnings("unchecked")
-        Message<AuditMessage> msg4 = (Message<AuditMessage>) messageCollector.forChannel(auditSourceBinding.auditSource()).poll();
-        assertNotNull(msg4);
-        received = msg4.getPayload().getAuditParameters();
+        received = auditMessages.pop().getAuditParameters();
         
         // @formatter:off
         assertAuditMessage(
@@ -906,7 +884,7 @@ public class AuditReplayTest {
                 received);
         // @formatter:on
         
-        Assert.assertEquals(0, messageCollector.forChannel(auditSourceBinding.auditSource()).size());
+        Assert.assertEquals(0, auditMessages.size());
     }
     
     // Test multiple create (0 msgs/sec), stopAll, updateAll, resumeAll, verify statusAll, deleteAll, verify file names, verify messageCollector
@@ -1274,16 +1252,19 @@ public class AuditReplayTest {
         
         List<Map<String,String>> receivedMessages = new ArrayList<>();
         
-        // Verify the message collector has our audit messages
-        @SuppressWarnings("unchecked")
-        Message<AuditMessage> msg = (Message<AuditMessage>) messageCollector.forChannel(auditSourceBinding.auditSource()).poll();
-        assertNotNull(msg);
-        receivedMessages.add(msg.getPayload().getAuditParameters());
+        // audit message handling is asynchronous, so we wait for both messages to be added to our list
+        long stopTime = System.currentTimeMillis() + TimeUnit.SECONDS.toMillis(10);
+        while (System.currentTimeMillis() < stopTime) {
+            if (auditMessages.size() == 2) {
+                break;
+            } else {
+                Thread.sleep(100);
+            }
+        }
         
-        @SuppressWarnings("unchecked")
-        Message<AuditMessage> msg2 = (Message<AuditMessage>) messageCollector.forChannel(auditSourceBinding.auditSource()).poll();
-        assertNotNull(msg2);
-        receivedMessages.add(msg2.getPayload().getAuditParameters());
+        Assert.assertEquals(2, auditMessages.size());
+        receivedMessages.add(auditMessages.pop().getAuditParameters());
+        receivedMessages.add(auditMessages.pop().getAuditParameters());
         
         Map<String,String> received = receivedMessages.stream().filter(r -> r.get(AUDIT_ID).equals("readyAuditId1")).findAny().orElse(null);
         Assert.assertNotNull(received);
@@ -1315,7 +1296,7 @@ public class AuditReplayTest {
                 received);
         // @formatter:on
         
-        Assert.assertEquals(0, messageCollector.forChannel(auditSourceBinding.auditSource()).size());
+        Assert.assertEquals(0, auditMessages.size());
     }
     
     // Test createAndStart, verify status, idleCheck, resume, verify audit messages
@@ -1524,11 +1505,7 @@ public class AuditReplayTest {
         Assert.assertNotNull(exception);
         Assert.assertTrue(exception instanceof HttpClientErrorException);
         
-        // Verify the message collector has our audit messages
-        @SuppressWarnings("unchecked")
-        Message<AuditMessage> msg = (Message<AuditMessage>) messageCollector.forChannel(auditSourceBinding.auditSource()).poll();
-        assertNotNull(msg);
-        Map<String,String> received = msg.getPayload().getAuditParameters();
+        Map<String,String> received = auditMessages.pop().getAuditParameters();
         
         // @formatter:off
         assertAuditMessage(
@@ -1543,10 +1520,7 @@ public class AuditReplayTest {
                 received);
         // @formatter:on
         
-        @SuppressWarnings("unchecked")
-        Message<AuditMessage> msg2 = (Message<AuditMessage>) messageCollector.forChannel(auditSourceBinding.auditSource()).poll();
-        assertNotNull(msg2);
-        received = msg2.getPayload().getAuditParameters();
+        received = auditMessages.pop().getAuditParameters();
         
         // @formatter:off
         assertAuditMessage(
@@ -1561,7 +1535,7 @@ public class AuditReplayTest {
                 received);
         // @formatter:on
         
-        Assert.assertEquals(0, messageCollector.forChannel(auditSourceBinding.auditSource()).size());
+        Assert.assertEquals(0, auditMessages.size());
     }
     
     // Test delete on running replay
@@ -1904,11 +1878,7 @@ public class AuditReplayTest {
         Assert.assertNotNull(exception);
         Assert.assertTrue(exception instanceof HttpClientErrorException);
         
-        // Verify the message collector has our audit messages
-        @SuppressWarnings("unchecked")
-        Message<AuditMessage> msg = (Message<AuditMessage>) messageCollector.forChannel(auditSourceBinding.auditSource()).poll();
-        assertNotNull(msg);
-        Map<String,String> received = msg.getPayload().getAuditParameters();
+        Map<String,String> received = auditMessages.pop().getAuditParameters();
         
         // @formatter:off
         assertAuditMessage(
@@ -1923,10 +1893,7 @@ public class AuditReplayTest {
                 received);
         // @formatter:on
         
-        @SuppressWarnings("unchecked")
-        Message<AuditMessage> msg2 = (Message<AuditMessage>) messageCollector.forChannel(auditSourceBinding.auditSource()).poll();
-        assertNotNull(msg2);
-        received = msg2.getPayload().getAuditParameters();
+        received = auditMessages.pop().getAuditParameters();
         
         // @formatter:off
         assertAuditMessage(
@@ -1941,7 +1908,7 @@ public class AuditReplayTest {
                 received);
         // @formatter:on
         
-        Assert.assertEquals(0, messageCollector.forChannel(auditSourceBinding.auditSource()).size());
+        Assert.assertEquals(0, auditMessages.size());
     }
     
     @Test
@@ -2112,7 +2079,7 @@ public class AuditReplayTest {
         Assert.assertTrue(exception instanceof HttpClientErrorException);
         
         // Verify the message collector has no audit messages
-        Assert.assertEquals(0, messageCollector.forChannel(auditSourceBinding.auditSource()).size());
+        Assert.assertEquals(0, auditMessages.size());
     }
     
     @Test
@@ -2188,7 +2155,7 @@ public class AuditReplayTest {
         Assert.assertTrue(exception instanceof HttpClientErrorException);
         
         // Verify the message collector has no audit messages
-        Assert.assertEquals(0, messageCollector.forChannel(auditSourceBinding.auditSource()).size());
+        Assert.assertEquals(0, auditMessages.size());
     }
     
     @Test
@@ -2782,6 +2749,23 @@ public class AuditReplayTest {
                 @Override
                 public boolean isHealthy() {
                     return isHealthy;
+                }
+            };
+        }
+        
+        @Bean
+        public LinkedList<AuditMessage> auditMessages() {
+            return new LinkedList<>();
+        }
+        
+        @Primary
+        @Bean
+        public AuditMessageSupplier testAuditSource(LinkedList<AuditMessage> auditMessages) {
+            return new AuditMessageSupplier() {
+                @Override
+                public boolean send(Message<AuditMessage> auditMessage) {
+                    auditMessages.addLast(auditMessage.getPayload());
+                    return true;
                 }
             };
         }

@@ -1,9 +1,9 @@
 package datawave.microservice.audit.config;
 
+import datawave.microservice.audit.common.AuditMessageSupplier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.cloud.stream.annotation.Output;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.messaging.MessageChannel;
 
 /**
  * Configuration for the audit service.
@@ -14,10 +14,8 @@ import org.springframework.messaging.MessageChannel;
 @Configuration
 @EnableConfigurationProperties(AuditProperties.class)
 public class AuditServiceConfig {
-    public interface AuditSourceBinding {
-        String NAME = "auditSource";
-        
-        @Output(NAME)
-        MessageChannel auditSource();
+    @Bean
+    public AuditMessageSupplier auditSource() {
+        return new AuditMessageSupplier();
     }
 }

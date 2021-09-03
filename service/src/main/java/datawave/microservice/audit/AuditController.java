@@ -1,9 +1,9 @@
 package datawave.microservice.audit;
 
 import datawave.microservice.audit.common.AuditMessage;
+import datawave.microservice.audit.common.AuditMessageSupplier;
 import datawave.microservice.audit.config.AuditProperties;
 import datawave.microservice.audit.config.AuditProperties.Retry;
-import datawave.microservice.audit.config.AuditServiceConfig;
 import datawave.microservice.audit.health.HealthChecker;
 import datawave.webservice.common.audit.AuditParameters;
 import datawave.webservice.common.audit.Auditor;
@@ -20,7 +20,6 @@ import org.springframework.integration.IntegrationMessageHeaderAccessor;
 import org.springframework.integration.annotation.ServiceActivator;
 import org.springframework.integration.support.MessageBuilder;
 import org.springframework.messaging.Message;
-import org.springframework.messaging.MessageChannel;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -63,7 +62,7 @@ public class AuditController {
     
     private final AuditParameters restAuditParams;
     
-    private final MessageChannel messageChannel;
+    private final AuditMessageSupplier auditSource;
     
     @Autowired(required = false)
     private HealthChecker healthChecker;
@@ -74,11 +73,10 @@ public class AuditController {
     
     private static final Map<String,CountDownLatch> correlationLatchMap = new ConcurrentHashMap<>();
     
-    public AuditController(AuditProperties auditProperties, @Qualifier("restAuditParams") AuditParameters restAuditParams,
-                    @Qualifier(AuditServiceConfig.AuditSourceBinding.NAME) MessageChannel messageChannel) {
+    public AuditController(AuditProperties auditProperties, @Qualifier("restAuditParams") AuditParameters restAuditParams, AuditMessageSupplier auditSource) {
         this.auditProperties = auditProperties;
         this.restAuditParams = restAuditParams;
-        this.messageChannel = messageChannel;
+        this.auditSource = auditSource;
     }
     
     /**
@@ -122,7 +120,7 @@ public class AuditController {
                 correlationLatchMap.put(auditId, latch);
             }
             
-            boolean success = messageChannel.send(MessageBuilder.withPayload(AuditMessage.fromParams(parameters)).setCorrelationId(auditId).build());
+            boolean success = auditSource.send(MessageBuilder.withPayload(AuditMessage.fromParams(parameters)).setCorrelationId(auditId).build());
             
             if (auditProperties.isConfirmAckEnabled()) {
                 try {

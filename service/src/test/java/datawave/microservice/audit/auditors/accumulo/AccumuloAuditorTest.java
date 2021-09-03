@@ -54,7 +54,7 @@ public class AccumuloAuditorTest {
     
     @Test
     public void testBeansPresent() {
-        assertTrue(context.containsBean("accumuloAuditMessageHandler"));
+        assertTrue(context.containsBean("accumuloAuditSink"));
         assertTrue(context.containsBean("accumuloAuditor"));
     }
     

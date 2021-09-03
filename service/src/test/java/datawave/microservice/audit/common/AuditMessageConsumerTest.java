@@ -11,7 +11,7 @@ import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 
-public class AuditMessageHandlerTest {
+public class AuditMessageConsumerTest {
     
     @Test
     public void onMessageTest() throws Exception {
@@ -25,9 +25,9 @@ public class AuditMessageHandlerTest {
         
         TestAuditor auditor = new TestAuditor();
         
-        AuditMessageHandler auditMessageHandler = new AuditMessageHandler(new AuditParameters(), auditor);
+        AuditMessageConsumer auditMessageHandler = new AuditMessageConsumer(new AuditParameters(), auditor);
         
-        auditMessageHandler.onMessage(AuditMessage.fromParams(auditParams));
+        auditMessageHandler.accept(AuditMessage.fromParams(auditParams));
         
         Map<String,String> received = auditor.getAuditParameters().toMap();
         Map<String,String> expected = auditParams.toMap();

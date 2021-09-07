@@ -17,6 +17,11 @@ public class Request {
     private final Method method;
     private final String id;
     
+    private Request() {
+        // this constructor is only for serialization/deserialization
+        this(null, null);
+    }
+    
     private Request(Method method) {
         this(method, null);
     }

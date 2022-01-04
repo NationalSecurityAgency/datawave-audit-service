@@ -10,7 +10,6 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 @Validated
-@EnableConfigurationProperties(AuditProperties.class)
 @ConfigurationProperties(prefix = "audit")
 public class AuditProperties {
     private boolean confirmAckEnabled = true;

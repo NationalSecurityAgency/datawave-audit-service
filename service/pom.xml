@@ -18,7 +18,7 @@
         <url>https://github.com/NationalSecurityAgency/datawave-audit-service</url>
     </scm>
     <properties>
-        <version.hadoop>2.6.0</version.hadoop>
+        <version.hadoop>3.2.3</version.hadoop>
         <version.microservice.audit-api>1.10</version.microservice.audit-api>
         <version.microservice.hazelcast-client>1.6</version.microservice.hazelcast-client>
         <version.microservice.starter>1.6.7</version.microservice.starter>

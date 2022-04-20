@@ -18,9 +18,10 @@ import datawave.security.authorization.SubjectIssuerDNPair;
 import datawave.webservice.common.audit.AuditParameters;
 import datawave.webservice.common.audit.Auditor;
 import datawave.webservice.common.audit.Auditor.AuditType;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -39,7 +40,7 @@ import org.springframework.messaging.Message;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.HttpClientErrorException;
@@ -64,13 +65,13 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import static datawave.security.authorization.DatawaveUser.UserType.USER;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 //@Category(IntegrationTest.class)
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ContextConfiguration(classes = AuditServiceTest.AuditServiceTestConfiguration.class)
 @ActiveProfiles({"AuditServiceTest"})
@@ -101,7 +102,7 @@ public class AuditServiceTest {
     private static Boolean isHealthy = Boolean.TRUE;
     private static Boolean isFileAuditEnabled = Boolean.TRUE;
     
-    @Before
+    @BeforeEach
     public void setup() {
         isHealthy = true;
         isFileAuditEnabled = true;
@@ -110,7 +111,7 @@ public class AuditServiceTest {
         auditMessages.clear();
     }
     
-    @Test(expected = HttpServerErrorException.class)
+    @Test
     public void testMissingUserDN() {
         Collection<String> roles = Collections.singleton("AuthorizedUser");
         DatawaveUser uathDWUser = new DatawaveUser(DN, USER, null, roles, null, System.currentTimeMillis());
@@ -127,13 +128,13 @@ public class AuditServiceTest {
         RequestEntity requestEntity = jwtRestTemplate.createRequestEntity(authUser, map, null, HttpMethod.POST, uri);
         
         try {
-            jwtRestTemplate.exchange(requestEntity, String.class);
+            Assertions.assertThrows(HttpServerErrorException.class, () -> jwtRestTemplate.exchange(requestEntity, String.class));
         } finally {
             assertTrue(auditMessages.isEmpty());
         }
     }
     
-    @Test(expected = HttpServerErrorException.class)
+    @Test
     public void testMissingQuery() {
         Collection<String> roles = Collections.singleton("AuthorizedUser");
         DatawaveUser uathDWUser = new DatawaveUser(DN, USER, null, roles, null, System.currentTimeMillis());
@@ -150,13 +151,13 @@ public class AuditServiceTest {
         RequestEntity requestEntity = jwtRestTemplate.createRequestEntity(authUser, map, null, HttpMethod.POST, uri);
         
         try {
-            jwtRestTemplate.exchange(requestEntity, String.class);
+            Assertions.assertThrows(HttpServerErrorException.class, () -> jwtRestTemplate.exchange(requestEntity, String.class));
         } finally {
             assertTrue(auditMessages.isEmpty());
         }
     }
     
-    @Test(expected = HttpServerErrorException.class)
+    @Test
     public void testMissingAuths() {
         Collection<String> roles = Collections.singleton("AuthorizedUser");
         DatawaveUser uathDWUser = new DatawaveUser(DN, USER, null, roles, null, System.currentTimeMillis());
@@ -173,13 +174,13 @@ public class AuditServiceTest {
         RequestEntity requestEntity = jwtRestTemplate.createRequestEntity(authUser, map, null, HttpMethod.POST, uri);
         
         try {
-            jwtRestTemplate.exchange(requestEntity, String.class);
+            Assertions.assertThrows(HttpServerErrorException.class, () -> jwtRestTemplate.exchange(requestEntity, String.class));
         } finally {
             assertTrue(auditMessages.isEmpty());
         }
     }
     
-    @Test(expected = HttpClientErrorException.class)
+    @Test
     public void testUnauthorizedRole() {
         Collection<String> roles = Collections.singleton("UnauthorizedUser");
         DatawaveUser uathDWUser = new DatawaveUser(DN, USER, null, roles, null, System.currentTimeMillis());
@@ -197,7 +198,7 @@ public class AuditServiceTest {
         RequestEntity requestEntity = jwtRestTemplate.createRequestEntity(authUser, map, null, HttpMethod.POST, uri);
         
         try {
-            jwtRestTemplate.exchange(requestEntity, String.class);
+            Assertions.assertThrows(HttpClientErrorException.class, () -> jwtRestTemplate.exchange(requestEntity, String.class));
         } finally {
             assertTrue(auditMessages.isEmpty());
         }
@@ -236,7 +237,7 @@ public class AuditServiceTest {
     }
     
     @DirtiesContext
-    @Test(expected = HttpServerErrorException.class)
+    @Test
     public void testUnhealthyFileAuditDisabled() {
         isFileAuditEnabled = false;
         
@@ -262,7 +263,7 @@ public class AuditServiceTest {
         
         RequestEntity requestEntity = jwtRestTemplate.createRequestEntity(authUser, map, null, HttpMethod.POST, uri);
         
-        jwtRestTemplate.exchange(requestEntity, String.class);
+        Assertions.assertThrows(HttpServerErrorException.class, () -> jwtRestTemplate.exchange(requestEntity, String.class));
     }
     
     @DirtiesContext
@@ -321,7 +322,7 @@ public class AuditServiceTest {
     }
     
     @DirtiesContext
-    @Test(expected = HttpServerErrorException.class)
+    @Test
     public void testRetryMaxAttemptsFileAuditDisabled() {
         isFileAuditEnabled = false;
         
@@ -351,7 +352,7 @@ public class AuditServiceTest {
         RequestEntity requestEntity = jwtRestTemplate.createRequestEntity(authUser, map, null, HttpMethod.POST, uri);
         
         long startTimeMillis = System.currentTimeMillis();
-        jwtRestTemplate.exchange(requestEntity, String.class);
+        Assertions.assertThrows(HttpServerErrorException.class, () -> jwtRestTemplate.exchange(requestEntity, String.class));
         long stopTimeMillis = System.currentTimeMillis();
         
         assertTrue((stopTimeMillis - startTimeMillis) >= ((maxAttempts - 1) * backoffIntervalMillis));
@@ -419,7 +420,7 @@ public class AuditServiceTest {
     }
     
     @DirtiesContext
-    @Test(expected = HttpServerErrorException.class)
+    @Test
     public void testRetryFailTimeoutFileAuditDisabled() {
         isFileAuditEnabled = false;
         
@@ -448,7 +449,7 @@ public class AuditServiceTest {
         RequestEntity requestEntity = jwtRestTemplate.createRequestEntity(authUser, map, null, HttpMethod.POST, uri);
         
         long startTimeMillis = System.currentTimeMillis();
-        jwtRestTemplate.exchange(requestEntity, String.class);
+        Assertions.assertThrows(HttpServerErrorException.class, () -> jwtRestTemplate.exchange(requestEntity, String.class));
         long stopTimeMillis = System.currentTimeMillis();
         
         assertTrue((stopTimeMillis - startTimeMillis) >= failTimeoutMillis);

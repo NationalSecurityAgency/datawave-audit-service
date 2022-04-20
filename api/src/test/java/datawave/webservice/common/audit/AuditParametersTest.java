@@ -1,12 +1,20 @@
 package datawave.webservice.common.audit;
 
 import org.apache.accumulo.core.security.ColumnVisibility;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class AuditParametersTest {
     
@@ -36,212 +44,212 @@ public class AuditParametersTest {
         assertEquals(params.get(AuditParameters.QUERY_LOGIC_CLASS).get(0), p.getLogicClass());
     }
     
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void missingUserDNTest() {
         Map<String,List<String>> params = new HashMap<>(this.params);
         params.remove(AuditParameters.USER_DN);
         
-        new AuditParameters().validate(params);
+        Assertions.assertThrows(IllegalArgumentException.class, () -> new AuditParameters().validate(params));
     }
     
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void missingQueryStringTest() {
         Map<String,List<String>> params = new HashMap<>(this.params);
         params.remove(AuditParameters.QUERY_STRING);
         
-        new AuditParameters().validate(params);
+        Assertions.assertThrows(IllegalArgumentException.class, () -> new AuditParameters().validate(params));
     }
     
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void missingAuthsTest() {
         Map<String,List<String>> params = new HashMap<>(this.params);
         params.remove(AuditParameters.QUERY_AUTHORIZATIONS);
         
-        new AuditParameters().validate(params);
+        Assertions.assertThrows(IllegalArgumentException.class, () -> new AuditParameters().validate(params));
     }
     
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void missingAuditTypeTest() {
         Map<String,List<String>> params = new HashMap<>(this.params);
         params.remove(AuditParameters.QUERY_AUDIT_TYPE);
         
-        new AuditParameters().validate(params);
+        Assertions.assertThrows(IllegalArgumentException.class, () -> new AuditParameters().validate(params));
     }
     
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void missingColVizTest() {
         Map<String,List<String>> params = new HashMap<>(this.params);
         params.remove(AuditParameters.QUERY_SECURITY_MARKING_COLVIZ);
         
-        new AuditParameters().validate(params);
+        Assertions.assertThrows(IllegalArgumentException.class, () -> new AuditParameters().validate(params));
     }
     
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void nullUserDNTest() {
         Map<String,List<String>> params = new HashMap<>(this.params);
         params.put(AuditParameters.USER_DN, null);
         
-        new AuditParameters().validate(params);
+        Assertions.assertThrows(IllegalArgumentException.class, () -> new AuditParameters().validate(params));
     }
     
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void nullQueryStringTest() {
         Map<String,List<String>> params = new HashMap<>(this.params);
         params.put(AuditParameters.QUERY_STRING, null);
         
-        new AuditParameters().validate(params);
+        Assertions.assertThrows(IllegalArgumentException.class, () -> new AuditParameters().validate(params));
     }
     
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void nullAuthsTest() {
         Map<String,List<String>> params = new HashMap<>(this.params);
         params.put(AuditParameters.QUERY_AUTHORIZATIONS, null);
         
-        new AuditParameters().validate(params);
+        Assertions.assertThrows(IllegalArgumentException.class, () -> new AuditParameters().validate(params));
     }
     
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void nullAuditTypeTest() {
         Map<String,List<String>> params = new HashMap<>(this.params);
         params.put(AuditParameters.QUERY_AUDIT_TYPE, null);
         
-        new AuditParameters().validate(params);
+        Assertions.assertThrows(IllegalArgumentException.class, () -> new AuditParameters().validate(params));
     }
     
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void nullColVizTest() {
         Map<String,List<String>> params = new HashMap<>(this.params);
         params.put(AuditParameters.QUERY_SECURITY_MARKING_COLVIZ, null);
         
-        new AuditParameters().validate(params);
+        Assertions.assertThrows(IllegalArgumentException.class, () -> new AuditParameters().validate(params));
     }
     
-    @Test(expected = NullPointerException.class)
+    @Test
     public void nullValueUserDNTest() {
         Map<String,List<String>> params = new HashMap<>(this.params);
         params.put(AuditParameters.USER_DN, Collections.singletonList(null));
         
-        new AuditParameters().validate(params);
+        Assertions.assertThrows(NullPointerException.class, () -> new AuditParameters().validate(params));
     }
     
-    @Test(expected = NullPointerException.class)
+    @Test
     public void nullValueQueryStringTest() {
         Map<String,List<String>> params = new HashMap<>(this.params);
         params.put(AuditParameters.QUERY_STRING, Collections.singletonList(null));
         
-        new AuditParameters().validate(params);
+        Assertions.assertThrows(NullPointerException.class, () -> new AuditParameters().validate(params));
     }
     
-    @Test(expected = NullPointerException.class)
+    @Test
     public void nullValueAuthsTest() {
         Map<String,List<String>> params = new HashMap<>(this.params);
         params.put(AuditParameters.QUERY_AUTHORIZATIONS, Collections.singletonList(null));
         
-        new AuditParameters().validate(params);
+        Assertions.assertThrows(NullPointerException.class, () -> new AuditParameters().validate(params));
     }
     
-    @Test(expected = NullPointerException.class)
+    @Test
     public void nullValueAuditTypeTest() {
         Map<String,List<String>> params = new HashMap<>(this.params);
         params.put(AuditParameters.QUERY_AUDIT_TYPE, Collections.singletonList(null));
         
-        new AuditParameters().validate(params);
+        Assertions.assertThrows(NullPointerException.class, () -> new AuditParameters().validate(params));
     }
     
-    @Test(expected = NullPointerException.class)
+    @Test
     public void nullValueColVizTest() {
         Map<String,List<String>> params = new HashMap<>(this.params);
         params.put(AuditParameters.QUERY_SECURITY_MARKING_COLVIZ, Collections.singletonList(null));
         
-        new AuditParameters().validate(params);
+        Assertions.assertThrows(NullPointerException.class, () -> new AuditParameters().validate(params));
     }
     
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void emptyUserDNTest() {
         Map<String,List<String>> params = new HashMap<>(this.params);
         params.put(AuditParameters.USER_DN, new ArrayList<>());
         
-        new AuditParameters().validate(params);
+        Assertions.assertThrows(IllegalArgumentException.class, () -> new AuditParameters().validate(params));
     }
     
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void emptyQueryStringTest() {
         Map<String,List<String>> params = new HashMap<>(this.params);
         params.put(AuditParameters.QUERY_STRING, new ArrayList<>());
         
-        new AuditParameters().validate(params);
+        Assertions.assertThrows(IllegalArgumentException.class, () -> new AuditParameters().validate(params));
     }
     
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void emptyAuthsTest() {
         Map<String,List<String>> params = new HashMap<>(this.params);
         params.put(AuditParameters.QUERY_AUTHORIZATIONS, new ArrayList<>());
         
-        new AuditParameters().validate(params);
+        Assertions.assertThrows(IllegalArgumentException.class, () -> new AuditParameters().validate(params));
     }
     
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void emptyAuditTypeTest() {
         Map<String,List<String>> params = new HashMap<>(this.params);
         params.put(AuditParameters.QUERY_AUDIT_TYPE, new ArrayList<>());
         
-        new AuditParameters().validate(params);
+        Assertions.assertThrows(IllegalArgumentException.class, () -> new AuditParameters().validate(params));
     }
     
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void emptyColVizTest() {
         Map<String,List<String>> params = new HashMap<>(this.params);
         params.put(AuditParameters.QUERY_SECURITY_MARKING_COLVIZ, new ArrayList<>());
         
-        new AuditParameters().validate(params);
+        Assertions.assertThrows(IllegalArgumentException.class, () -> new AuditParameters().validate(params));
     }
     
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void multiValueUserDNTest() {
         Map<String,List<String>> params = new HashMap<>(this.params);
         params.put(AuditParameters.USER_DN, Arrays.asList("userDN1", "userDN2"));
         
-        new AuditParameters().validate(params);
+        Assertions.assertThrows(IllegalArgumentException.class, () -> new AuditParameters().validate(params));
     }
     
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void multiValueQueryStringTest() {
         Map<String,List<String>> params = new HashMap<>(this.params);
         params.put(AuditParameters.QUERY_STRING, Arrays.asList("query1", "query2"));
         
-        new AuditParameters().validate(params);
+        Assertions.assertThrows(IllegalArgumentException.class, () -> new AuditParameters().validate(params));
     }
     
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void multiValueAuthsTest() {
         Map<String,List<String>> params = new HashMap<>(this.params);
         params.put(AuditParameters.QUERY_AUTHORIZATIONS, Arrays.asList("AUTH1", "AUTH2"));
         
-        new AuditParameters().validate(params);
+        Assertions.assertThrows(IllegalArgumentException.class, () -> new AuditParameters().validate(params));
     }
     
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void multiValueAuditTypeTest() {
         Map<String,List<String>> params = new HashMap<>(this.params);
         params.put(AuditParameters.QUERY_AUDIT_TYPE, Arrays.asList(Auditor.AuditType.ACTIVE.name(), Auditor.AuditType.PASSIVE.name()));
         
-        new AuditParameters().validate(params);
+        Assertions.assertThrows(IllegalArgumentException.class, () -> new AuditParameters().validate(params));
     }
     
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void multiValueColVizTest() {
         Map<String,List<String>> params = new HashMap<>(this.params);
         params.put(AuditParameters.QUERY_SECURITY_MARKING_COLVIZ, Arrays.asList("ALL", "NONE"));
         
-        new AuditParameters().validate(params);
+        Assertions.assertThrows(IllegalArgumentException.class, () -> new AuditParameters().validate(params));
     }
     
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testInvalidDate() {
         Map<String,List<String>> params = new HashMap<>(this.params);
         params.put(AuditParameters.QUERY_DATE, Collections.singletonList("invalidDate"));
         
-        new AuditParameters().validate(params);
+        Assertions.assertThrows(IllegalArgumentException.class, () -> new AuditParameters().validate(params));
     }
     
     @Test

@@ -14,8 +14,9 @@ import org.apache.accumulo.core.data.Key;
 import org.apache.accumulo.core.data.Value;
 import org.apache.accumulo.core.security.Authorizations;
 import org.apache.accumulo.core.security.ColumnVisibility;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ApplicationContext;
@@ -24,18 +25,18 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.Map;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE, properties = "spring.main.allow-bean-definition-overriding=true")
 @ActiveProfiles({"AccumuloAuditorTest", "accumulo-enabled"})
 public class AccumuloAuditorTest {
@@ -64,15 +65,15 @@ public class AccumuloAuditorTest {
         if (connector.tableOperations().exists(tableName))
             connector.tableOperations().delete(tableName);
         
-        assertFalse(tableName + " already exists before test", connector.tableOperations().exists(tableName));
+        assertFalse(connector.tableOperations().exists(tableName), tableName + " already exists before test");
         
         Auditor accumuloAuditor = new AccumuloAuditor(tableName, connector);
         
-        assertTrue(tableName + " doesn't exist after test", connector.tableOperations().exists(tableName));
+        assertTrue(connector.tableOperations().exists(tableName), tableName + " doesn't exist after test");
         
         accumuloAuditor = new AccumuloAuditor(tableName, connector);
         
-        assertTrue(tableName + " doesn't exist after test", connector.tableOperations().exists(tableName));
+        assertTrue(connector.tableOperations().exists(tableName), tableName + " doesn't exist after test");
     }
     
     @Test
@@ -127,7 +128,7 @@ public class AccumuloAuditorTest {
         assertFalse(it.hasNext());
     }
     
-    @Test(expected = NullPointerException.class)
+    @Test
     public void testMissingUserDN() throws Exception {
         Date date = new Date();
         
@@ -138,10 +139,10 @@ public class AccumuloAuditorTest {
         auditParams.setColviz(new ColumnVisibility("ALL"));
         auditParams.setQueryDate(date);
         
-        accumuloAuditor.audit(auditParams);
+        Assertions.assertThrows(NullPointerException.class, () -> accumuloAuditor.audit(auditParams));
     }
     
-    @Test(expected = NullPointerException.class)
+    @Test
     public void testMissingColViz() throws Exception {
         Date date = new Date();
         
@@ -152,7 +153,7 @@ public class AccumuloAuditorTest {
         auditParams.setAuditType(Auditor.AuditType.ACTIVE);
         auditParams.setQueryDate(date);
         
-        accumuloAuditor.audit(auditParams);
+        Assertions.assertThrows(NullPointerException.class, () -> accumuloAuditor.audit(auditParams));
     }
     
     @Configuration

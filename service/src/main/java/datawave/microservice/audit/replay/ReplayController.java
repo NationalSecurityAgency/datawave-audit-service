@@ -23,13 +23,13 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.core.task.TaskRejectedException;
 import org.springframework.http.MediaType;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.annotation.security.RolesAllowed;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -110,7 +110,7 @@ public class ReplayController {
      * @return the audit replay id
      */
     @ApiOperation(value = "Creates an audit replay request.")
-    @RolesAllowed({"Administrator", "JBossAdministrator"})
+    @Secured({"Administrator", "JBossAdministrator"})
     @RequestMapping(path = "/create", method = RequestMethod.POST)
     public String create(@ApiParam(value = "The path where the audit file(s) to be replayed can be found", required = true) @RequestParam String pathUri,
                     @ApiParam(value = "The number of messages to send per second", defaultValue = "100") @RequestParam(defaultValue = "100") Long sendRate,
@@ -151,7 +151,7 @@ public class ReplayController {
      * @return the audit replay id
      */
     @ApiOperation(value = "Creates an audit replay request, and starts it.")
-    @RolesAllowed({"Administrator", "JBossAdministrator"})
+    @Secured({"Administrator", "JBossAdministrator"})
     @RequestMapping(path = "/createAndStart", method = RequestMethod.POST)
     public String createAndStart(
                     @ApiParam(value = "The path where the audit file(s) to be replayed can be found", required = true) @RequestParam String pathUri,
@@ -202,7 +202,7 @@ public class ReplayController {
      * @return status, indicating whether the audit replay was started successfully
      */
     @ApiOperation(value = "Starts an audit replay.")
-    @RolesAllowed({"Administrator", "JBossAdministrator"})
+    @Secured({"Administrator", "JBossAdministrator"})
     @RequestMapping(path = "/{id}/start", method = RequestMethod.PUT)
     public String start(@ApiParam(value = "The audit replay id") @PathVariable String id, HttpServletResponse response) {
         
@@ -282,7 +282,7 @@ public class ReplayController {
      * @return status, indicating the number of audit replays which were successfully started
      */
     @ApiOperation(value = "Starts all audit replays.")
-    @RolesAllowed({"Administrator", "JBossAdministrator"})
+    @Secured({"Administrator", "JBossAdministrator"})
     @RequestMapping(path = "/startAll", method = RequestMethod.PUT)
     public String startAll() {
         
@@ -398,7 +398,7 @@ public class ReplayController {
      * @return status, indicating whether the update was successful
      */
     @ApiOperation(value = "Updates an audit replay.")
-    @RolesAllowed({"Administrator", "JBossAdministrator"})
+    @Secured({"Administrator", "JBossAdministrator"})
     @RequestMapping(path = "/{id}/update", method = RequestMethod.PUT)
     public String update(@ApiParam("The audit replay id") @PathVariable("id") String id,
                     @ApiParam(value = "The number of messages to send per second", required = true) @RequestParam long sendRate, HttpServletResponse response) {
@@ -461,7 +461,7 @@ public class ReplayController {
      * @return status, indicating the number of audit replays which were successfully updated
      */
     @ApiOperation(value = "Updates all audit replays.")
-    @RolesAllowed({"Administrator", "JBossAdministrator"})
+    @Secured({"Administrator", "JBossAdministrator"})
     @RequestMapping(path = "/updateAll", method = RequestMethod.PUT)
     public String updateAll(@ApiParam(value = "The number of messages to send per second", required = true) @RequestParam long sendRate,
                     HttpServletResponse response) {
@@ -515,7 +515,7 @@ public class ReplayController {
      * @return status, indicating whether the audit replay was successfully stopped
      */
     @ApiOperation(value = "Stops an audit replay.")
-    @RolesAllowed({"Administrator", "JBossAdministrator"})
+    @Secured({"Administrator", "JBossAdministrator"})
     @RequestMapping(path = "/{id}/stop", method = RequestMethod.PUT)
     public String stop(@ApiParam("The audit replay id") @PathVariable("id") String id, HttpServletResponse response) {
         
@@ -587,7 +587,7 @@ public class ReplayController {
      * @return status, indicating the number of audit replays which were successfully stopped
      */
     @ApiOperation(value = "Stops all audit replays.")
-    @RolesAllowed({"Administrator", "JBossAdministrator"})
+    @Secured({"Administrator", "JBossAdministrator"})
     @RequestMapping(path = "/stopAll", method = RequestMethod.PUT)
     public String stopAll() {
         
@@ -632,7 +632,7 @@ public class ReplayController {
      * @return status, indicating whether the audit replay was successfully resumed
      */
     @ApiOperation(value = "Resumes an audit replay.")
-    @RolesAllowed({"Administrator", "JBossAdministrator"})
+    @Secured({"Administrator", "JBossAdministrator"})
     @RequestMapping(path = "/{id}/resume", method = RequestMethod.PUT)
     public String resume(@ApiParam("The audit replay id") @PathVariable("id") String id, HttpServletResponse response) {
         
@@ -682,7 +682,7 @@ public class ReplayController {
      * @return status, indicating the number of audit replays which were successfully resumed
      */
     @ApiOperation(value = "Resumes all audit replays.")
-    @RolesAllowed({"Administrator", "JBossAdministrator"})
+    @Secured({"Administrator", "JBossAdministrator"})
     @RequestMapping(path = "/resumeAll", method = RequestMethod.PUT)
     public String resumeAll() {
         
@@ -719,7 +719,7 @@ public class ReplayController {
      * @return status, indicating whether the audit replay was successfully deleted
      */
     @ApiOperation(value = "Deletes an audit replay.")
-    @RolesAllowed({"Administrator", "JBossAdministrator"})
+    @Secured({"Administrator", "JBossAdministrator"})
     @RequestMapping(path = "/{id}/delete", method = RequestMethod.DELETE)
     public String delete(@ApiParam("The audit replay id") @PathVariable("id") String id, HttpServletResponse response) {
         
@@ -762,7 +762,7 @@ public class ReplayController {
      * @return status, indicating the number of audit replays which were successfully deleted
      */
     @ApiOperation(value = "Deletes all audit replays.")
-    @RolesAllowed({"Administrator", "JBossAdministrator"})
+    @Secured({"Administrator", "JBossAdministrator"})
     @RequestMapping(path = "/deleteAll", method = RequestMethod.DELETE)
     public String deleteAll() {
         

@@ -20,13 +20,13 @@ import org.springframework.integration.IntegrationMessageHeaderAccessor;
 import org.springframework.integration.annotation.ServiceActivator;
 import org.springframework.integration.support.MessageBuilder;
 import org.springframework.messaging.Message;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.annotation.security.RolesAllowed;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CountDownLatch;
@@ -150,7 +150,7 @@ public class AuditController {
             @ApiImplicitParam(name = QUERY_SELECTORS), @ApiImplicitParam(name = QUERY_AUTHORIZATIONS, required = true),
             @ApiImplicitParam(name = QUERY_AUDIT_TYPE, required = true), @ApiImplicitParam(name = QUERY_SECURITY_MARKING_COLVIZ, required = true),
             @ApiImplicitParam(name = QUERY_DATE), @ApiImplicitParam(name = QUERY_LOGIC_CLASS), @ApiImplicitParam(name = AUDIT_ID)})
-    @RolesAllowed({"AuthorizedUser", "AuthorizedServer", "InternalUser", "Administrator"})
+    @Secured({"AuthorizedUser", "AuthorizedServer", "InternalUser", "Administrator"})
     @RequestMapping(path = "/audit", method = RequestMethod.POST)
     public String audit(@RequestParam MultiValueMap<String,String> parameters) {
         restAuditParams.clear();

@@ -1256,15 +1256,13 @@ public class AuditReplayTest {
         long stopTime = System.currentTimeMillis() + TimeUnit.SECONDS.toMillis(10);
         while (System.currentTimeMillis() < stopTime) {
             if (auditMessages.size() == 2) {
+                receivedMessages.add(auditMessages.get(0).getAuditParameters());
+                receivedMessages.add(auditMessages.get(1).getAuditParameters());
                 break;
             } else {
                 Thread.sleep(100);
             }
         }
-        
-        Assertions.assertEquals(2, auditMessages.size());
-        receivedMessages.add(auditMessages.pop().getAuditParameters());
-        receivedMessages.add(auditMessages.pop().getAuditParameters());
         
         Map<String,String> received = receivedMessages.stream().filter(r -> r.get(AUDIT_ID).equals("readyAuditId1")).findAny().orElse(null);
         Assertions.assertNotNull(received);
@@ -1295,8 +1293,6 @@ public class AuditReplayTest {
                 "READY",
                 received);
         // @formatter:on
-        
-        Assertions.assertEquals(0, auditMessages.size());
     }
     
     // Test createAndStart, verify status, idleCheck, resume, verify audit messages

@@ -111,7 +111,7 @@ public class LogAuditorTest {
         private final List<LogEvent> log = new ArrayList<>();
         
         protected TestAppender() {
-            super("TestAppender", null, null);
+            super("TestAppender", null, null, false, null);
         }
         
         @Override

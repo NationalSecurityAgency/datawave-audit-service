@@ -5,13 +5,13 @@ import datawave.microservice.audit.common.AuditMessageConsumer;
 import datawave.microservice.audit.config.AuditProperties;
 import datawave.webservice.common.audit.AuditParameters;
 import datawave.webservice.common.audit.Auditor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import javax.annotation.Resource;
 import javax.validation.Valid;
 import java.util.List;
 
@@ -30,8 +30,7 @@ public class DumpAuditConfig {
         return new FileAuditProperties();
     }
     
-    @Autowired
-    @Qualifier("msgHandlerAuditParams")
+    @Resource(name = "msgHandlerAuditParams")
     private AuditParameters msgHandlerAuditParams;
     
     @Bean

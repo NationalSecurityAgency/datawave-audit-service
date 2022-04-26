@@ -15,13 +15,13 @@ import org.apache.accumulo.core.client.security.tokens.PasswordToken;
 import org.apache.commons.configuration.BaseConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
+import javax.annotation.Resource;
 
 /**
  * Configures the AccumuloAuditor to process messages received by the audit service. This configuration is activated via the 'audit.auditors.accumulo.enabled'
@@ -35,8 +35,7 @@ public class AccumuloAuditConfig {
     
     private Logger log = LoggerFactory.getLogger(this.getClass());
     
-    @Autowired
-    @Qualifier("msgHandlerAuditParams")
+    @Resource(name = "msgHandlerAuditParams")
     private AuditParameters msgHandlerAuditParams;
     
     @Bean

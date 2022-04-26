@@ -11,7 +11,6 @@ import org.apache.logging.log4j.core.appender.AbstractAppender;
 import org.apache.logging.log4j.core.config.AbstractConfiguration;
 import org.apache.logging.log4j.core.config.AppenderRef;
 import org.apache.logging.log4j.core.config.LoggerConfig;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +23,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import javax.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -45,7 +45,7 @@ public class LogAuditorTest {
     
     private TestAppender testAppender;
     
-    @BeforeEach
+    @PostConstruct
     public void LogAuditorTestInit() {
         LoggerContext ctx = (LoggerContext) LogManager.getContext(false);
         AbstractConfiguration config = (AbstractConfiguration) ctx.getConfiguration();

@@ -57,6 +57,10 @@
                         <groupId>org.slf4j</groupId>
                     </exclusion>
                     <exclusion>
+                        <artifactId>*</artifactId>
+                        <groupId>log4j</groupId>
+                    </exclusion>
+                    <exclusion>
                         <artifactId>commons-logging</artifactId>
                         <groupId>commons-logging</groupId>
                     </exclusion>

@@ -7,9 +7,9 @@ import datawave.microservice.audit.config.AuditProperties.Retry;
 import datawave.microservice.audit.health.HealthChecker;
 import datawave.webservice.common.audit.AuditParameters;
 import datawave.webservice.common.audit.Auditor;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.Parameters;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -145,11 +145,11 @@ public class AuditController {
      *            the audit parameters
      * @return an audit ID, which can be used for tracking purposes
      */
-    @ApiOperation(value = "Performs auditing for the given parameters.")
-    @ApiImplicitParams({@ApiImplicitParam(name = USER_DN, required = true), @ApiImplicitParam(name = QUERY_STRING, required = true),
-            @ApiImplicitParam(name = QUERY_SELECTORS), @ApiImplicitParam(name = QUERY_AUTHORIZATIONS, required = true),
-            @ApiImplicitParam(name = QUERY_AUDIT_TYPE, required = true), @ApiImplicitParam(name = QUERY_SECURITY_MARKING_COLVIZ, required = true),
-            @ApiImplicitParam(name = QUERY_DATE), @ApiImplicitParam(name = QUERY_LOGIC_CLASS), @ApiImplicitParam(name = AUDIT_ID)})
+    @Operation(description = "Performs auditing for the given parameters.")
+    @Parameters({@Parameter(name = USER_DN, required = true), @Parameter(name = QUERY_STRING, required = true), @Parameter(name = QUERY_SELECTORS),
+            @Parameter(name = QUERY_AUTHORIZATIONS, required = true), @Parameter(name = QUERY_AUDIT_TYPE, required = true),
+            @Parameter(name = QUERY_SECURITY_MARKING_COLVIZ, required = true), @Parameter(name = QUERY_DATE), @Parameter(name = QUERY_LOGIC_CLASS),
+            @Parameter(name = AUDIT_ID)})
     @Secured({"AuthorizedUser", "AuthorizedServer", "InternalUser", "Administrator"})
     @RequestMapping(path = "/audit", method = RequestMethod.POST)
     public String audit(@RequestParam MultiValueMap<String,String> parameters) {

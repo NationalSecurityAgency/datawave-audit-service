@@ -9,8 +9,9 @@ import datawave.microservice.audit.replay.runner.RunningReplay;
 import datawave.microservice.audit.replay.status.Status;
 import datawave.microservice.audit.replay.status.StatusCache;
 import datawave.webservice.common.audit.AuditParameters;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
 import org.slf4j.Logger;
@@ -109,13 +110,14 @@ public class ReplayController {
      *            Indicates whether files from an unfinished audit replay should be included
      * @return the audit replay id
      */
-    @ApiOperation(value = "Creates an audit replay request.")
+    @Operation(summary = "Creates an audit replay request.")
     @Secured({"Administrator", "JBossAdministrator"})
     @RequestMapping(path = "/create", method = RequestMethod.POST)
-    public String create(@ApiParam(value = "The path where the audit file(s) to be replayed can be found", required = true) @RequestParam String pathUri,
-                    @ApiParam(value = "The number of messages to send per second", defaultValue = "100") @RequestParam(defaultValue = "100") Long sendRate,
-                    @ApiParam(value = "Indicates whether files from an unfinished audit replay should be included",
-                                    defaultValue = "false") @RequestParam(defaultValue = "false") boolean replayUnfinishedFiles,
+    public String create(@Parameter(description = "The path where the audit file(s) to be replayed can be found", required = true) @RequestParam String pathUri,
+                    @Parameter(description = "The number of messages to send per second",
+                                    schema = @Schema(defaultValue = "100")) @RequestParam(defaultValue = "100") Long sendRate,
+                    @Parameter(description = "Indicates whether files from an unfinished audit replay should be included",
+                                    schema = @Schema(defaultValue = "false")) @RequestParam(defaultValue = "false") boolean replayUnfinishedFiles,
                     HttpServletResponse response) {
         
         log.info("Creating audit replay with params: pathUri={}, sendRate={}, replayUnfinishedFiles={}", pathUri, sendRate, replayUnfinishedFiles);
@@ -150,14 +152,15 @@ public class ReplayController {
      *            Indicates whether files from an unfinished audit replay should be included
      * @return the audit replay id
      */
-    @ApiOperation(value = "Creates an audit replay request, and starts it.")
+    @Operation(summary = "Creates an audit replay request, and starts it.")
     @Secured({"Administrator", "JBossAdministrator"})
     @RequestMapping(path = "/createAndStart", method = RequestMethod.POST)
     public String createAndStart(
-                    @ApiParam(value = "The path where the audit file(s) to be replayed can be found", required = true) @RequestParam String pathUri,
-                    @ApiParam(value = "The number of messages to send per second", defaultValue = "100") @RequestParam(defaultValue = "100") Long sendRate,
-                    @ApiParam(value = "Indicates whether files from an unfinished audit replay should be included",
-                                    defaultValue = "false") @RequestParam(defaultValue = "false") boolean replayUnfinishedFiles,
+                    @Parameter(description = "The path where the audit file(s) to be replayed can be found", required = true) @RequestParam String pathUri,
+                    @Parameter(description = "The number of messages to send per second",
+                                    schema = @Schema(defaultValue = "100")) @RequestParam(defaultValue = "100") Long sendRate,
+                    @Parameter(description = "Indicates whether files from an unfinished audit replay should be included",
+                                    schema = @Schema(defaultValue = "false")) @RequestParam(defaultValue = "false") boolean replayUnfinishedFiles,
                     HttpServletResponse response) {
         
         log.info("Creating and starting audit replay with params: pathUri={}, sendRate={}, replayUnfinishedFiles={}", pathUri, sendRate, replayUnfinishedFiles);
@@ -201,10 +204,10 @@ public class ReplayController {
      *            The audit replay id
      * @return status, indicating whether the audit replay was started successfully
      */
-    @ApiOperation(value = "Starts an audit replay.")
+    @Operation(summary = "Starts an audit replay.")
     @Secured({"Administrator", "JBossAdministrator"})
     @RequestMapping(path = "/{id}/start", method = RequestMethod.PUT)
-    public String start(@ApiParam(value = "The audit replay id") @PathVariable String id, HttpServletResponse response) {
+    public String start(@Parameter(description = "The audit replay id") @PathVariable String id, HttpServletResponse response) {
         
         log.info("Starting audit replay with id " + id);
         
@@ -281,7 +284,7 @@ public class ReplayController {
      *
      * @return status, indicating the number of audit replays which were successfully started
      */
-    @ApiOperation(value = "Starts all audit replays.")
+    @Operation(summary = "Starts all audit replays.")
     @Secured({"Administrator", "JBossAdministrator"})
     @RequestMapping(path = "/startAll", method = RequestMethod.PUT)
     public String startAll() {
@@ -320,9 +323,9 @@ public class ReplayController {
      *            The audit replay id
      * @return the status of the audit replay
      */
-    @ApiOperation(value = "Gets the status of an audit replay.")
+    @Operation(summary = "Gets the status of an audit replay.")
     @RequestMapping(path = "/{id}/status", method = RequestMethod.GET)
-    public Status status(@ApiParam("The audit replay id") @PathVariable("id") String id, HttpServletResponse response) throws IOException {
+    public Status status(@Parameter(description = "The audit replay id") @PathVariable("id") String id, HttpServletResponse response) throws IOException {
         
         log.info("Getting status for audit replay with id {}", id);
         
@@ -365,7 +368,7 @@ public class ReplayController {
      *
      * @return list of statuses for all audit replays
      */
-    @ApiOperation(value = "Lists the status for all audit replays.")
+    @Operation(summary = "Lists the status for all audit replays.")
     @RequestMapping(path = "/statusAll", method = RequestMethod.GET)
     public List<Status> statusAll() {
         
@@ -397,11 +400,12 @@ public class ReplayController {
      *            The number of messages to send per second
      * @return status, indicating whether the update was successful
      */
-    @ApiOperation(value = "Updates an audit replay.")
+    @Operation(summary = "Updates an audit replay.")
     @Secured({"Administrator", "JBossAdministrator"})
     @RequestMapping(path = "/{id}/update", method = RequestMethod.PUT)
-    public String update(@ApiParam("The audit replay id") @PathVariable("id") String id,
-                    @ApiParam(value = "The number of messages to send per second", required = true) @RequestParam long sendRate, HttpServletResponse response) {
+    public String update(@Parameter(description = "The audit replay id") @PathVariable("id") String id,
+                    @Parameter(description = "The number of messages to send per second", required = true) @RequestParam long sendRate,
+                    HttpServletResponse response) {
         
         log.info("Updating sendRate to {} for audit replay with id {}", sendRate, id);
         
@@ -460,10 +464,10 @@ public class ReplayController {
      *            The number of messages to send per second
      * @return status, indicating the number of audit replays which were successfully updated
      */
-    @ApiOperation(value = "Updates all audit replays.")
+    @Operation(summary = "Updates all audit replays.")
     @Secured({"Administrator", "JBossAdministrator"})
     @RequestMapping(path = "/updateAll", method = RequestMethod.PUT)
-    public String updateAll(@ApiParam(value = "The number of messages to send per second", required = true) @RequestParam long sendRate,
+    public String updateAll(@Parameter(description = "The number of messages to send per second", required = true) @RequestParam long sendRate,
                     HttpServletResponse response) {
         
         log.info("Updating sendRate to {} for all audit replays", sendRate);
@@ -514,10 +518,10 @@ public class ReplayController {
      *            The audit replay id
      * @return status, indicating whether the audit replay was successfully stopped
      */
-    @ApiOperation(value = "Stops an audit replay.")
+    @Operation(summary = "Stops an audit replay.")
     @Secured({"Administrator", "JBossAdministrator"})
     @RequestMapping(path = "/{id}/stop", method = RequestMethod.PUT)
-    public String stop(@ApiParam("The audit replay id") @PathVariable("id") String id, HttpServletResponse response) {
+    public String stop(@Parameter(description = "The audit replay id") @PathVariable("id") String id, HttpServletResponse response) {
         
         log.info("Stopping audit replay with id {}", id);
         
@@ -586,7 +590,7 @@ public class ReplayController {
      *
      * @return status, indicating the number of audit replays which were successfully stopped
      */
-    @ApiOperation(value = "Stops all audit replays.")
+    @Operation(summary = "Stops all audit replays.")
     @Secured({"Administrator", "JBossAdministrator"})
     @RequestMapping(path = "/stopAll", method = RequestMethod.PUT)
     public String stopAll() {
@@ -631,10 +635,10 @@ public class ReplayController {
      *            The audit replay id
      * @return status, indicating whether the audit replay was successfully resumed
      */
-    @ApiOperation(value = "Resumes an audit replay.")
+    @Operation(summary = "Resumes an audit replay.")
     @Secured({"Administrator", "JBossAdministrator"})
     @RequestMapping(path = "/{id}/resume", method = RequestMethod.PUT)
-    public String resume(@ApiParam("The audit replay id") @PathVariable("id") String id, HttpServletResponse response) {
+    public String resume(@Parameter(description = "The audit replay id") @PathVariable("id") String id, HttpServletResponse response) {
         
         log.info("Resuming audit replay with id {}", id);
         
@@ -681,7 +685,7 @@ public class ReplayController {
      *
      * @return status, indicating the number of audit replays which were successfully resumed
      */
-    @ApiOperation(value = "Resumes all audit replays.")
+    @Operation(summary = "Resumes all audit replays.")
     @Secured({"Administrator", "JBossAdministrator"})
     @RequestMapping(path = "/resumeAll", method = RequestMethod.PUT)
     public String resumeAll() {
@@ -718,10 +722,10 @@ public class ReplayController {
      *            The audit replay id
      * @return status, indicating whether the audit replay was successfully deleted
      */
-    @ApiOperation(value = "Deletes an audit replay.")
+    @Operation(summary = "Deletes an audit replay.")
     @Secured({"Administrator", "JBossAdministrator"})
     @RequestMapping(path = "/{id}/delete", method = RequestMethod.DELETE)
-    public String delete(@ApiParam("The audit replay id") @PathVariable("id") String id, HttpServletResponse response) {
+    public String delete(@Parameter(description = "The audit replay id") @PathVariable("id") String id, HttpServletResponse response) {
         
         log.info("Deleting audit replay with id {}", id);
         
@@ -761,7 +765,7 @@ public class ReplayController {
      *
      * @return status, indicating the number of audit replays which were successfully deleted
      */
-    @ApiOperation(value = "Deletes all audit replays.")
+    @Operation(summary = "Deletes all audit replays.")
     @Secured({"Administrator", "JBossAdministrator"})
     @RequestMapping(path = "/deleteAll", method = RequestMethod.DELETE)
     public String deleteAll() {

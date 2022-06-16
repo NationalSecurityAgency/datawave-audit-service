@@ -1,7 +1,6 @@
 package datawave.microservice.audit.config;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.Valid;

@@ -7,9 +7,15 @@ import datawave.microservice.audit.config.AuditProperties.Retry;
 import datawave.microservice.audit.health.HealthChecker;
 import datawave.webservice.common.audit.AuditParameters;
 import datawave.webservice.common.audit.Auditor;
+import io.swagger.v3.oas.annotations.ExternalDocumentation;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.Parameters;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,8 +56,11 @@ import static datawave.webservice.common.audit.AuditParameters.USER_DN;
  * message passing infrastructure is unhealthy, or if we can't verify that the message was successfully passed to our messaging infrastructure, a 500 Internal
  * Server Error will be returned to the caller.
  */
+@Tag(name = "Audit Controller /v1", description = "DataWave Query Auditing",
+                externalDocs = @ExternalDocumentation(description = "Audit Service Documentation",
+                                url = "https://github.com/NationalSecurityAgency/datawave-audit-service"))
 @RestController
-@RequestMapping(path = "/v1", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(path = "/v1", produces = MediaType.TEXT_PLAIN_VALUE)
 public class AuditController {
     // Note: This must match 'confirmAckChannel' in the service configuration. Default set in bootstrap.yml.
     public static final String CONFIRM_ACK_CHANNEL = "confirmAckChannel";
@@ -145,14 +154,79 @@ public class AuditController {
      *            the audit parameters
      * @return an audit ID, which can be used for tracking purposes
      */
-    @Operation(description = "Performs auditing for the given parameters.")
-    @Parameters({@Parameter(name = USER_DN, required = true), @Parameter(name = QUERY_STRING, required = true), @Parameter(name = QUERY_SELECTORS),
-            @Parameter(name = QUERY_AUTHORIZATIONS, required = true), @Parameter(name = QUERY_AUDIT_TYPE, required = true),
-            @Parameter(name = QUERY_SECURITY_MARKING_COLVIZ, required = true), @Parameter(name = QUERY_DATE), @Parameter(name = QUERY_LOGIC_CLASS),
-            @Parameter(name = AUDIT_ID)})
+    // @formatter:off
+    @Operation(
+            summary = "Submit an audit message with the given parameters.",
+            description = "Audit messages will be forwarded to the configured auditors.")
+    @ApiResponse(
+            description = "if successful, returns the audit ID",
+            responseCode = "200",
+            content = @Content(schema = @Schema(implementation = String.class))
+    )
+    @Parameters({
+            @Parameter(
+                    name = USER_DN,
+                    in = ParameterIn.QUERY,
+                    description = "The user's DN",
+                    required = true,
+                    schema = @Schema(implementation = String.class),
+                    example = "cn=test a. user, ou=example developers, o=example corp, c=us<cn=example corp ca, o=example corp, c=us>"),
+            @Parameter(
+                    name = QUERY_STRING,
+                    in = ParameterIn.QUERY,
+                    description = "The user-specified query",
+                    required = true,
+                    schema = @Schema(implementation = String.class),
+                    example = "GENRES:[Action to Western]"),
+            @Parameter(
+                    name = QUERY_SELECTORS,
+                    in = ParameterIn.QUERY,
+                    description = "The selectors present in the query",
+                    schema = @Schema(implementation = String.class),
+                    example = "A,E,I,O,U"),
+            @Parameter(
+                    name = QUERY_AUTHORIZATIONS,
+                    in = ParameterIn.QUERY,
+                    description = "The user-selected authorizations",
+                    required = true,
+                    schema = @Schema(implementation = String.class),
+                    example = "PUBLIC,PRIVATE,BAR,FOO"),
+            @Parameter(
+                    name = QUERY_AUDIT_TYPE,
+                    in = ParameterIn.QUERY,
+                    description = "The audit type",
+                    required = true,
+                    schema = @Schema(implementation = String.class),
+                    example = "ACTIVE"),
+            @Parameter(
+                    name = QUERY_SECURITY_MARKING_COLVIZ,
+                    in = ParameterIn.QUERY,
+                    description = "The visibility to use when storing the audit record",
+                    required = true,
+                    schema = @Schema(implementation = String.class),
+                    example = "PUBLIC"),
+            @Parameter(
+                    name = QUERY_DATE,
+                    in = ParameterIn.QUERY,
+                    description = "The date the user ran the query",
+                    schema = @Schema(implementation = Long.class),
+                    example = "1655410818951"),
+            @Parameter(
+                    name = QUERY_LOGIC_CLASS,
+                    in = ParameterIn.QUERY,
+                    description = "The query logic used",
+                    schema = @Schema(implementation = String.class),
+                    example = "EventQuery"),
+            @Parameter(
+                    name = AUDIT_ID,
+                    in = ParameterIn.QUERY,
+                    description = "An optional audit ID to use for tracking purposes",
+                    schema = @Schema(implementation = String.class),
+                    example = "my-audit-id")})
+    // @formatter:on
     @Secured({"AuthorizedUser", "AuthorizedServer", "InternalUser", "Administrator"})
     @RequestMapping(path = "/audit", method = RequestMethod.POST)
-    public String audit(@RequestParam MultiValueMap<String,String> parameters) {
+    public String audit(@Parameter(hidden = true) @RequestParam MultiValueMap<String,String> parameters) {
         restAuditParams.clear();
         restAuditParams.validate(parameters);
         

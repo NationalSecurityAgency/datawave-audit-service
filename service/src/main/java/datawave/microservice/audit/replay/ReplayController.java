@@ -9,9 +9,11 @@ import datawave.microservice.audit.replay.runner.RunningReplay;
 import datawave.microservice.audit.replay.status.Status;
 import datawave.microservice.audit.replay.status.StatusCache;
 import datawave.webservice.common.audit.AuditParameters;
+import io.swagger.v3.oas.annotations.ExternalDocumentation;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
 import org.slf4j.Logger;
@@ -51,6 +53,9 @@ import static io.undertow.util.StatusCodes.UNPROCESSABLE_ENTITY;
  * The ReplayController presents the REST endpoints for audit replay.
  *
  */
+@Tag(name = "Replay Controller /v1", description = "DataWave Audit Replay Management",
+                externalDocs = @ExternalDocumentation(description = "Audit Service Documentation",
+                                url = "https://github.com/NationalSecurityAgency/datawave-audit-service"))
 @RestController
 @RequestMapping(path = "/v1/replay", produces = MediaType.APPLICATION_JSON_VALUE)
 @ConditionalOnProperty(name = "audit.replay.enabled", havingValue = "true")

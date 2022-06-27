@@ -224,7 +224,7 @@ public class RabbitHealthProperties {
     public static class BindingProperties {
         private String destination;
         private String destinationType;
-        private String exchange;
+        private String source;
         private String routingKey;
         private Map<String,Object> arguments;
         
@@ -244,12 +244,12 @@ public class RabbitHealthProperties {
             this.destinationType = destinationType;
         }
         
-        public String getExchange() {
-            return exchange;
+        public String getSource() {
+            return source;
         }
         
-        public void setExchange(String exchange) {
-            this.exchange = exchange;
+        public void setSource(String source) {
+            this.source = source;
         }
         
         public String getRoutingKey() {

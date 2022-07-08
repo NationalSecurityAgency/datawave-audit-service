@@ -70,6 +70,10 @@
                         <artifactId>*</artifactId>
                         <groupId>commons-logging</groupId>
                     </exclusion>
+                    <exclusion>
+                        <artifactId>avro</artifactId>
+                        <groupId>org.apache.avro</groupId>
+                    </exclusion>
                 </exclusions>
             </dependency>
             <dependency>

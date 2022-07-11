@@ -17,7 +17,7 @@
         <url>https://github.com/NationalSecurityAgency/datawave-audit-service</url>
     </scm>
     <properties>
-        <version.accumulo>1.9.3</version.accumulo>
+        <version.accumulo>1.10.2</version.accumulo>
         <version.guava>31.1-jre</version.guava>
     </properties>
     <dependencyManagement>

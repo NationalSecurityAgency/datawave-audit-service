@@ -62,9 +62,6 @@ public class FileAuditor implements Auditor {
         
         fileSystem = FileSystem.get(path.toUri(), config);
         
-        if (!fileSystem.exists(path))
-            fileSystem.mkdirs(path);
-        
         String sdfString = "yyyyMMdd_HHmmss.SSS'.json'";
         if (builder.prefix != null && !builder.prefix.isEmpty())
             sdfString = "'" + builder.prefix + "-'" + sdfString;
@@ -74,6 +71,10 @@ public class FileAuditor implements Auditor {
     
     @Override
     public void audit(AuditParameters auditParameters) throws Exception {
+        
+        // create the audit path if it doesn't exist
+        if (!fileSystem.exists(path))
+            fileSystem.mkdirs(path);
         
         // convert the messages to JSON
         String jsonAuditParams = mapper.writeValueAsString(auditParameters.toMap()) + "\n";

@@ -1384,17 +1384,17 @@ public class AuditReplayTest {
                 fileStatus);
         // @formatter:on
         
-        // Check the status until it is idle
+        // Check the status until it is stopped
         status = toStatus(jwtRestTemplate.exchange(authUser, HttpMethod.GET, statusUri, String.class));
         numRetries = 20;
-        while (status.getState() != Status.ReplayState.IDLE && numRetries-- != 0) {
+        while (status.getState() != Status.ReplayState.STOPPED && numRetries-- != 0) {
             Thread.sleep(250);
             status = toStatus(jwtRestTemplate.exchange(authUser, HttpMethod.GET, statusUri, String.class));
         }
         
         // @formatter:off
         assertStatus(
-                Status.ReplayState.IDLE,
+                Status.ReplayState.STOPPED,
                 tempDir.toURI().toString(),
                 0L,
                 2,
@@ -1409,7 +1409,7 @@ public class AuditReplayTest {
         map = new LinkedMultiValueMap<>();
         map.add("sendRate", "200");
         
-        // Create and start the audit replay request
+        // Update replay request
         requestEntity = jwtRestTemplate.createRequestEntity(authUser, map, null, HttpMethod.PUT, updateUri);
         ResponseEntity<String> updateResp = jwtRestTemplate.exchange(requestEntity, String.class);
         
@@ -1420,7 +1420,7 @@ public class AuditReplayTest {
         
         // @formatter:off
         assertStatus(
-                Status.ReplayState.IDLE,
+                Status.ReplayState.STOPPED,
                 tempDir.toURI().toString(),
                 200L,
                 2,

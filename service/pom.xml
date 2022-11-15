@@ -4,11 +4,11 @@
     <parent>
         <groupId>gov.nsa.datawave.microservice</groupId>
         <artifactId>datawave-microservice-service-parent</artifactId>
-        <version>2.0</version>
+        <version>2.1-SNAPSHOT</version>
         <relativePath />
     </parent>
     <artifactId>audit-service</artifactId>
-    <version>2.0.1-SNAPSHOT</version>
+    <version>2.1.0-SNAPSHOT</version>
     <description>DATAWAVE Auditing Microservice</description>
     <url>https://code.nsa.gov/datawave-audit-service</url>
     <scm>
@@ -19,11 +19,11 @@
     </scm>
     <properties>
         <version.commons>3.9</version.commons>
-        <version.hadoop>3.1.1</version.hadoop>
-        <version.microservice.audit-api>2.0.1-SNAPSHOT</version.microservice.audit-api>
-        <version.microservice.hazelcast-client>2.0.0</version.microservice.hazelcast-client>
-        <version.microservice.starter>2.0.0</version.microservice.starter>
-        <version.zookeeper>3.4.14</version.zookeeper>
+        <version.hadoop>3.3.4</version.hadoop>
+        <version.microservice.audit-api>2.1.0-SNAPSHOT</version.microservice.audit-api>
+        <version.microservice.hazelcast-client>2.1.0-SNAPSHOT</version.microservice.hazelcast-client>
+        <version.microservice.starter>2.1.0-SNAPSHOT</version.microservice.starter>
+        <version.zookeeper>3.8.0</version.zookeeper>
     </properties>
     <dependencyManagement>
         <dependencies>
@@ -101,6 +101,16 @@
                 <groupId>org.apache.zookeeper</groupId>
                 <artifactId>zookeeper</artifactId>
                 <version>${version.zookeeper}</version>
+                <exclusions>
+                    <exclusion>
+                        <artifactId>*</artifactId>
+                        <groupId>ch.qos.logback</groupId>
+                    </exclusion>
+                    <exclusion>
+                        <artifactId>netty-tcnative</artifactId>
+                        <groupId>io.netty</groupId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <groupId>gov.nsa.datawave.microservice</groupId>

@@ -58,6 +58,10 @@
                     </exclusion>
                     <exclusion>
                         <artifactId>*</artifactId>
+                        <groupId>org.eclipse.jetty</groupId>
+                    </exclusion>
+                    <exclusion>
+                        <artifactId>*</artifactId>
                         <groupId>log4j</groupId>
                     </exclusion>
                     <exclusion>

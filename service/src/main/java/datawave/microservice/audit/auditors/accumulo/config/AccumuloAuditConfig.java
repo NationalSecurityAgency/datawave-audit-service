@@ -2,6 +2,7 @@ package datawave.microservice.audit.auditors.accumulo.config;
 
 import datawave.microservice.audit.auditors.accumulo.AccumuloAuditor;
 import datawave.microservice.audit.auditors.accumulo.config.AccumuloAuditProperties.Accumulo;
+import datawave.microservice.audit.auditors.accumulo.health.AccumuloHealthChecker;
 import datawave.microservice.audit.common.AuditMessage;
 import datawave.microservice.audit.common.AuditMessageHandler;
 import datawave.webservice.common.audit.AuditParameters;
@@ -56,8 +57,14 @@ public class AccumuloAuditConfig {
     }
     
     @Bean
-    public Auditor accumuloAuditor(AccumuloAuditProperties accumuloAuditProperties, Connector connector) {
+    public AccumuloAuditor accumuloAuditor(AccumuloAuditProperties accumuloAuditProperties, Connector connector) {
         return new AccumuloAuditor(accumuloAuditProperties.getTableName(), connector);
+    }
+    
+    @Bean
+    @ConditionalOnProperty(name = "audit.auditors.accumulo.health.enabled", havingValue = "true")
+    public AccumuloHealthChecker accumuloHealthChecker(AccumuloAuditProperties accumuloAuditProperties, AccumuloAuditor accumuloAuditor) {
+        return new AccumuloHealthChecker(accumuloAuditProperties, accumuloAuditor);
     }
     
     @Bean

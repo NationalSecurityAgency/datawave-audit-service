@@ -89,9 +89,9 @@ public class AccumuloAuditProperties {
     }
     
     public static class Health {
-        private Long hungTimeout = 30L;
+        private Long hungTimeout = 5L;
         
-        private TimeUnit hungTimeUnit = TimeUnit.SECONDS;
+        private TimeUnit hungTimeUnit = TimeUnit.MINUTES;
         
         // The minimum percentage of hung audit consumers (expressed as a number
         // between 0 and 1, inclusive) required to mark the service as down

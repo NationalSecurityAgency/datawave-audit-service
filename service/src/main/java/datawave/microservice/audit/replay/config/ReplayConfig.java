@@ -15,6 +15,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
+import java.util.function.Function;
+
 @Configuration
 @EnableCaching
 @EnableConfigurationProperties(ReplayProperties.class)
@@ -35,12 +37,12 @@ public class ReplayConfig {
     }
     
     @Bean
-    public StatusCache replayStatusCache(CacheInspector cacheInspector, CacheManager cacheManager) {
+    public StatusCache replayStatusCache(Function<CacheManager,CacheInspector> cacheInspectorFactory, CacheManager cacheManager) {
         LockableCacheInspector lockableCacheInspector = null;
         if (cacheManager instanceof HazelcastCacheManager)
             lockableCacheInspector = new LockableHazelcastCacheInspector(cacheManager);
         else
-            lockableCacheInspector = new UniversalLockableCacheInspector(cacheInspector);
+            lockableCacheInspector = new UniversalLockableCacheInspector(cacheInspectorFactory.apply(cacheManager));
         return new StatusCache(lockableCacheInspector);
     }
 }

@@ -51,20 +51,23 @@ public class FileAuditor implements Auditor {
         Configuration config = new Configuration();
         
         if (builder.fsConfigResources != null) {
-            for (String resource : builder.fsConfigResources)
+            for (String resource : builder.fsConfigResources) {
                 config.addResource(new Path(resource));
+            }
         }
         
         path = new Path(builder.path);
         
-        if (builder.subPath != null)
+        if (builder.subPath != null) {
             path = new Path(path, builder.subPath);
+        }
         
         fileSystem = FileSystem.get(path.toUri(), config);
         
         String sdfString = "yyyyMMdd_HHmmss.SSS'.json'";
-        if (builder.prefix != null && !builder.prefix.isEmpty())
+        if (builder.prefix != null && !builder.prefix.isEmpty()) {
             sdfString = "'" + builder.prefix + "-'" + sdfString;
+        }
         
         this.sdf = new SimpleDateFormat(sdfString);
     }
@@ -73,8 +76,9 @@ public class FileAuditor implements Auditor {
     public void audit(AuditParameters auditParameters) throws Exception {
         
         // create the audit path if it doesn't exist
-        if (!fileSystem.exists(path))
+        if (!fileSystem.exists(path)) {
             fileSystem.mkdirs(path);
+        }
         
         // convert the messages to JSON
         String jsonAuditParams = mapper.writeValueAsString(auditParameters.toMap()) + "\n";
@@ -82,8 +86,9 @@ public class FileAuditor implements Auditor {
         writeLock.lock();
         try {
             // if the file/stream is null, doesn't exist, or the file is too old/big, create a new file & output stream
-            if (currentFile == null || !fileSystem.exists(currentFile) || isFileTooOld() || isFileTooBig())
+            if (currentFile == null || !fileSystem.exists(currentFile) || isFileTooOld() || isFileTooBig()) {
                 createNewFile();
+            }
             
             writeAudit(jsonAuditParams);
         } finally {
@@ -134,8 +139,9 @@ public class FileAuditor implements Auditor {
         }
         
         public T setPath(String path) {
-            if (path != null)
+            if (path != null) {
                 this.path = path;
+            }
             return (T) this;
         }
         
@@ -144,8 +150,9 @@ public class FileAuditor implements Auditor {
         }
         
         public T setSubPath(String subPath) {
-            if (subPath != null)
+            if (subPath != null) {
                 this.subPath = subPath;
+            }
             return (T) this;
         }
         
@@ -163,8 +170,9 @@ public class FileAuditor implements Auditor {
         }
         
         public T setPrefix(String prefix) {
-            if (prefix != null)
+            if (prefix != null) {
                 this.prefix = prefix;
+            }
             return (T) this;
         }
         
@@ -173,8 +181,9 @@ public class FileAuditor implements Auditor {
         }
         
         public T setMaxFileLengthMB(Long maxFileLengthMB) {
-            if (maxFileLengthMB != null)
+            if (maxFileLengthMB != null) {
                 this.maxFileLengthMB = maxFileLengthMB;
+            }
             return (T) this;
         }
         
@@ -183,8 +192,9 @@ public class FileAuditor implements Auditor {
         }
         
         public T setMaxFileAgeSeconds(Long maxFileAgeSeconds) {
-            if (maxFileAgeSeconds != null)
+            if (maxFileAgeSeconds != null) {
                 this.maxFileAgeSeconds = maxFileAgeSeconds;
+            }
             return (T) this;
         }
         

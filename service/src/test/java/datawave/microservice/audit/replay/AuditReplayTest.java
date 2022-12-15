@@ -203,8 +203,8 @@ public class AuditReplayTest {
         // Get the status of the audit replay request
         status = toStatus(jwtRestTemplate.exchange(authUser, HttpMethod.GET, statusUri, String.class));
         
-        int numRetries = 20;
-        while ((status.getFiles().size() == 0 || status.getFiles().get(0).getState() != Status.FileState.RUNNING) && numRetries-- > 0) {
+        long stopTime = System.currentTimeMillis() + TEST_TIMEOUT_MILLIS;
+        while ((status.getFiles().size() == 0 || status.getFiles().get(0).getState() != Status.FileState.RUNNING) && (System.currentTimeMillis() < stopTime)) {
             Thread.sleep(250);
             status = toStatus(jwtRestTemplate.exchange(authUser, HttpMethod.GET, statusUri, String.class));
         }
@@ -349,8 +349,9 @@ public class AuditReplayTest {
         
         // Check the status until it is not running
         status = toStatus(jwtRestTemplate.exchange(authUser, HttpMethod.GET, statusUri, String.class));
-        numRetries = 20;
-        while (status.getState() == Status.ReplayState.RUNNING && numRetries-- != 0) {
+        
+        stopTime = System.currentTimeMillis() + TEST_TIMEOUT_MILLIS;
+        while (status.getState() == Status.ReplayState.RUNNING && (System.currentTimeMillis() < stopTime)) {
             Thread.sleep(250);
             status = toStatus(jwtRestTemplate.exchange(authUser, HttpMethod.GET, statusUri, String.class));
         }
@@ -513,8 +514,8 @@ public class AuditReplayTest {
         // Get the status of the audit replay request
         status = toStatus(jwtRestTemplate.exchange(authUser, HttpMethod.GET, statusUri, String.class));
         
-        int numRetries = 20;
-        while ((status.getFiles().size() == 0 || status.getFiles().get(0).getState() != Status.FileState.RUNNING) && numRetries-- > 0) {
+        long stopTime = System.currentTimeMillis() + TEST_TIMEOUT_MILLIS;
+        while ((status.getFiles().size() == 0 || status.getFiles().get(0).getState() != Status.FileState.RUNNING) && (System.currentTimeMillis() < stopTime)) {
             Thread.sleep(250);
             status = toStatus(jwtRestTemplate.exchange(authUser, HttpMethod.GET, statusUri, String.class));
         }
@@ -740,8 +741,9 @@ public class AuditReplayTest {
         
         // Check the status until it is not running
         status = toStatus(jwtRestTemplate.exchange(authUser, HttpMethod.GET, statusUri, String.class));
-        numRetries = 20;
-        while (status.getState() == Status.ReplayState.RUNNING && numRetries-- != 0) {
+        
+        stopTime = System.currentTimeMillis() + TEST_TIMEOUT_MILLIS;
+        while (status.getState() == Status.ReplayState.RUNNING && (System.currentTimeMillis() < stopTime)) {
             Thread.sleep(250);
             status = toStatus(jwtRestTemplate.exchange(authUser, HttpMethod.GET, statusUri, String.class));
         }
@@ -963,8 +965,8 @@ public class AuditReplayTest {
         // Get the status of the audit replay requests
         statuses = toStatuses(jwtRestTemplate.exchange(authUser, HttpMethod.GET, statusAllUri, String.class));
         
-        int numRetries = 20;
-        while (numRetries-- > 0) {
+        long stopTime = System.currentTimeMillis() + TEST_TIMEOUT_MILLIS;
+        while (System.currentTimeMillis() < stopTime) {
             Thread.sleep(250);
             
             boolean shouldBreak = true;
@@ -1037,8 +1039,8 @@ public class AuditReplayTest {
         // Get the status of the audit replay request
         statuses = toStatuses(jwtRestTemplate.exchange(authUser, HttpMethod.GET, statusAllUri, String.class));
         
-        numRetries = 20;
-        while (numRetries-- > 0) {
+        stopTime = System.currentTimeMillis() + TEST_TIMEOUT_MILLIS;
+        while (System.currentTimeMillis() < stopTime) {
             Thread.sleep(250);
             
             boolean shouldBreak = true;
@@ -1176,8 +1178,9 @@ public class AuditReplayTest {
         
         // Check the statuses until they are all finished running
         statuses = toStatuses(jwtRestTemplate.exchange(authUser, HttpMethod.GET, statusAllUri, String.class));
-        numRetries = 20;
-        while (numRetries-- > 0) {
+        
+        stopTime = System.currentTimeMillis() + TEST_TIMEOUT_MILLIS;
+        while (System.currentTimeMillis() < stopTime) {
             Thread.sleep(250);
             
             boolean shouldBreak = true;
@@ -1255,16 +1258,18 @@ public class AuditReplayTest {
         List<Map<String,String>> receivedMessages = new ArrayList<>();
         
         // audit message handling is asynchronous, so we wait for both messages to be added to our list
-        long stopTime = System.currentTimeMillis() + TEST_TIMEOUT_MILLIS;
+        stopTime = System.currentTimeMillis() + TEST_TIMEOUT_MILLIS;
         while (System.currentTimeMillis() < stopTime) {
             if (auditMessages.size() == 2) {
-                receivedMessages.add(auditMessages.get(0).getAuditParameters());
-                receivedMessages.add(auditMessages.get(1).getAuditParameters());
                 break;
             } else {
                 Thread.sleep(500);
             }
         }
+        
+        Assertions.assertEquals(2, auditMessages.size());
+        receivedMessages.add(auditMessages.pop().getAuditParameters());
+        receivedMessages.add(auditMessages.pop().getAuditParameters());
         
         Map<String,String> received = receivedMessages.stream().filter(r -> r.get(AUDIT_ID).equals("readyAuditId1")).findAny().orElse(null);
         Assertions.assertNotNull(received);
@@ -1322,8 +1327,8 @@ public class AuditReplayTest {
                         .path("/audit/v1/replay/" + replayId + "/status").build();
         Status status = toStatus(jwtRestTemplate.exchange(authUser, HttpMethod.GET, statusUri, String.class));
         
-        int numRetries = 20;
-        while ((status.getFiles().size() == 0 || status.getFiles().get(0).getState() != Status.FileState.RUNNING) && numRetries-- > 0) {
+        long stopTime = System.currentTimeMillis() + TEST_TIMEOUT_MILLIS;
+        while ((status.getFiles().size() == 0 || status.getFiles().get(0).getState() != Status.FileState.RUNNING) && (System.currentTimeMillis() < stopTime)) {
             Thread.sleep(125);
             status = toStatus(jwtRestTemplate.exchange(authUser, HttpMethod.GET, statusUri, String.class));
         }
@@ -1366,8 +1371,9 @@ public class AuditReplayTest {
         
         // Check the status until it is stopped
         status = toStatus(jwtRestTemplate.exchange(authUser, HttpMethod.GET, statusUri, String.class));
-        numRetries = 20;
-        while (status.getState() != Status.ReplayState.STOPPED && numRetries-- != 0) {
+        
+        stopTime = System.currentTimeMillis() + TEST_TIMEOUT_MILLIS;
+        while (status.getState() != Status.ReplayState.STOPPED && (System.currentTimeMillis() < stopTime)) {
             Thread.sleep(250);
             status = toStatus(jwtRestTemplate.exchange(authUser, HttpMethod.GET, statusUri, String.class));
         }
@@ -1443,8 +1449,9 @@ public class AuditReplayTest {
         
         // Check the status until it is not running
         status = toStatus(jwtRestTemplate.exchange(authUser, HttpMethod.GET, statusUri, String.class));
-        numRetries = 20;
-        while (status.getState() == Status.ReplayState.RUNNING && numRetries-- != 0) {
+        
+        stopTime = System.currentTimeMillis() + TEST_TIMEOUT_MILLIS;
+        while (status.getState() == Status.ReplayState.RUNNING && (System.currentTimeMillis() < stopTime)) {
             Thread.sleep(250);
             status = toStatus(jwtRestTemplate.exchange(authUser, HttpMethod.GET, statusUri, String.class));
         }
@@ -1563,8 +1570,8 @@ public class AuditReplayTest {
                         .path("/audit/v1/replay/" + replayId + "/status").build();
         Status status = toStatus(jwtRestTemplate.exchange(authUser, HttpMethod.GET, statusUri, String.class));
         
-        int numRetries = 20;
-        while ((status.getFiles().size() == 0 || status.getFiles().get(0).getState() != Status.FileState.RUNNING) && numRetries-- > 0) {
+        long stopTime = System.currentTimeMillis() + TEST_TIMEOUT_MILLIS;
+        while ((status.getFiles().size() == 0 || status.getFiles().get(0).getState() != Status.FileState.RUNNING) && (System.currentTimeMillis() < stopTime)) {
             Thread.sleep(250);
             status = toStatus(jwtRestTemplate.exchange(authUser, HttpMethod.GET, statusUri, String.class));
         }
@@ -1760,8 +1767,8 @@ public class AuditReplayTest {
         // Get the status of the audit replay request
         status = toStatus(jwtRestTemplate.exchange(authUser, HttpMethod.GET, statusUri, String.class));
         
-        int numRetries = 20;
-        while ((status.getFiles().size() == 0 || status.getFiles().get(0).getState() != Status.FileState.RUNNING) && numRetries-- > 0) {
+        long stopTime = System.currentTimeMillis() + TEST_TIMEOUT_MILLIS;
+        while ((status.getFiles().size() == 0 || status.getFiles().get(0).getState() != Status.FileState.RUNNING) && (System.currentTimeMillis() < stopTime)) {
             Thread.sleep(250);
             status = toStatus(jwtRestTemplate.exchange(authUser, HttpMethod.GET, statusUri, String.class));
         }
@@ -1817,8 +1824,9 @@ public class AuditReplayTest {
         
         // Check the status until it is not running
         status = toStatus(jwtRestTemplate.exchange(authUser, HttpMethod.GET, statusUri, String.class));
-        numRetries = 20;
-        while (status.getState() == Status.ReplayState.RUNNING && numRetries-- != 0) {
+        
+        stopTime = System.currentTimeMillis() + TEST_TIMEOUT_MILLIS;
+        while (status.getState() == Status.ReplayState.RUNNING && (System.currentTimeMillis() < stopTime)) {
             Thread.sleep(250);
             status = toStatus(jwtRestTemplate.exchange(authUser, HttpMethod.GET, statusUri, String.class));
         }
@@ -2030,8 +2038,8 @@ public class AuditReplayTest {
                         .path("/audit/v1/replay/" + replayId + "/status").build();
         Status status = toStatus(jwtRestTemplate.exchange(authUser, HttpMethod.GET, statusUri, String.class));
         
-        int numRetries = 20;
-        while (status.getState() == Status.ReplayState.RUNNING && numRetries-- > 0) {
+        long stopTime = System.currentTimeMillis() + TEST_TIMEOUT_MILLIS;
+        while (status.getState() == Status.ReplayState.RUNNING && (System.currentTimeMillis() < stopTime)) {
             Thread.sleep(250);
             status = toStatus(jwtRestTemplate.exchange(authUser, HttpMethod.GET, statusUri, String.class));
         }
@@ -2106,8 +2114,8 @@ public class AuditReplayTest {
                         .path("/audit/v1/replay/" + replayId + "/status").build();
         Status status = toStatus(jwtRestTemplate.exchange(authUser, HttpMethod.GET, statusUri, String.class));
         
-        int numRetries = 20;
-        while (status.getState() == Status.ReplayState.RUNNING && numRetries-- > 0) {
+        long stopTime = System.currentTimeMillis() + TEST_TIMEOUT_MILLIS;
+        while (status.getState() == Status.ReplayState.RUNNING && (System.currentTimeMillis() < stopTime)) {
             Thread.sleep(250);
             status = toStatus(jwtRestTemplate.exchange(authUser, HttpMethod.GET, statusUri, String.class));
         }
@@ -2218,8 +2226,8 @@ public class AuditReplayTest {
         // Get the status of the audit replay request
         status = toStatus(jwtRestTemplate.exchange(authUser, HttpMethod.GET, statusUri, String.class));
         
-        int numRetries = 20;
-        while ((status.getFiles().size() == 0 || status.getFiles().get(0).getState() != Status.FileState.RUNNING) && numRetries-- > 0) {
+        long stopTime = System.currentTimeMillis() + TEST_TIMEOUT_MILLIS;
+        while ((status.getFiles().size() == 0 || status.getFiles().get(0).getState() != Status.FileState.RUNNING) && (System.currentTimeMillis() < stopTime)) {
             Thread.sleep(250);
             status = toStatus(jwtRestTemplate.exchange(authUser, HttpMethod.GET, statusUri, String.class));
         }
@@ -2350,8 +2358,8 @@ public class AuditReplayTest {
         // Get the status of the audit replay requests
         statuses = toStatuses(jwtRestTemplate.exchange(authUser, HttpMethod.GET, statusAllUri, String.class));
         
-        int numRetries = 20;
-        while (numRetries-- > 0) {
+        long stopTime = System.currentTimeMillis() + TEST_TIMEOUT_MILLIS;
+        while (System.currentTimeMillis() < stopTime) {
             Thread.sleep(250);
             
             boolean shouldBreak = true;
@@ -2419,8 +2427,9 @@ public class AuditReplayTest {
         
         // Check the statuses until they are all finished running
         statuses = toStatuses(jwtRestTemplate.exchange(authUser, HttpMethod.GET, statusAllUri, String.class));
-        numRetries = 20;
-        while (numRetries-- > 0) {
+        
+        stopTime = System.currentTimeMillis() + TEST_TIMEOUT_MILLIS;
+        while (System.currentTimeMillis() < stopTime) {
             Thread.sleep(250);
             
             boolean shouldBreak = true;
@@ -2523,8 +2532,8 @@ public class AuditReplayTest {
                         .path("/audit/v1/replay/statusAll").build();
         List<Status> statuses = toStatuses(jwtRestTemplate.exchange(authUser, HttpMethod.GET, statusAllUri, String.class));
         
-        int numRetries = 20;
-        while (numRetries-- > 0) {
+        long stopTime = System.currentTimeMillis() + TEST_TIMEOUT_MILLIS;
+        while (System.currentTimeMillis() < stopTime) {
             Thread.sleep(250);
             
             boolean shouldBreak = true;

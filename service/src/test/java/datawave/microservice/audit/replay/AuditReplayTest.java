@@ -73,6 +73,8 @@ import static datawave.webservice.common.audit.AuditParameters.USER_DN;
 @ActiveProfiles({"AuditReplayTest", "replay-config"})
 public class AuditReplayTest {
     
+    private static final long TEST_TIMEOUT_MILLIS = TimeUnit.SECONDS.toMillis(30);
+    
     @LocalServerPort
     private int webServicePort;
     
@@ -1253,14 +1255,14 @@ public class AuditReplayTest {
         List<Map<String,String>> receivedMessages = new ArrayList<>();
         
         // audit message handling is asynchronous, so we wait for both messages to be added to our list
-        long stopTime = System.currentTimeMillis() + TimeUnit.SECONDS.toMillis(10);
+        long stopTime = System.currentTimeMillis() + TEST_TIMEOUT_MILLIS;
         while (System.currentTimeMillis() < stopTime) {
             if (auditMessages.size() == 2) {
                 receivedMessages.add(auditMessages.get(0).getAuditParameters());
                 receivedMessages.add(auditMessages.get(1).getAuditParameters());
                 break;
             } else {
-                Thread.sleep(100);
+                Thread.sleep(500);
             }
         }
         

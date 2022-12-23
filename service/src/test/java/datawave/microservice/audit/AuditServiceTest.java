@@ -12,7 +12,7 @@ import datawave.microservice.audit.common.AuditMessageSupplier;
 import datawave.microservice.audit.config.AuditProperties;
 import datawave.microservice.audit.health.HealthChecker;
 import datawave.microservice.authorization.jwt.JWTRestTemplate;
-import datawave.microservice.authorization.user.ProxiedUserDetails;
+import datawave.microservice.authorization.user.DatawaveUserDetails;
 import datawave.security.authorization.DatawaveUser;
 import datawave.security.authorization.SubjectIssuerDNPair;
 import datawave.webservice.common.audit.AuditParameters;
@@ -115,7 +115,7 @@ public class AuditServiceTest {
     public void testMissingUserDN() {
         Collection<String> roles = Collections.singleton("AuthorizedUser");
         DatawaveUser uathDWUser = new DatawaveUser(DN, USER, null, roles, null, System.currentTimeMillis());
-        ProxiedUserDetails authUser = new ProxiedUserDetails(Collections.singleton(uathDWUser), uathDWUser.getCreationTime());
+        DatawaveUserDetails authUser = new DatawaveUserDetails(Collections.singleton(uathDWUser), uathDWUser.getCreationTime());
         
         UriComponents uri = UriComponentsBuilder.newInstance().scheme("https").host("localhost").port(webServicePort).path("/audit/v1/audit").build();
         
@@ -138,7 +138,7 @@ public class AuditServiceTest {
     public void testMissingQuery() {
         Collection<String> roles = Collections.singleton("AuthorizedUser");
         DatawaveUser uathDWUser = new DatawaveUser(DN, USER, null, roles, null, System.currentTimeMillis());
-        ProxiedUserDetails authUser = new ProxiedUserDetails(Collections.singleton(uathDWUser), uathDWUser.getCreationTime());
+        DatawaveUserDetails authUser = new DatawaveUserDetails(Collections.singleton(uathDWUser), uathDWUser.getCreationTime());
         
         UriComponents uri = UriComponentsBuilder.newInstance().scheme("https").host("localhost").port(webServicePort).path("/audit/v1/audit").build();
         
@@ -161,7 +161,7 @@ public class AuditServiceTest {
     public void testMissingAuths() {
         Collection<String> roles = Collections.singleton("AuthorizedUser");
         DatawaveUser uathDWUser = new DatawaveUser(DN, USER, null, roles, null, System.currentTimeMillis());
-        ProxiedUserDetails authUser = new ProxiedUserDetails(Collections.singleton(uathDWUser), uathDWUser.getCreationTime());
+        DatawaveUserDetails authUser = new DatawaveUserDetails(Collections.singleton(uathDWUser), uathDWUser.getCreationTime());
         
         UriComponents uri = UriComponentsBuilder.newInstance().scheme("https").host("localhost").port(webServicePort).path("/audit/v1/audit").build();
         
@@ -184,7 +184,7 @@ public class AuditServiceTest {
     public void testUnauthorizedRole() {
         Collection<String> roles = Collections.singleton("UnauthorizedUser");
         DatawaveUser uathDWUser = new DatawaveUser(DN, USER, null, roles, null, System.currentTimeMillis());
-        ProxiedUserDetails authUser = new ProxiedUserDetails(Collections.singleton(uathDWUser), uathDWUser.getCreationTime());
+        DatawaveUserDetails authUser = new DatawaveUserDetails(Collections.singleton(uathDWUser), uathDWUser.getCreationTime());
         
         UriComponents uri = UriComponentsBuilder.newInstance().scheme("https").host("localhost").port(webServicePort).path("/audit/v1/audit").build();
         
@@ -208,7 +208,7 @@ public class AuditServiceTest {
     public void testAuditMessaging() {
         Collection<String> roles = Collections.singleton("AuthorizedUser");
         DatawaveUser uathDWUser = new DatawaveUser(DN, USER, null, roles, null, System.currentTimeMillis());
-        ProxiedUserDetails authUser = new ProxiedUserDetails(Collections.singleton(uathDWUser), uathDWUser.getCreationTime());
+        DatawaveUserDetails authUser = new DatawaveUserDetails(Collections.singleton(uathDWUser), uathDWUser.getCreationTime());
         
         UriComponents uri = UriComponentsBuilder.newInstance().scheme("https").host("localhost").port(webServicePort).path("/audit/v1/audit").build();
         
@@ -250,7 +250,7 @@ public class AuditServiceTest {
         isHealthy = false;
         Collection<String> roles = Collections.singleton("AuthorizedUser");
         DatawaveUser uathDWUser = new DatawaveUser(DN, USER, null, roles, null, System.currentTimeMillis());
-        ProxiedUserDetails authUser = new ProxiedUserDetails(Collections.singleton(uathDWUser), uathDWUser.getCreationTime());
+        DatawaveUserDetails authUser = new DatawaveUserDetails(Collections.singleton(uathDWUser), uathDWUser.getCreationTime());
         
         UriComponents uri = UriComponentsBuilder.newInstance().scheme("https").host("localhost").port(webServicePort).path("/audit/v1/audit").build();
         
@@ -279,7 +279,7 @@ public class AuditServiceTest {
         isHealthy = false;
         Collection<String> roles = Collections.singleton("AuthorizedUser");
         DatawaveUser uathDWUser = new DatawaveUser(DN, USER, null, roles, null, System.currentTimeMillis());
-        ProxiedUserDetails authUser = new ProxiedUserDetails(Collections.singleton(uathDWUser), uathDWUser.getCreationTime());
+        DatawaveUserDetails authUser = new DatawaveUserDetails(Collections.singleton(uathDWUser), uathDWUser.getCreationTime());
         
         UriComponents uri = UriComponentsBuilder.newInstance().scheme("https").host("localhost").port(webServicePort).path("/audit/v1/audit").build();
         
@@ -338,7 +338,7 @@ public class AuditServiceTest {
         isHealthy = false;
         Collection<String> roles = Collections.singleton("AuthorizedUser");
         DatawaveUser uathDWUser = new DatawaveUser(DN, USER, null, roles, null, System.currentTimeMillis());
-        ProxiedUserDetails authUser = new ProxiedUserDetails(Collections.singleton(uathDWUser), uathDWUser.getCreationTime());
+        DatawaveUserDetails authUser = new DatawaveUserDetails(Collections.singleton(uathDWUser), uathDWUser.getCreationTime());
         
         UriComponents uri = UriComponentsBuilder.newInstance().scheme("https").host("localhost").port(webServicePort).path("/audit/v1/audit").build();
         
@@ -373,7 +373,7 @@ public class AuditServiceTest {
         isHealthy = false;
         Collection<String> roles = Collections.singleton("AuthorizedUser");
         DatawaveUser uathDWUser = new DatawaveUser(DN, USER, null, roles, null, System.currentTimeMillis());
-        ProxiedUserDetails authUser = new ProxiedUserDetails(Collections.singleton(uathDWUser), uathDWUser.getCreationTime());
+        DatawaveUserDetails authUser = new DatawaveUserDetails(Collections.singleton(uathDWUser), uathDWUser.getCreationTime());
         
         UriComponents uri = UriComponentsBuilder.newInstance().scheme("https").host("localhost").port(webServicePort).path("/audit/v1/audit").build();
         
@@ -435,7 +435,7 @@ public class AuditServiceTest {
         isHealthy = false;
         Collection<String> roles = Collections.singleton("AuthorizedUser");
         DatawaveUser uathDWUser = new DatawaveUser(DN, USER, null, roles, null, System.currentTimeMillis());
-        ProxiedUserDetails authUser = new ProxiedUserDetails(Collections.singleton(uathDWUser), uathDWUser.getCreationTime());
+        DatawaveUserDetails authUser = new DatawaveUserDetails(Collections.singleton(uathDWUser), uathDWUser.getCreationTime());
         
         UriComponents uri = UriComponentsBuilder.newInstance().scheme("https").host("localhost").port(webServicePort).path("/audit/v1/audit").build();
         
@@ -469,7 +469,7 @@ public class AuditServiceTest {
         isHealthy = false;
         Collection<String> roles = Collections.singleton("AuthorizedUser");
         DatawaveUser uathDWUser = new DatawaveUser(DN, USER, null, roles, null, System.currentTimeMillis());
-        ProxiedUserDetails authUser = new ProxiedUserDetails(Collections.singleton(uathDWUser), uathDWUser.getCreationTime());
+        DatawaveUserDetails authUser = new DatawaveUserDetails(Collections.singleton(uathDWUser), uathDWUser.getCreationTime());
         
         UriComponents uri = UriComponentsBuilder.newInstance().scheme("https").host("localhost").port(webServicePort).path("/audit/v1/audit").build();
         
@@ -519,7 +519,7 @@ public class AuditServiceTest {
     public void testAuditMessagingWithAuditId() {
         Collection<String> roles = Collections.singleton("AuthorizedUser");
         DatawaveUser uathDWUser = new DatawaveUser(DN, USER, null, roles, null, System.currentTimeMillis());
-        ProxiedUserDetails authUser = new ProxiedUserDetails(Collections.singleton(uathDWUser), uathDWUser.getCreationTime());
+        DatawaveUserDetails authUser = new DatawaveUserDetails(Collections.singleton(uathDWUser), uathDWUser.getCreationTime());
         String auditId = UUID.randomUUID().toString();
         
         UriComponents uri = UriComponentsBuilder.newInstance().scheme("https").host("localhost").port(webServicePort).path("/audit/v1/audit").build();
@@ -562,7 +562,7 @@ public class AuditServiceTest {
         
         Collection<String> roles = Collections.singleton("AuthorizedUser");
         DatawaveUser uathDWUser = new DatawaveUser(DN, USER, null, roles, null, System.currentTimeMillis());
-        ProxiedUserDetails authUser = new ProxiedUserDetails(Collections.singleton(uathDWUser), uathDWUser.getCreationTime());
+        DatawaveUserDetails authUser = new DatawaveUserDetails(Collections.singleton(uathDWUser), uathDWUser.getCreationTime());
         
         UriComponents uri = UriComponentsBuilder.newInstance().scheme("https").host("localhost").port(webServicePort).path("/audit/v1/audit").build();
         

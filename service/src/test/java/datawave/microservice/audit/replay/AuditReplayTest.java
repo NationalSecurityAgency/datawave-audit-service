@@ -12,7 +12,7 @@ import datawave.microservice.audit.replay.config.ReplayProperties;
 import datawave.microservice.audit.replay.remote.Request;
 import datawave.microservice.audit.replay.status.Status;
 import datawave.microservice.authorization.jwt.JWTRestTemplate;
-import datawave.microservice.authorization.user.ProxiedUserDetails;
+import datawave.microservice.authorization.user.DatawaveUserDetails;
 import datawave.security.authorization.DatawaveUser;
 import datawave.security.authorization.SubjectIssuerDNPair;
 import org.apache.commons.io.FileUtils;
@@ -130,7 +130,7 @@ public class AuditReplayTest {
     public void unauthorizedUserTest() {
         Collection<String> roles = Collections.singleton("AuthorizedUser");
         DatawaveUser uathDWUser = new DatawaveUser(DN, USER, null, roles, null, System.currentTimeMillis());
-        ProxiedUserDetails authUser = new ProxiedUserDetails(Collections.singleton(uathDWUser), uathDWUser.getCreationTime());
+        DatawaveUserDetails authUser = new DatawaveUserDetails(Collections.singleton(uathDWUser), uathDWUser.getCreationTime());
         
         UriComponents uri = UriComponentsBuilder.newInstance().scheme("https").host("localhost").port(webServicePort).path("/audit/v1/replay/createAndStart")
                         .build();
@@ -150,7 +150,7 @@ public class AuditReplayTest {
         
         Collection<String> roles = Collections.singleton("Administrator");
         DatawaveUser uathDWUser = new DatawaveUser(DN, USER, null, roles, null, System.currentTimeMillis());
-        ProxiedUserDetails authUser = new ProxiedUserDetails(Collections.singleton(uathDWUser), uathDWUser.getCreationTime());
+        DatawaveUserDetails authUser = new DatawaveUserDetails(Collections.singleton(uathDWUser), uathDWUser.getCreationTime());
         
         UriComponents createUri = UriComponentsBuilder.newInstance().scheme("https").host("localhost").port(webServicePort).path("/audit/v1/replay/create")
                         .build();
@@ -474,7 +474,7 @@ public class AuditReplayTest {
         
         Collection<String> roles = Collections.singleton("Administrator");
         DatawaveUser uathDWUser = new DatawaveUser(DN, USER, null, roles, null, System.currentTimeMillis());
-        ProxiedUserDetails authUser = new ProxiedUserDetails(Collections.singleton(uathDWUser), uathDWUser.getCreationTime());
+        DatawaveUserDetails authUser = new DatawaveUserDetails(Collections.singleton(uathDWUser), uathDWUser.getCreationTime());
         
         UriComponents createUri = UriComponentsBuilder.newInstance().scheme("https").host("localhost").port(webServicePort).path("/audit/v1/replay/create")
                         .build();
@@ -899,7 +899,7 @@ public class AuditReplayTest {
         
         Collection<String> roles = Collections.singleton("Administrator");
         DatawaveUser uathDWUser = new DatawaveUser(DN, USER, null, roles, null, System.currentTimeMillis());
-        ProxiedUserDetails authUser = new ProxiedUserDetails(Collections.singleton(uathDWUser), uathDWUser.getCreationTime());
+        DatawaveUserDetails authUser = new DatawaveUserDetails(Collections.singleton(uathDWUser), uathDWUser.getCreationTime());
         
         // Create the audit replay requests
         UriComponents createUri1 = UriComponentsBuilder.newInstance().scheme("https").host("localhost").port(webServicePort).path("/audit/v1/replay/create")
@@ -1307,7 +1307,7 @@ public class AuditReplayTest {
     public void createAndStartIdleCheckTest() throws Exception {
         Collection<String> roles = Collections.singleton("Administrator");
         DatawaveUser uathDWUser = new DatawaveUser(DN, USER, null, roles, null, System.currentTimeMillis());
-        ProxiedUserDetails authUser = new ProxiedUserDetails(Collections.singleton(uathDWUser), uathDWUser.getCreationTime());
+        DatawaveUserDetails authUser = new DatawaveUserDetails(Collections.singleton(uathDWUser), uathDWUser.getCreationTime());
         
         UriComponents createAndStartUri = UriComponentsBuilder.newInstance().scheme("https").host("localhost").port(webServicePort)
                         .path("/audit/v1/replay/createAndStart").build();
@@ -1551,7 +1551,7 @@ public class AuditReplayTest {
         
         Collection<String> roles = Collections.singleton("Administrator");
         DatawaveUser uathDWUser = new DatawaveUser(DN, USER, null, roles, null, System.currentTimeMillis());
-        ProxiedUserDetails authUser = new ProxiedUserDetails(Collections.singleton(uathDWUser), uathDWUser.getCreationTime());
+        DatawaveUserDetails authUser = new DatawaveUserDetails(Collections.singleton(uathDWUser), uathDWUser.getCreationTime());
         
         UriComponents createAndStartUri = UriComponentsBuilder.newInstance().scheme("https").host("localhost").port(webServicePort)
                         .path("/audit/v1/replay/createAndStart").build();
@@ -1631,7 +1631,7 @@ public class AuditReplayTest {
     public void actionsOnBogusReplayIdTest() {
         Collection<String> roles = Collections.singleton("Administrator");
         DatawaveUser uathDWUser = new DatawaveUser(DN, USER, null, roles, null, System.currentTimeMillis());
-        ProxiedUserDetails authUser = new ProxiedUserDetails(Collections.singleton(uathDWUser), uathDWUser.getCreationTime());
+        DatawaveUserDetails authUser = new DatawaveUserDetails(Collections.singleton(uathDWUser), uathDWUser.getCreationTime());
         
         // status
         UriComponents statusUri = UriComponentsBuilder.newInstance().scheme("https").host("localhost").port(webServicePort)
@@ -1728,7 +1728,7 @@ public class AuditReplayTest {
         
         Collection<String> roles = Collections.singleton("Administrator");
         DatawaveUser uathDWUser = new DatawaveUser(DN, USER, null, roles, null, System.currentTimeMillis());
-        ProxiedUserDetails authUser = new ProxiedUserDetails(Collections.singleton(uathDWUser), uathDWUser.getCreationTime());
+        DatawaveUserDetails authUser = new DatawaveUserDetails(Collections.singleton(uathDWUser), uathDWUser.getCreationTime());
         
         UriComponents createUri = UriComponentsBuilder.newInstance().scheme("https").host("localhost").port(webServicePort).path("/audit/v1/replay/create")
                         .build();
@@ -1921,7 +1921,7 @@ public class AuditReplayTest {
     public void bogusSendRateTest() {
         Collection<String> roles = Collections.singleton("Administrator");
         DatawaveUser uathDWUser = new DatawaveUser(DN, USER, null, roles, null, System.currentTimeMillis());
-        ProxiedUserDetails authUser = new ProxiedUserDetails(Collections.singleton(uathDWUser), uathDWUser.getCreationTime());
+        DatawaveUserDetails authUser = new DatawaveUserDetails(Collections.singleton(uathDWUser), uathDWUser.getCreationTime());
         
         // create
         UriComponents createUri = UriComponentsBuilder.newInstance().scheme("https").host("localhost").port(webServicePort).path("/audit/v1/replay/create")
@@ -2019,7 +2019,7 @@ public class AuditReplayTest {
         
         Collection<String> roles = Collections.singleton("Administrator");
         DatawaveUser uathDWUser = new DatawaveUser(DN, USER, null, roles, null, System.currentTimeMillis());
-        ProxiedUserDetails authUser = new ProxiedUserDetails(Collections.singleton(uathDWUser), uathDWUser.getCreationTime());
+        DatawaveUserDetails authUser = new DatawaveUserDetails(Collections.singleton(uathDWUser), uathDWUser.getCreationTime());
         
         UriComponents createAndStartUri = UriComponentsBuilder.newInstance().scheme("https").host("localhost").port(webServicePort)
                         .path("/audit/v1/replay/createAndStart").build();
@@ -2095,7 +2095,7 @@ public class AuditReplayTest {
         
         Collection<String> roles = Collections.singleton("Administrator");
         DatawaveUser uathDWUser = new DatawaveUser(DN, USER, null, roles, null, System.currentTimeMillis());
-        ProxiedUserDetails authUser = new ProxiedUserDetails(Collections.singleton(uathDWUser), uathDWUser.getCreationTime());
+        DatawaveUserDetails authUser = new DatawaveUserDetails(Collections.singleton(uathDWUser), uathDWUser.getCreationTime());
         
         UriComponents createAndStartUri = UriComponentsBuilder.newInstance().scheme("https").host("localhost").port(webServicePort)
                         .path("/audit/v1/replay/createAndStart").build();
@@ -2169,7 +2169,7 @@ public class AuditReplayTest {
     public void remoteUpdateStopTest() throws Exception {
         Collection<String> roles = Collections.singleton("Administrator");
         DatawaveUser uathDWUser = new DatawaveUser(DN, USER, null, roles, null, System.currentTimeMillis());
-        ProxiedUserDetails authUser = new ProxiedUserDetails(Collections.singleton(uathDWUser), uathDWUser.getCreationTime());
+        DatawaveUserDetails authUser = new DatawaveUserDetails(Collections.singleton(uathDWUser), uathDWUser.getCreationTime());
         
         UriComponents createUri = UriComponentsBuilder.newInstance().scheme("https").host("localhost").port(webServicePort).path("/audit/v1/replay/create")
                         .build();
@@ -2292,7 +2292,7 @@ public class AuditReplayTest {
         
         Collection<String> roles = Collections.singleton("Administrator");
         DatawaveUser uathDWUser = new DatawaveUser(DN, USER, null, roles, null, System.currentTimeMillis());
-        ProxiedUserDetails authUser = new ProxiedUserDetails(Collections.singleton(uathDWUser), uathDWUser.getCreationTime());
+        DatawaveUserDetails authUser = new DatawaveUserDetails(Collections.singleton(uathDWUser), uathDWUser.getCreationTime());
         
         // Create the audit replay requests
         UriComponents createUri1 = UriComponentsBuilder.newInstance().scheme("https").host("localhost").port(webServicePort).path("/audit/v1/replay/create")
@@ -2500,7 +2500,7 @@ public class AuditReplayTest {
         
         Collection<String> roles = Collections.singleton("Administrator");
         DatawaveUser uathDWUser = new DatawaveUser(DN, USER, null, roles, null, System.currentTimeMillis());
-        ProxiedUserDetails authUser = new ProxiedUserDetails(Collections.singleton(uathDWUser), uathDWUser.getCreationTime());
+        DatawaveUserDetails authUser = new DatawaveUserDetails(Collections.singleton(uathDWUser), uathDWUser.getCreationTime());
         
         // Create the audit replay requests
         UriComponents createAndStartUri1 = UriComponentsBuilder.newInstance().scheme("https").host("localhost").port(webServicePort)

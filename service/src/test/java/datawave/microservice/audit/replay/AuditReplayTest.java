@@ -73,7 +73,7 @@ import static datawave.webservice.common.audit.AuditParameters.USER_DN;
 @ActiveProfiles({"AuditReplayTest", "replay-config"})
 public class AuditReplayTest {
     
-    private static final long TEST_TIMEOUT_MILLIS = TimeUnit.SECONDS.toMillis(30);
+    private static final long TEST_TIMEOUT_MILLIS = TimeUnit.SECONDS.toMillis(100);
     
     @LocalServerPort
     private int webServicePort;

@@ -8,7 +8,7 @@
         <relativePath />
     </parent>
     <artifactId>audit-service</artifactId>
-    <version>1.11-SNAPSHOT</version>
+    <version>1.11</version>
     <description>DATAWAVE Auditing Microservice</description>
     <url>https://code.nsa.gov/datawave-audit-service</url>
     <scm>
@@ -19,7 +19,7 @@
     </scm>
     <properties>
         <version.hadoop>2.6.0</version.hadoop>
-        <version.microservice.audit-api>1.10</version.microservice.audit-api>
+        <version.microservice.audit-api>1.11</version.microservice.audit-api>
         <version.microservice.hazelcast-client>1.9</version.microservice.hazelcast-client>
         <version.microservice.starter>1.6.8</version.microservice.starter>
         <version.zookeeper>3.4.14</version.zookeeper>

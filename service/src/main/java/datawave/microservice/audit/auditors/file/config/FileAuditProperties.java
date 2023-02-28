@@ -9,6 +9,7 @@ import java.util.List;
 @Validated
 public class FileAuditProperties {
     
+    private String user;
     @NotEmpty
     private String pathUri;
     private String subPath;
@@ -21,6 +22,14 @@ public class FileAuditProperties {
     
     @DecimalMin("60")
     private Long maxFileAgeSeconds;
+    
+    public String getUser() {
+        return user;
+    }
+    
+    public void setUser(String user) {
+        this.user = user;
+    }
     
     public String getPathUri() {
         return pathUri;

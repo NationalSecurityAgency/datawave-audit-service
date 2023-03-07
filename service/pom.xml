@@ -19,7 +19,7 @@
     </scm>
     <properties>
         <version.hadoop>2.6.0</version.hadoop>
-        <version.microservice.audit-api>1.11</version.microservice.audit-api>
+        <version.microservice.audit-api>1.12</version.microservice.audit-api>
         <version.microservice.hazelcast-client>1.9</version.microservice.hazelcast-client>
         <version.microservice.starter>1.6.8</version.microservice.starter>
         <version.zookeeper>3.4.14</version.zookeeper>

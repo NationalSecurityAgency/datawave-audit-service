@@ -8,6 +8,7 @@ import org.apache.hadoop.fs.FSDataOutputStream;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.LocalFileSystem;
 import org.apache.hadoop.fs.Path;
+import org.apache.hadoop.security.UserGroupInformation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -61,6 +62,9 @@ public class FileAuditor implements Auditor {
         if (builder.subPath != null) {
             path = new Path(path, builder.subPath);
         }
+        
+        UserGroupInformation ugi = UserGroupInformation.createRemoteUser(builder.user);
+        UserGroupInformation.setLoginUser(ugi);
         
         fileSystem = FileSystem.get(path.toUri(), config);
         
@@ -121,6 +125,7 @@ public class FileAuditor implements Auditor {
     }
     
     public static class Builder<T extends Builder<T>> {
+        protected String user;
         protected String path;
         protected String subPath;
         protected List<String> fsConfigResources;
@@ -129,9 +134,21 @@ public class FileAuditor implements Auditor {
         protected Long maxFileAgeSeconds;
         
         public Builder() {
+            user = "datawave";
             prefix = "audit";
             maxFileLengthMB = 8192L;
             maxFileAgeSeconds = TimeUnit.HOURS.toSeconds(6);
+        }
+        
+        public String getUser() {
+            return user;
+        }
+        
+        public T setUser(String user) {
+            if (user != null) {
+                this.user = user;
+            }
+            return (T) this;
         }
         
         public String getPath() {

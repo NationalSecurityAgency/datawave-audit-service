@@ -39,6 +39,7 @@ public class FileAuditConfig {
         
         // @formatter:off
         return new FileAuditor.Builder()
+                .setUser(fileAuditProperties.getUser())
                 .setPath(fileAuditProperties.getPathUri())
                 .setSubPath(subPath)
                 .setFsConfigResources(fsConfigResources)

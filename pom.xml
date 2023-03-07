@@ -8,7 +8,7 @@
         <relativePath />
     </parent>
     <artifactId>audit-service-parent</artifactId>
-    <version>1.12</version>
+    <version>1.13-SNAPSHOT</version>
     <packaging>pom</packaging>
     <url>https://code.nsa.gov/datawave-audit-service</url>
     <modules>

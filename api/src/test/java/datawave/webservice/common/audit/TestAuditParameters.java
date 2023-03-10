@@ -1,13 +1,15 @@
 package datawave.webservice.common.audit;
 
 import com.google.common.collect.Lists;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class TestAuditParameters {
     
@@ -43,8 +45,8 @@ public class TestAuditParameters {
             try {
                 this.auditParameters.validate(this.paramsMap);
             } catch (Exception e) {
-                Assertions.assertEquals(IllegalArgumentException.class.getName(), e.getClass().getName());
-                Assertions.assertEquals("Required parameter " + p + " not found", e.getMessage());
+                assertEquals(IllegalArgumentException.class.getName(), e.getClass().getName());
+                assertEquals("Required parameter " + p + " not found", e.getMessage());
             }
         }
     }
@@ -57,8 +59,8 @@ public class TestAuditParameters {
             try {
                 this.auditParameters.validate(this.paramsMap);
             } catch (Exception e) {
-                Assertions.assertEquals(IllegalArgumentException.class.getName(), e.getClass().getName());
-                Assertions.assertEquals("Required parameter " + p + " only accepts one value", e.getMessage());
+                assertEquals(IllegalArgumentException.class.getName(), e.getClass().getName());
+                assertEquals("Required parameter " + p + " only accepts one value", e.getMessage());
             }
         }
     }
@@ -67,7 +69,7 @@ public class TestAuditParameters {
     public void validateEmptyAuths() {
         this.paramsMap.remove(AuditParameters.QUERY_AUTHORIZATIONS);
         this.paramsMap.put(AuditParameters.QUERY_AUTHORIZATIONS, Lists.newArrayList(""));
-        Assertions.assertThrows(NullPointerException.class, () -> this.auditParameters.validate(this.paramsMap));
+        assertThrows(NullPointerException.class, () -> this.auditParameters.validate(this.paramsMap));
     }
     
     @Test
@@ -75,7 +77,7 @@ public class TestAuditParameters {
         this.paramsMap.remove(AuditParameters.QUERY_AUTHORIZATIONS);
         this.paramsMap.put(AuditParameters.QUERY_AUTHORIZATIONS, Lists.newArrayList("AUTH1, AUTH2, AUTH3"));
         this.auditParameters.validate(this.paramsMap);
-        Assertions.assertEquals("AUTH1,AUTH2,AUTH3", this.auditParameters.getAuths());
+        assertEquals("AUTH1,AUTH2,AUTH3", this.auditParameters.getAuths());
     }
     
     @Test
@@ -83,6 +85,6 @@ public class TestAuditParameters {
         this.paramsMap.remove(AuditParameters.QUERY_AUTHORIZATIONS);
         this.paramsMap.put(AuditParameters.QUERY_AUTHORIZATIONS, Lists.newArrayList("AUTH1,,AUTH2,,AUTH3"));
         this.auditParameters.validate(this.paramsMap);
-        Assertions.assertEquals("AUTH1,AUTH2,AUTH3", this.auditParameters.getAuths());
+        assertEquals("AUTH1,AUTH2,AUTH3", this.auditParameters.getAuths());
     }
 }

@@ -2,11 +2,11 @@ package datawave.microservice.audit.auditors.accumulo;
 
 import datawave.webservice.common.audit.AuditParameters;
 import datawave.webservice.common.audit.Auditor;
+import org.apache.accumulo.core.client.AccumuloClient;
 import org.apache.accumulo.core.client.AccumuloException;
 import org.apache.accumulo.core.client.AccumuloSecurityException;
 import org.apache.accumulo.core.client.BatchWriter;
 import org.apache.accumulo.core.client.BatchWriterConfig;
-import org.apache.accumulo.core.client.Connector;
 import org.apache.accumulo.core.client.TableExistsException;
 import org.apache.accumulo.core.data.Mutation;
 import org.apache.accumulo.core.data.Value;
@@ -30,18 +30,18 @@ public class AccumuloAuditor implements Auditor {
     
     private String tableName;
     
-    private Connector connector;
+    private AccumuloClient accumuloClient;
     
-    public AccumuloAuditor(String tableName, Connector connector) {
+    public AccumuloAuditor(String tableName, AccumuloClient client) {
         this.tableName = tableName;
-        this.connector = connector;
+        this.accumuloClient = client;
         init();
     }
     
     private void init() {
         try {
-            if (!connector.tableOperations().exists(tableName))
-                connector.tableOperations().create(tableName);
+            if (!accumuloClient.tableOperations().exists(tableName))
+                accumuloClient.tableOperations().create(tableName);
         } catch (AccumuloException | AccumuloSecurityException e) {
             log.error("Unable to create audit table.", e);
         } catch (TableExistsException e) {
@@ -52,7 +52,7 @@ public class AccumuloAuditor implements Auditor {
     @Override
     public void audit(AuditParameters msg) throws Exception {
         if (!msg.getAuditType().equals(AuditType.NONE)) {
-            try (BatchWriter writer = connector.createBatchWriter(tableName,
+            try (BatchWriter writer = accumuloClient.createBatchWriter(tableName,
                             new BatchWriterConfig().setMaxLatency(10, TimeUnit.SECONDS).setMaxMemory(10240L).setMaxWriteThreads(1))) {
                 Mutation m = new Mutation(formatter.format(msg.getQueryDate()));
                 m.put(new Text(msg.getUserDn()), new Text(""), msg.getColviz(), new Value(msg.toString().getBytes(UTF_8)));

@@ -1,7 +1,6 @@
 package datawave.webservice.common.audit;
 
 import org.apache.accumulo.core.security.ColumnVisibility;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -15,6 +14,7 @@ import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class AuditParametersTest {
     
@@ -49,7 +49,7 @@ public class AuditParametersTest {
         Map<String,List<String>> params = new HashMap<>(this.params);
         params.remove(AuditParameters.USER_DN);
         
-        Assertions.assertThrows(IllegalArgumentException.class, () -> new AuditParameters().validate(params));
+        assertThrows(IllegalArgumentException.class, () -> new AuditParameters().validate(params));
     }
     
     @Test
@@ -57,7 +57,7 @@ public class AuditParametersTest {
         Map<String,List<String>> params = new HashMap<>(this.params);
         params.remove(AuditParameters.QUERY_STRING);
         
-        Assertions.assertThrows(IllegalArgumentException.class, () -> new AuditParameters().validate(params));
+        assertThrows(IllegalArgumentException.class, () -> new AuditParameters().validate(params));
     }
     
     @Test
@@ -65,7 +65,7 @@ public class AuditParametersTest {
         Map<String,List<String>> params = new HashMap<>(this.params);
         params.remove(AuditParameters.QUERY_AUTHORIZATIONS);
         
-        Assertions.assertThrows(IllegalArgumentException.class, () -> new AuditParameters().validate(params));
+        assertThrows(IllegalArgumentException.class, () -> new AuditParameters().validate(params));
     }
     
     @Test
@@ -73,7 +73,7 @@ public class AuditParametersTest {
         Map<String,List<String>> params = new HashMap<>(this.params);
         params.remove(AuditParameters.QUERY_AUDIT_TYPE);
         
-        Assertions.assertThrows(IllegalArgumentException.class, () -> new AuditParameters().validate(params));
+        assertThrows(IllegalArgumentException.class, () -> new AuditParameters().validate(params));
     }
     
     @Test
@@ -81,7 +81,7 @@ public class AuditParametersTest {
         Map<String,List<String>> params = new HashMap<>(this.params);
         params.remove(AuditParameters.QUERY_SECURITY_MARKING_COLVIZ);
         
-        Assertions.assertThrows(IllegalArgumentException.class, () -> new AuditParameters().validate(params));
+        assertThrows(IllegalArgumentException.class, () -> new AuditParameters().validate(params));
     }
     
     @Test
@@ -89,7 +89,7 @@ public class AuditParametersTest {
         Map<String,List<String>> params = new HashMap<>(this.params);
         params.put(AuditParameters.USER_DN, null);
         
-        Assertions.assertThrows(IllegalArgumentException.class, () -> new AuditParameters().validate(params));
+        assertThrows(IllegalArgumentException.class, () -> new AuditParameters().validate(params));
     }
     
     @Test
@@ -97,7 +97,7 @@ public class AuditParametersTest {
         Map<String,List<String>> params = new HashMap<>(this.params);
         params.put(AuditParameters.QUERY_STRING, null);
         
-        Assertions.assertThrows(IllegalArgumentException.class, () -> new AuditParameters().validate(params));
+        assertThrows(IllegalArgumentException.class, () -> new AuditParameters().validate(params));
     }
     
     @Test
@@ -105,7 +105,7 @@ public class AuditParametersTest {
         Map<String,List<String>> params = new HashMap<>(this.params);
         params.put(AuditParameters.QUERY_AUTHORIZATIONS, null);
         
-        Assertions.assertThrows(IllegalArgumentException.class, () -> new AuditParameters().validate(params));
+        assertThrows(IllegalArgumentException.class, () -> new AuditParameters().validate(params));
     }
     
     @Test
@@ -113,7 +113,7 @@ public class AuditParametersTest {
         Map<String,List<String>> params = new HashMap<>(this.params);
         params.put(AuditParameters.QUERY_AUDIT_TYPE, null);
         
-        Assertions.assertThrows(IllegalArgumentException.class, () -> new AuditParameters().validate(params));
+        assertThrows(IllegalArgumentException.class, () -> new AuditParameters().validate(params));
     }
     
     @Test
@@ -121,7 +121,7 @@ public class AuditParametersTest {
         Map<String,List<String>> params = new HashMap<>(this.params);
         params.put(AuditParameters.QUERY_SECURITY_MARKING_COLVIZ, null);
         
-        Assertions.assertThrows(IllegalArgumentException.class, () -> new AuditParameters().validate(params));
+        assertThrows(IllegalArgumentException.class, () -> new AuditParameters().validate(params));
     }
     
     @Test
@@ -129,7 +129,7 @@ public class AuditParametersTest {
         Map<String,List<String>> params = new HashMap<>(this.params);
         params.put(AuditParameters.USER_DN, Collections.singletonList(null));
         
-        Assertions.assertThrows(NullPointerException.class, () -> new AuditParameters().validate(params));
+        assertThrows(NullPointerException.class, () -> new AuditParameters().validate(params));
     }
     
     @Test
@@ -137,7 +137,7 @@ public class AuditParametersTest {
         Map<String,List<String>> params = new HashMap<>(this.params);
         params.put(AuditParameters.QUERY_STRING, Collections.singletonList(null));
         
-        Assertions.assertThrows(NullPointerException.class, () -> new AuditParameters().validate(params));
+        assertThrows(NullPointerException.class, () -> new AuditParameters().validate(params));
     }
     
     @Test
@@ -145,7 +145,7 @@ public class AuditParametersTest {
         Map<String,List<String>> params = new HashMap<>(this.params);
         params.put(AuditParameters.QUERY_AUTHORIZATIONS, Collections.singletonList(null));
         
-        Assertions.assertThrows(NullPointerException.class, () -> new AuditParameters().validate(params));
+        assertThrows(NullPointerException.class, () -> new AuditParameters().validate(params));
     }
     
     @Test
@@ -153,7 +153,7 @@ public class AuditParametersTest {
         Map<String,List<String>> params = new HashMap<>(this.params);
         params.put(AuditParameters.QUERY_AUDIT_TYPE, Collections.singletonList(null));
         
-        Assertions.assertThrows(NullPointerException.class, () -> new AuditParameters().validate(params));
+        assertThrows(NullPointerException.class, () -> new AuditParameters().validate(params));
     }
     
     @Test
@@ -161,7 +161,7 @@ public class AuditParametersTest {
         Map<String,List<String>> params = new HashMap<>(this.params);
         params.put(AuditParameters.QUERY_SECURITY_MARKING_COLVIZ, Collections.singletonList(null));
         
-        Assertions.assertThrows(NullPointerException.class, () -> new AuditParameters().validate(params));
+        assertThrows(NullPointerException.class, () -> new AuditParameters().validate(params));
     }
     
     @Test
@@ -169,7 +169,7 @@ public class AuditParametersTest {
         Map<String,List<String>> params = new HashMap<>(this.params);
         params.put(AuditParameters.USER_DN, new ArrayList<>());
         
-        Assertions.assertThrows(IllegalArgumentException.class, () -> new AuditParameters().validate(params));
+        assertThrows(IllegalArgumentException.class, () -> new AuditParameters().validate(params));
     }
     
     @Test
@@ -177,7 +177,7 @@ public class AuditParametersTest {
         Map<String,List<String>> params = new HashMap<>(this.params);
         params.put(AuditParameters.QUERY_STRING, new ArrayList<>());
         
-        Assertions.assertThrows(IllegalArgumentException.class, () -> new AuditParameters().validate(params));
+        assertThrows(IllegalArgumentException.class, () -> new AuditParameters().validate(params));
     }
     
     @Test
@@ -185,7 +185,7 @@ public class AuditParametersTest {
         Map<String,List<String>> params = new HashMap<>(this.params);
         params.put(AuditParameters.QUERY_AUTHORIZATIONS, new ArrayList<>());
         
-        Assertions.assertThrows(IllegalArgumentException.class, () -> new AuditParameters().validate(params));
+        assertThrows(IllegalArgumentException.class, () -> new AuditParameters().validate(params));
     }
     
     @Test
@@ -193,7 +193,7 @@ public class AuditParametersTest {
         Map<String,List<String>> params = new HashMap<>(this.params);
         params.put(AuditParameters.QUERY_AUDIT_TYPE, new ArrayList<>());
         
-        Assertions.assertThrows(IllegalArgumentException.class, () -> new AuditParameters().validate(params));
+        assertThrows(IllegalArgumentException.class, () -> new AuditParameters().validate(params));
     }
     
     @Test
@@ -201,7 +201,7 @@ public class AuditParametersTest {
         Map<String,List<String>> params = new HashMap<>(this.params);
         params.put(AuditParameters.QUERY_SECURITY_MARKING_COLVIZ, new ArrayList<>());
         
-        Assertions.assertThrows(IllegalArgumentException.class, () -> new AuditParameters().validate(params));
+        assertThrows(IllegalArgumentException.class, () -> new AuditParameters().validate(params));
     }
     
     @Test
@@ -209,7 +209,7 @@ public class AuditParametersTest {
         Map<String,List<String>> params = new HashMap<>(this.params);
         params.put(AuditParameters.USER_DN, Arrays.asList("userDN1", "userDN2"));
         
-        Assertions.assertThrows(IllegalArgumentException.class, () -> new AuditParameters().validate(params));
+        assertThrows(IllegalArgumentException.class, () -> new AuditParameters().validate(params));
     }
     
     @Test
@@ -217,7 +217,7 @@ public class AuditParametersTest {
         Map<String,List<String>> params = new HashMap<>(this.params);
         params.put(AuditParameters.QUERY_STRING, Arrays.asList("query1", "query2"));
         
-        Assertions.assertThrows(IllegalArgumentException.class, () -> new AuditParameters().validate(params));
+        assertThrows(IllegalArgumentException.class, () -> new AuditParameters().validate(params));
     }
     
     @Test
@@ -225,7 +225,7 @@ public class AuditParametersTest {
         Map<String,List<String>> params = new HashMap<>(this.params);
         params.put(AuditParameters.QUERY_AUTHORIZATIONS, Arrays.asList("AUTH1", "AUTH2"));
         
-        Assertions.assertThrows(IllegalArgumentException.class, () -> new AuditParameters().validate(params));
+        assertThrows(IllegalArgumentException.class, () -> new AuditParameters().validate(params));
     }
     
     @Test
@@ -233,7 +233,7 @@ public class AuditParametersTest {
         Map<String,List<String>> params = new HashMap<>(this.params);
         params.put(AuditParameters.QUERY_AUDIT_TYPE, Arrays.asList(Auditor.AuditType.ACTIVE.name(), Auditor.AuditType.PASSIVE.name()));
         
-        Assertions.assertThrows(IllegalArgumentException.class, () -> new AuditParameters().validate(params));
+        assertThrows(IllegalArgumentException.class, () -> new AuditParameters().validate(params));
     }
     
     @Test
@@ -241,7 +241,7 @@ public class AuditParametersTest {
         Map<String,List<String>> params = new HashMap<>(this.params);
         params.put(AuditParameters.QUERY_SECURITY_MARKING_COLVIZ, Arrays.asList("ALL", "NONE"));
         
-        Assertions.assertThrows(IllegalArgumentException.class, () -> new AuditParameters().validate(params));
+        assertThrows(IllegalArgumentException.class, () -> new AuditParameters().validate(params));
     }
     
     @Test
@@ -249,7 +249,7 @@ public class AuditParametersTest {
         Map<String,List<String>> params = new HashMap<>(this.params);
         params.put(AuditParameters.QUERY_DATE, Collections.singletonList("invalidDate"));
         
-        Assertions.assertThrows(IllegalArgumentException.class, () -> new AuditParameters().validate(params));
+        assertThrows(IllegalArgumentException.class, () -> new AuditParameters().validate(params));
     }
     
     @Test

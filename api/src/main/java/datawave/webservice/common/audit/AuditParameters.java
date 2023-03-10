@@ -4,8 +4,8 @@ import com.google.common.base.Preconditions;
 import com.google.common.base.Splitter;
 import datawave.webservice.common.audit.Auditor.AuditType;
 import org.apache.accumulo.core.security.ColumnVisibility;
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import java.util.Arrays;
 import java.util.Collection;

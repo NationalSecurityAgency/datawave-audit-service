@@ -4,11 +4,11 @@
     <parent>
         <groupId>gov.nsa.datawave.microservice</groupId>
         <artifactId>datawave-microservice-service-parent</artifactId>
-        <version>3.0</version>
+        <version>3.1-SNAPSHOT</version>
         <relativePath>../../../microservice-service-parent/pom.xml</relativePath>
     </parent>
     <artifactId>audit-service</artifactId>
-    <version>2.0-SNAPSHOT</version>
+    <version>3.0-SNAPSHOT</version>
     <description>DATAWAVE Auditing Microservice</description>
     <url>https://code.nsa.gov/datawave-audit-service</url>
     <scm>
@@ -18,11 +18,12 @@
         <url>https://github.com/NationalSecurityAgency/datawave-audit-service</url>
     </scm>
     <properties>
-        <version.hadoop>3.3.3</version.hadoop>
-        <version.microservice.audit-api>2.0-SNAPSHOT</version.microservice.audit-api>
-        <version.microservice.hazelcast-client>2.0-SNAPSHOT</version.microservice.hazelcast-client>
-        <version.microservice.starter>2.0-SNAPSHOT</version.microservice.starter>
-        <version.zookeeper>3.6.3</version.zookeeper>
+        <version.commons>3.9</version.commons>
+        <version.hadoop>3.3.4</version.hadoop>
+        <version.microservice.audit-api>3.0-SNAPSHOT</version.microservice.audit-api>
+        <version.microservice.hazelcast-client>3.0-SNAPSHOT</version.microservice.hazelcast-client>
+        <version.microservice.starter>3.0-SNAPSHOT</version.microservice.starter>
+        <version.zookeeper>3.8.0</version.zookeeper>
     </properties>
     <dependencyManagement>
         <dependencies>
@@ -40,6 +41,11 @@
                 <groupId>gov.nsa.datawave.microservice</groupId>
                 <artifactId>spring-boot-starter-datawave</artifactId>
                 <version>${version.microservice.starter}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-lang3</artifactId>
+                <version>${version.commons}</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.hadoop</groupId>
@@ -116,6 +122,14 @@
                         <artifactId>log4j</artifactId>
                         <groupId>log4j</groupId>
                     </exclusion>
+                    <exclusion>
+                        <artifactId>*</artifactId>
+                        <groupId>ch.qos.logback</groupId>
+                    </exclusion>
+                    <exclusion>
+                        <artifactId>netty-tcnative</artifactId>
+                        <groupId>io.netty</groupId>
+                    </exclusion>
                 </exclusions>
             </dependency>
             <dependency>
@@ -139,6 +153,10 @@
         <dependency>
             <groupId>gov.nsa.datawave.microservice</groupId>
             <artifactId>spring-boot-starter-datawave</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
         </dependency>
         <dependency>
             <groupId>org.apache.hadoop</groupId>

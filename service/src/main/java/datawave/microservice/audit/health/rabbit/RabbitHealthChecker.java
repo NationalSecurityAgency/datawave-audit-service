@@ -115,7 +115,7 @@ public class RabbitHealthChecker implements HealthChecker, HealthIndicator {
         }
     }
     
-    public RabbitHealthChecker(RabbitHealthProperties rabbitHealthProperties, CachingConnectionFactory rabbitConnectionFactory) throws Exception {
+    public RabbitHealthChecker(RabbitHealthProperties rabbitHealthProperties, CachingConnectionFactory rabbitConnectionFactory) {
         this(rabbitHealthProperties, rabbitConnectionFactory.getHost(), rabbitConnectionFactory.getUsername(),
                         rabbitConnectionFactory.getRabbitConnectionFactory().getPassword());
     }
@@ -187,7 +187,7 @@ public class RabbitHealthChecker implements HealthChecker, HealthIndicator {
      *
      * @param bp
      *            The binding properties derived from the {@link RabbitHealthProperties}
-     * @return A {@link Binding}
+     * @return A {@link BindingInfo}
      */
     private static BindingInfo createBinding(BindingProperties bp) {
         BindingInfo bindingInfo = new BindingInfo();
@@ -350,7 +350,7 @@ public class RabbitHealthChecker implements HealthChecker, HealthIndicator {
                 if (!detectedExchanges.containsKey(exchange.getName()))
                     missingExchanges.add(exchange);
                 else if (!isExchangeValid(exchange, detectedExchanges.get(exchange.getName())))
-                    invalidExchanges.add(new InvalidPairing(exchange, detectedExchanges.get(exchange.getName())));
+                    invalidExchanges.add(new InvalidPairing<>(exchange, detectedExchanges.get(exchange.getName())));
             }
         } else {
             missingExchanges.addAll(exchanges);
@@ -386,7 +386,7 @@ public class RabbitHealthChecker implements HealthChecker, HealthIndicator {
                 if (!detectedQueues.containsKey(queue.getName()))
                     missingQueues.add(queue);
                 else if (!isQueueValid(queue, detectedQueues.get(queue.getName())))
-                    invalidQueues.add(new InvalidPairing(queue, detectedQueues.get(queue.getName())));
+                    invalidQueues.add(new InvalidPairing<>(queue, detectedQueues.get(queue.getName())));
             }
         } else {
             missingQueues.addAll(queues);
@@ -424,7 +424,7 @@ public class RabbitHealthChecker implements HealthChecker, HealthIndicator {
                 if (!detectedBindings.containsKey(bindingKey))
                     missingBindings.add(binding);
                 else if (!isBindingValid(binding, detectedBindings.get(bindingKey)))
-                    invalidBindings.add(new InvalidPairing(binding, detectedBindings.get(bindingKey)));
+                    invalidBindings.add(new InvalidPairing<>(binding, detectedBindings.get(bindingKey)));
             }
         } else {
             missingBindings.addAll(bindings);
@@ -599,7 +599,7 @@ public class RabbitHealthChecker implements HealthChecker, HealthIndicator {
     public List<Map<String,Object>> getOutageStats() {
         if (!outageStats.isEmpty())
             return outageStats.stream().map(RabbitOutageStats::getOutageParams).collect(Collectors.toList());
-        return Collections.EMPTY_LIST;
+        return Collections.emptyList();
     }
     
     /**

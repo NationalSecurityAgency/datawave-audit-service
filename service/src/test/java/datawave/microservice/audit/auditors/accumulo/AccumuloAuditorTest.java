@@ -34,6 +34,7 @@ import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @ExtendWith(SpringExtension.class)
@@ -139,7 +140,7 @@ public class AccumuloAuditorTest {
         auditParams.setColviz(new ColumnVisibility("ALL"));
         auditParams.setQueryDate(date);
         
-        Assertions.assertThrows(NullPointerException.class, () -> accumuloAuditor.audit(auditParams));
+        assertThrows(NullPointerException.class, () -> accumuloAuditor.audit(auditParams));
     }
     
     @Test
@@ -153,7 +154,7 @@ public class AccumuloAuditorTest {
         auditParams.setAuditType(Auditor.AuditType.ACTIVE);
         auditParams.setQueryDate(date);
         
-        Assertions.assertThrows(NullPointerException.class, () -> accumuloAuditor.audit(auditParams));
+        assertThrows(NullPointerException.class, () -> accumuloAuditor.audit(auditParams));
     }
     
     @Configuration

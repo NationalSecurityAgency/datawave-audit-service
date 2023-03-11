@@ -66,6 +66,10 @@ import static datawave.webservice.common.audit.AuditParameters.QUERY_LOGIC_CLASS
 import static datawave.webservice.common.audit.AuditParameters.QUERY_SECURITY_MARKING_COLVIZ;
 import static datawave.webservice.common.audit.AuditParameters.QUERY_STRING;
 import static datawave.webservice.common.audit.AuditParameters.USER_DN;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -139,7 +143,7 @@ public class AuditReplayTest {
         map.add("pathUri", tempDir.toURI().toString());
         
         RequestEntity requestEntity = jwtRestTemplate.createRequestEntity(authUser, map, null, HttpMethod.POST, uri);
-        Assertions.assertThrows(HttpClientErrorException.class, () -> jwtRestTemplate.exchange(requestEntity, String.class));
+        assertThrows(HttpClientErrorException.class, () -> jwtRestTemplate.exchange(requestEntity, String.class));
     }
     
     // Test create (0 msgs/sec), status, stop, status, update, status, resume, verify status, delete, verify file names, verify messageCollector
@@ -189,16 +193,16 @@ public class AuditReplayTest {
         } catch (Exception e) {
             exception = e;
         }
-        Assertions.assertNotNull(exception);
-        Assertions.assertTrue(exception instanceof HttpClientErrorException);
-        Assertions.assertTrue(((HttpClientErrorException) exception).getResponseBodyAsString().contains("Cannot stop audit replay with id " + replayId));
+        assertNotNull(exception);
+        assertTrue(exception instanceof HttpClientErrorException);
+        assertTrue(((HttpClientErrorException) exception).getResponseBodyAsString().contains("Cannot stop audit replay with id " + replayId));
         
         // Start the audit replay request
         UriComponents startUri = UriComponentsBuilder.newInstance().scheme("https").host("localhost").port(webServicePort)
                         .path("/audit/v1/replay/" + replayId + "/start").build();
         ResponseEntity<String> startResp = jwtRestTemplate.exchange(authUser, HttpMethod.PUT, startUri, String.class);
         
-        Assertions.assertEquals(200, startResp.getStatusCode().value());
+        assertEquals(200, startResp.getStatusCode().value());
         
         // Get the status of the audit replay request
         status = toStatus(jwtRestTemplate.exchange(authUser, HttpMethod.GET, statusUri, String.class));
@@ -248,7 +252,7 @@ public class AuditReplayTest {
         // Stop the audit replay request
         ResponseEntity<String> stopResp = jwtRestTemplate.exchange(authUser, HttpMethod.PUT, stopUri, String.class);
         
-        Assertions.assertEquals(200, stopResp.getStatusCode().value());
+        assertEquals(200, stopResp.getStatusCode().value());
         
         // Get the status of the audit replay request
         status = toStatus(jwtRestTemplate.exchange(authUser, HttpMethod.GET, statusUri, String.class));
@@ -299,7 +303,7 @@ public class AuditReplayTest {
         requestEntity = jwtRestTemplate.createRequestEntity(authUser, map, null, HttpMethod.PUT, updateUri);
         ResponseEntity<String> updateResp = jwtRestTemplate.exchange(requestEntity, String.class);
         
-        Assertions.assertEquals(200, updateResp.getStatusCode().value());
+        assertEquals(200, updateResp.getStatusCode().value());
         
         // Get the status of the audit replay request
         status = toStatus(jwtRestTemplate.exchange(authUser, HttpMethod.GET, statusUri, String.class));
@@ -345,7 +349,7 @@ public class AuditReplayTest {
                         .path("/audit/v1/replay/" + replayId + "/resume").build();
         ResponseEntity<String> resumeResp = jwtRestTemplate.exchange(authUser, HttpMethod.PUT, resumeUri, String.class);
         
-        Assertions.assertEquals(200, resumeResp.getStatusCode().value());
+        assertEquals(200, resumeResp.getStatusCode().value());
         
         // Check the status until it is not running
         status = toStatus(jwtRestTemplate.exchange(authUser, HttpMethod.GET, statusUri, String.class));
@@ -400,9 +404,9 @@ public class AuditReplayTest {
             exception = e;
         }
         
-        Assertions.assertNotNull(exception);
-        Assertions.assertTrue(exception instanceof HttpClientErrorException);
-        Assertions.assertTrue(((HttpClientErrorException) exception).getResponseBodyAsString().contains("Cannot resume audit replay with id " + replayId));
+        assertNotNull(exception);
+        assertTrue(exception instanceof HttpClientErrorException);
+        assertTrue(((HttpClientErrorException) exception).getResponseBodyAsString().contains("Cannot resume audit replay with id " + replayId));
         
         // Test start on a finished audit replay
         exception = null;
@@ -412,16 +416,16 @@ public class AuditReplayTest {
             exception = e;
         }
         
-        Assertions.assertNotNull(exception);
-        Assertions.assertTrue(exception instanceof HttpClientErrorException);
-        Assertions.assertTrue(((HttpClientErrorException) exception).getResponseBodyAsString().contains("Cannot start audit replay with state FINISHED"));
+        assertNotNull(exception);
+        assertTrue(exception instanceof HttpClientErrorException);
+        assertTrue(((HttpClientErrorException) exception).getResponseBodyAsString().contains("Cannot start audit replay with state FINISHED"));
         
         // Delete the audit replay request
         UriComponents deleteUri = UriComponentsBuilder.newInstance().scheme("https").host("localhost").port(webServicePort)
                         .path("/audit/v1/replay/" + replayId + "/delete").build();
         ResponseEntity<String> deleteResp = jwtRestTemplate.exchange(authUser, HttpMethod.DELETE, deleteUri, String.class);
         
-        Assertions.assertEquals(200, deleteResp.getStatusCode().value());
+        assertEquals(200, deleteResp.getStatusCode().value());
         
         exception = null;
         try {
@@ -430,8 +434,8 @@ public class AuditReplayTest {
             exception = e;
         }
         
-        Assertions.assertNotNull(exception);
-        Assertions.assertTrue(exception instanceof HttpClientErrorException);
+        assertNotNull(exception);
+        assertTrue(exception instanceof HttpClientErrorException);
         
         Map<String,String> received = auditMessages.pop().getAuditParameters();
         
@@ -463,7 +467,7 @@ public class AuditReplayTest {
                 received);
         // @formatter:on
         
-        Assertions.assertEquals(0, auditMessages.size());
+        assertEquals(0, auditMessages.size());
     }
     
     // Test create (0 msgs/sec), status, stop, status, update, status, resume, verify status, delete, verify file names, verify messageCollector
@@ -509,7 +513,7 @@ public class AuditReplayTest {
                         .path("/audit/v1/replay/" + replayId + "/start").build();
         ResponseEntity<String> startResp = jwtRestTemplate.exchange(authUser, HttpMethod.PUT, startUri, String.class);
         
-        Assertions.assertEquals(200, startResp.getStatusCode().value());
+        assertEquals(200, startResp.getStatusCode().value());
         
         // Get the status of the audit replay request
         status = toStatus(jwtRestTemplate.exchange(authUser, HttpMethod.GET, statusUri, String.class));
@@ -587,7 +591,7 @@ public class AuditReplayTest {
                         .path("/audit/v1/replay/" + replayId + "/stop").build();
         ResponseEntity<String> stopResp = jwtRestTemplate.exchange(authUser, HttpMethod.PUT, stopUri, String.class);
         
-        Assertions.assertEquals(200, stopResp.getStatusCode().value());
+        assertEquals(200, stopResp.getStatusCode().value());
         
         // Get the status of the audit replay request
         status = toStatus(jwtRestTemplate.exchange(authUser, HttpMethod.GET, statusUri, String.class));
@@ -665,7 +669,7 @@ public class AuditReplayTest {
         requestEntity = jwtRestTemplate.createRequestEntity(authUser, map, null, HttpMethod.PUT, updateUri);
         ResponseEntity<String> updateResp = jwtRestTemplate.exchange(requestEntity, String.class);
         
-        Assertions.assertEquals(200, updateResp.getStatusCode().value());
+        assertEquals(200, updateResp.getStatusCode().value());
         
         // Get the status of the audit replay request
         status = toStatus(jwtRestTemplate.exchange(authUser, HttpMethod.GET, statusUri, String.class));
@@ -737,7 +741,7 @@ public class AuditReplayTest {
                         .path("/audit/v1/replay/" + replayId + "/resume").build();
         ResponseEntity<String> resumeResp = jwtRestTemplate.exchange(authUser, HttpMethod.PUT, resumeUri, String.class);
         
-        Assertions.assertEquals(200, resumeResp.getStatusCode().value());
+        assertEquals(200, resumeResp.getStatusCode().value());
         
         // Check the status until it is not running
         status = toStatus(jwtRestTemplate.exchange(authUser, HttpMethod.GET, statusUri, String.class));
@@ -815,7 +819,7 @@ public class AuditReplayTest {
                         .path("/audit/v1/replay/" + replayId + "/delete").build();
         ResponseEntity<String> deleteResp = jwtRestTemplate.exchange(authUser, HttpMethod.DELETE, deleteUri, String.class);
         
-        Assertions.assertEquals(200, deleteResp.getStatusCode().value());
+        assertEquals(200, deleteResp.getStatusCode().value());
         
         Exception exception = null;
         try {
@@ -825,8 +829,8 @@ public class AuditReplayTest {
             exception = e;
         }
         
-        Assertions.assertNotNull(exception);
-        Assertions.assertTrue(exception instanceof HttpClientErrorException);
+        assertNotNull(exception);
+        assertTrue(exception instanceof HttpClientErrorException);
         
         Map<String,String> received = auditMessages.pop().getAuditParameters();
         
@@ -888,7 +892,7 @@ public class AuditReplayTest {
                 received);
         // @formatter:on
         
-        Assertions.assertEquals(0, auditMessages.size());
+        assertEquals(0, auditMessages.size());
     }
     
     // Test multiple create (0 msgs/sec), stopAll, updateAll, resumeAll, verify statusAll, deleteAll, verify file names, verify messageCollector
@@ -932,7 +936,7 @@ public class AuditReplayTest {
         List<Status> statuses = toStatuses(jwtRestTemplate.exchange(authUser, HttpMethod.GET, statusAllUri, String.class));
         
         Status status = statuses.stream().filter(s -> s.getId().equals(replayId1)).findAny().orElse(null);
-        Assertions.assertNotNull(status);
+        assertNotNull(status);
         // @formatter:off
         assertStatus(
                 Status.ReplayState.CREATED,
@@ -944,7 +948,7 @@ public class AuditReplayTest {
         // @formatter:on
         
         status = statuses.stream().filter(s -> s.getId().equals(replayId2)).findAny().orElse(null);
-        Assertions.assertNotNull(status);
+        assertNotNull(status);
         // @formatter:off
         assertStatus(
                 Status.ReplayState.CREATED,
@@ -960,7 +964,7 @@ public class AuditReplayTest {
                         .build();
         ResponseEntity<String> startResp = jwtRestTemplate.exchange(authUser, HttpMethod.PUT, startUri, String.class);
         
-        Assertions.assertEquals(200, startResp.getStatusCode().value());
+        assertEquals(200, startResp.getStatusCode().value());
         
         // Get the status of the audit replay requests
         statuses = toStatuses(jwtRestTemplate.exchange(authUser, HttpMethod.GET, statusAllUri, String.class));
@@ -980,7 +984,7 @@ public class AuditReplayTest {
         }
         
         status = statuses.stream().filter(s -> s.getId().equals(replayId1)).findAny().orElse(null);
-        Assertions.assertNotNull(status);
+        assertNotNull(status);
         // @formatter:off
         assertStatus(
                 Status.ReplayState.RUNNING,
@@ -1005,7 +1009,7 @@ public class AuditReplayTest {
         // @formatter:on
         
         status = statuses.stream().filter(s -> s.getId().equals(replayId2)).findAny().orElse(null);
-        Assertions.assertNotNull(status);
+        assertNotNull(status);
         // @formatter:off
         assertStatus(
                 Status.ReplayState.RUNNING,
@@ -1034,7 +1038,7 @@ public class AuditReplayTest {
                         .build();
         ResponseEntity<String> stopResp = jwtRestTemplate.exchange(authUser, HttpMethod.PUT, stopAllUri, String.class);
         
-        Assertions.assertEquals(200, stopResp.getStatusCode().value());
+        assertEquals(200, stopResp.getStatusCode().value());
         
         // Get the status of the audit replay request
         statuses = toStatuses(jwtRestTemplate.exchange(authUser, HttpMethod.GET, statusAllUri, String.class));
@@ -1054,7 +1058,7 @@ public class AuditReplayTest {
         }
         
         status = statuses.stream().filter(s -> s.getId().equals(replayId1)).findAny().orElse(null);
-        Assertions.assertNotNull(status);
+        assertNotNull(status);
         // @formatter:off
         assertStatus(
                 Status.ReplayState.STOPPED,
@@ -1079,7 +1083,7 @@ public class AuditReplayTest {
         // @formatter:on
         
         status = statuses.stream().filter(s -> s.getId().equals(replayId2)).findAny().orElse(null);
-        Assertions.assertNotNull(status);
+        assertNotNull(status);
         // @formatter:off
         assertStatus(
                 Status.ReplayState.STOPPED,
@@ -1114,13 +1118,13 @@ public class AuditReplayTest {
         requestEntity = jwtRestTemplate.createRequestEntity(authUser, map, null, HttpMethod.PUT, updateAllUri);
         ResponseEntity<String> updateResp = jwtRestTemplate.exchange(requestEntity, String.class);
         
-        Assertions.assertEquals(200, updateResp.getStatusCode().value());
+        assertEquals(200, updateResp.getStatusCode().value());
         
         // Get the status of the audit replay request
         statuses = toStatuses(jwtRestTemplate.exchange(authUser, HttpMethod.GET, statusAllUri, String.class));
         
         status = statuses.stream().filter(s -> s.getId().equals(replayId1)).findAny().orElse(null);
-        Assertions.assertNotNull(status);
+        assertNotNull(status);
         // @formatter:off
         assertStatus(
                 Status.ReplayState.STOPPED,
@@ -1145,7 +1149,7 @@ public class AuditReplayTest {
         // @formatter:on
         
         status = statuses.stream().filter(s -> s.getId().equals(replayId2)).findAny().orElse(null);
-        Assertions.assertNotNull(status);
+        assertNotNull(status);
         // @formatter:off
         assertStatus(
                 Status.ReplayState.STOPPED,
@@ -1174,7 +1178,7 @@ public class AuditReplayTest {
                         .path("/audit/v1/replay/resumeAll").build();
         ResponseEntity<String> resumeResp = jwtRestTemplate.exchange(authUser, HttpMethod.PUT, resumeAllUri, String.class);
         
-        Assertions.assertEquals(200, resumeResp.getStatusCode().value());
+        assertEquals(200, resumeResp.getStatusCode().value());
         
         // Check the statuses until they are all finished running
         statuses = toStatuses(jwtRestTemplate.exchange(authUser, HttpMethod.GET, statusAllUri, String.class));
@@ -1194,7 +1198,7 @@ public class AuditReplayTest {
         }
         
         status = statuses.stream().filter(s -> s.getId().equals(replayId1)).findAny().orElse(null);
-        Assertions.assertNotNull(status);
+        assertNotNull(status);
         // @formatter:off
         assertStatus(
                 Status.ReplayState.FINISHED,
@@ -1219,7 +1223,7 @@ public class AuditReplayTest {
         // @formatter:on
         
         status = statuses.stream().filter(s -> s.getId().equals(replayId2)).findAny().orElse(null);
-        Assertions.assertNotNull(status);
+        assertNotNull(status);
         // @formatter:off
         assertStatus(
                 Status.ReplayState.FINISHED,
@@ -1248,12 +1252,12 @@ public class AuditReplayTest {
                         .build();
         ResponseEntity<String> deleteResp = jwtRestTemplate.exchange(authUser, HttpMethod.DELETE, deleteUri, String.class);
         
-        Assertions.assertEquals(200, deleteResp.getStatusCode().value());
+        assertEquals(200, deleteResp.getStatusCode().value());
         
         statuses = toStatuses(jwtRestTemplate.exchange(authUser, HttpMethod.GET, statusAllUri, String.class));
         
-        Assertions.assertNotNull(statuses);
-        Assertions.assertEquals(0, statuses.size());
+        assertNotNull(statuses);
+        assertEquals(0, statuses.size());
         
         List<Map<String,String>> receivedMessages = new ArrayList<>();
         
@@ -1267,12 +1271,12 @@ public class AuditReplayTest {
             }
         }
         
-        Assertions.assertEquals(2, auditMessages.size());
+        assertEquals(2, auditMessages.size());
         receivedMessages.add(auditMessages.pop().getAuditParameters());
         receivedMessages.add(auditMessages.pop().getAuditParameters());
         
         Map<String,String> received = receivedMessages.stream().filter(r -> r.get(AUDIT_ID).equals("readyAuditId1")).findAny().orElse(null);
-        Assertions.assertNotNull(received);
+        assertNotNull(received);
         // @formatter:off
         assertAuditMessage(
                 "readyAuditId1",
@@ -1287,7 +1291,7 @@ public class AuditReplayTest {
         // @formatter:on
         
         received = receivedMessages.stream().filter(r -> r.get(AUDIT_ID).equals("readyAuditId2")).findAny().orElse(null);
-        Assertions.assertNotNull(received);
+        assertNotNull(received);
         // @formatter:off
         assertAuditMessage(
                 "readyAuditId2",
@@ -1399,7 +1403,7 @@ public class AuditReplayTest {
         requestEntity = jwtRestTemplate.createRequestEntity(authUser, map, null, HttpMethod.PUT, updateUri);
         ResponseEntity<String> updateResp = jwtRestTemplate.exchange(requestEntity, String.class);
         
-        Assertions.assertEquals(200, updateResp.getStatusCode().value());
+        assertEquals(200, updateResp.getStatusCode().value());
         
         // Get the status of the audit replay request
         status = toStatus(jwtRestTemplate.exchange(authUser, HttpMethod.GET, statusUri, String.class));
@@ -1445,7 +1449,7 @@ public class AuditReplayTest {
                         .path("/audit/v1/replay/" + replayId + "/resume").build();
         ResponseEntity<String> resumeResp = jwtRestTemplate.exchange(authUser, HttpMethod.PUT, resumeUri, String.class);
         
-        Assertions.assertEquals(200, resumeResp.getStatusCode().value());
+        assertEquals(200, resumeResp.getStatusCode().value());
         
         // Check the status until it is not running
         status = toStatus(jwtRestTemplate.exchange(authUser, HttpMethod.GET, statusUri, String.class));
@@ -1497,7 +1501,7 @@ public class AuditReplayTest {
                         .path("/audit/v1/replay/" + replayId + "/delete").build();
         ResponseEntity<String> deleteResp = jwtRestTemplate.exchange(authUser, HttpMethod.DELETE, deleteUri, String.class);
         
-        Assertions.assertEquals(200, deleteResp.getStatusCode().value());
+        assertEquals(200, deleteResp.getStatusCode().value());
         
         Exception exception = null;
         try {
@@ -1507,8 +1511,8 @@ public class AuditReplayTest {
             exception = e;
         }
         
-        Assertions.assertNotNull(exception);
-        Assertions.assertTrue(exception instanceof HttpClientErrorException);
+        assertNotNull(exception);
+        assertTrue(exception instanceof HttpClientErrorException);
         
         Map<String,String> received = auditMessages.pop().getAuditParameters();
         
@@ -1540,7 +1544,7 @@ public class AuditReplayTest {
                 received);
         // @formatter:on
         
-        Assertions.assertEquals(0, auditMessages.size());
+        assertEquals(0, auditMessages.size());
     }
     
     // Test delete on running replay
@@ -1623,8 +1627,8 @@ public class AuditReplayTest {
             exception = e;
         }
         
-        Assertions.assertNotNull(exception);
-        Assertions.assertTrue(exception instanceof HttpClientErrorException);
+        assertNotNull(exception);
+        assertTrue(exception instanceof HttpClientErrorException);
     }
     
     @Test
@@ -1643,9 +1647,9 @@ public class AuditReplayTest {
         } catch (Exception e) {
             exception = e;
         }
-        Assertions.assertNotNull(exception);
-        Assertions.assertTrue(exception instanceof HttpClientErrorException);
-        Assertions.assertTrue(((HttpClientErrorException) exception).getResponseBodyAsString().contains("No audit replay found with id bogusId"));
+        assertNotNull(exception);
+        assertTrue(exception instanceof HttpClientErrorException);
+        assertTrue(((HttpClientErrorException) exception).getResponseBodyAsString().contains("No audit replay found with id bogusId"));
         
         // update
         UriComponents updateUri = UriComponentsBuilder.newInstance().scheme("https").host("localhost").port(webServicePort)
@@ -1663,9 +1667,9 @@ public class AuditReplayTest {
         } catch (Exception e) {
             exception = e;
         }
-        Assertions.assertNotNull(exception);
-        Assertions.assertTrue(exception instanceof HttpClientErrorException);
-        Assertions.assertTrue(((HttpClientErrorException) exception).getResponseBodyAsString().contains("No audit replay found with id bogusId"));
+        assertNotNull(exception);
+        assertTrue(exception instanceof HttpClientErrorException);
+        assertTrue(((HttpClientErrorException) exception).getResponseBodyAsString().contains("No audit replay found with id bogusId"));
         
         // start
         UriComponents startUri = UriComponentsBuilder.newInstance().scheme("https").host("localhost").port(webServicePort)
@@ -1676,9 +1680,9 @@ public class AuditReplayTest {
         } catch (Exception e) {
             exception = e;
         }
-        Assertions.assertNotNull(exception);
-        Assertions.assertTrue(exception instanceof HttpClientErrorException);
-        Assertions.assertTrue(((HttpClientErrorException) exception).getResponseBodyAsString().contains("No audit replay found with id bogusId"));
+        assertNotNull(exception);
+        assertTrue(exception instanceof HttpClientErrorException);
+        assertTrue(((HttpClientErrorException) exception).getResponseBodyAsString().contains("No audit replay found with id bogusId"));
         
         // stop
         UriComponents stopUri = UriComponentsBuilder.newInstance().scheme("https").host("localhost").port(webServicePort).path("/audit/v1/replay/bogusId/stop")
@@ -1689,9 +1693,9 @@ public class AuditReplayTest {
         } catch (Exception e) {
             exception = e;
         }
-        Assertions.assertNotNull(exception);
-        Assertions.assertTrue(exception instanceof HttpClientErrorException);
-        Assertions.assertTrue(((HttpClientErrorException) exception).getResponseBodyAsString().contains("No audit replay found with id bogusId"));
+        assertNotNull(exception);
+        assertTrue(exception instanceof HttpClientErrorException);
+        assertTrue(((HttpClientErrorException) exception).getResponseBodyAsString().contains("No audit replay found with id bogusId"));
         
         // resume
         UriComponents resumeUri = UriComponentsBuilder.newInstance().scheme("https").host("localhost").port(webServicePort)
@@ -1702,9 +1706,9 @@ public class AuditReplayTest {
         } catch (Exception e) {
             exception = e;
         }
-        Assertions.assertNotNull(exception);
-        Assertions.assertTrue(exception instanceof HttpClientErrorException);
-        Assertions.assertTrue(((HttpClientErrorException) exception).getResponseBodyAsString().contains("No audit replay found with id bogusId"));
+        assertNotNull(exception);
+        assertTrue(exception instanceof HttpClientErrorException);
+        assertTrue(((HttpClientErrorException) exception).getResponseBodyAsString().contains("No audit replay found with id bogusId"));
         
         // delete
         UriComponents deleteUri = UriComponentsBuilder.newInstance().scheme("https").host("localhost").port(webServicePort)
@@ -1715,9 +1719,9 @@ public class AuditReplayTest {
         } catch (Exception e) {
             exception = e;
         }
-        Assertions.assertNotNull(exception);
-        Assertions.assertTrue(exception instanceof HttpClientErrorException);
-        Assertions.assertTrue(((HttpClientErrorException) exception).getResponseBodyAsString().contains("No audit replay found with id bogusId"));
+        assertNotNull(exception);
+        assertTrue(exception instanceof HttpClientErrorException);
+        assertTrue(((HttpClientErrorException) exception).getResponseBodyAsString().contains("No audit replay found with id bogusId"));
         
     }
     
@@ -1762,7 +1766,7 @@ public class AuditReplayTest {
                         .path("/audit/v1/replay/" + replayId + "/start").build();
         ResponseEntity<String> startResp = jwtRestTemplate.exchange(authUser, HttpMethod.PUT, startUri, String.class);
         
-        Assertions.assertEquals(200, startResp.getStatusCode().value());
+        assertEquals(200, startResp.getStatusCode().value());
         
         // Get the status of the audit replay request
         status = toStatus(jwtRestTemplate.exchange(authUser, HttpMethod.GET, statusUri, String.class));
@@ -1820,7 +1824,7 @@ public class AuditReplayTest {
         requestEntity = jwtRestTemplate.createRequestEntity(authUser, map, null, HttpMethod.PUT, updateUri);
         ResponseEntity<String> updateResp = jwtRestTemplate.exchange(requestEntity, String.class);
         
-        Assertions.assertEquals(200, updateResp.getStatusCode().value());
+        assertEquals(200, updateResp.getStatusCode().value());
         
         // Check the status until it is not running
         status = toStatus(jwtRestTemplate.exchange(authUser, HttpMethod.GET, statusUri, String.class));
@@ -1872,7 +1876,7 @@ public class AuditReplayTest {
                         .path("/audit/v1/replay/" + replayId + "/delete").build();
         ResponseEntity<String> deleteResp = jwtRestTemplate.exchange(authUser, HttpMethod.DELETE, deleteUri, String.class);
         
-        Assertions.assertEquals(200, deleteResp.getStatusCode().value());
+        assertEquals(200, deleteResp.getStatusCode().value());
         
         Exception exception = null;
         try {
@@ -1881,8 +1885,8 @@ public class AuditReplayTest {
             exception = e;
         }
         
-        Assertions.assertNotNull(exception);
-        Assertions.assertTrue(exception instanceof HttpClientErrorException);
+        assertNotNull(exception);
+        assertTrue(exception instanceof HttpClientErrorException);
         
         Map<String,String> received = auditMessages.pop().getAuditParameters();
         
@@ -1914,7 +1918,7 @@ public class AuditReplayTest {
                 received);
         // @formatter:on
         
-        Assertions.assertEquals(0, auditMessages.size());
+        assertEquals(0, auditMessages.size());
     }
     
     @Test
@@ -1941,9 +1945,9 @@ public class AuditReplayTest {
             exception = e;
         }
         
-        Assertions.assertNotNull(exception);
-        Assertions.assertTrue(exception instanceof HttpClientErrorException);
-        Assertions.assertTrue(((HttpClientErrorException) exception).getResponseBodyAsString().contains("Send rate must be >= 0"));
+        assertNotNull(exception);
+        assertTrue(exception instanceof HttpClientErrorException);
+        assertTrue(((HttpClientErrorException) exception).getResponseBodyAsString().contains("Send rate must be >= 0"));
         
         // createAndStart
         UriComponents createAndStartUri = UriComponentsBuilder.newInstance().scheme("https").host("localhost").port(webServicePort)
@@ -1963,9 +1967,9 @@ public class AuditReplayTest {
             exception = e;
         }
         
-        Assertions.assertNotNull(exception);
-        Assertions.assertTrue(exception instanceof HttpClientErrorException);
-        Assertions.assertTrue(((HttpClientErrorException) exception).getResponseBodyAsString().contains("Send rate must be >= 0"));
+        assertNotNull(exception);
+        assertTrue(exception instanceof HttpClientErrorException);
+        assertTrue(((HttpClientErrorException) exception).getResponseBodyAsString().contains("Send rate must be >= 0"));
         
         // update
         UriComponents updateUri = UriComponentsBuilder.newInstance().scheme("https").host("localhost").port(webServicePort)
@@ -1984,9 +1988,9 @@ public class AuditReplayTest {
             exception = e;
         }
         
-        Assertions.assertNotNull(exception);
-        Assertions.assertTrue(exception instanceof HttpClientErrorException);
-        Assertions.assertTrue(((HttpClientErrorException) exception).getResponseBodyAsString().contains("Send rate must be >= 0"));
+        assertNotNull(exception);
+        assertTrue(exception instanceof HttpClientErrorException);
+        assertTrue(((HttpClientErrorException) exception).getResponseBodyAsString().contains("Send rate must be >= 0"));
         
         // updateAll
         UriComponents updateAllUri = UriComponentsBuilder.newInstance().scheme("https").host("localhost").port(webServicePort)
@@ -2005,9 +2009,9 @@ public class AuditReplayTest {
             exception = e;
         }
         
-        Assertions.assertNotNull(exception);
-        Assertions.assertTrue(exception instanceof HttpClientErrorException);
-        Assertions.assertTrue(((HttpClientErrorException) exception).getResponseBodyAsString().contains("Send rate must be >= 0"));
+        assertNotNull(exception);
+        assertTrue(exception instanceof HttpClientErrorException);
+        assertTrue(((HttpClientErrorException) exception).getResponseBodyAsString().contains("Send rate must be >= 0"));
         
     }
     
@@ -2072,7 +2076,7 @@ public class AuditReplayTest {
                         .path("/audit/v1/replay/" + replayId + "/delete").build();
         ResponseEntity<String> deleteResp = jwtRestTemplate.exchange(authUser, HttpMethod.DELETE, deleteUri, String.class);
         
-        Assertions.assertEquals(200, deleteResp.getStatusCode().value());
+        assertEquals(200, deleteResp.getStatusCode().value());
         
         Exception exception = null;
         try {
@@ -2081,11 +2085,11 @@ public class AuditReplayTest {
             exception = e;
         }
         
-        Assertions.assertNotNull(exception);
-        Assertions.assertTrue(exception instanceof HttpClientErrorException);
+        assertNotNull(exception);
+        assertTrue(exception instanceof HttpClientErrorException);
         
         // Verify the message collector has no audit messages
-        Assertions.assertEquals(0, auditMessages.size());
+        assertEquals(0, auditMessages.size());
     }
     
     @Test
@@ -2148,7 +2152,7 @@ public class AuditReplayTest {
                         .path("/audit/v1/replay/" + replayId + "/delete").build();
         ResponseEntity<String> deleteResp = jwtRestTemplate.exchange(authUser, HttpMethod.DELETE, deleteUri, String.class);
         
-        Assertions.assertEquals(200, deleteResp.getStatusCode().value());
+        assertEquals(200, deleteResp.getStatusCode().value());
         
         Exception exception = null;
         try {
@@ -2157,11 +2161,11 @@ public class AuditReplayTest {
             exception = e;
         }
         
-        Assertions.assertNotNull(exception);
-        Assertions.assertTrue(exception instanceof HttpClientErrorException);
+        assertNotNull(exception);
+        assertTrue(exception instanceof HttpClientErrorException);
         
         // Verify the message collector has no audit messages
-        Assertions.assertEquals(0, auditMessages.size());
+        assertEquals(0, auditMessages.size());
     }
     
     @Test
@@ -2221,7 +2225,7 @@ public class AuditReplayTest {
                         .path("/audit/v1/replay/" + replayId + "/start").build();
         ResponseEntity<String> startResp = jwtRestTemplate.exchange(authUser, HttpMethod.PUT, startUri, String.class);
         
-        Assertions.assertEquals(200, startResp.getStatusCode().value());
+        assertEquals(200, startResp.getStatusCode().value());
         
         // Get the status of the audit replay request
         status = toStatus(jwtRestTemplate.exchange(authUser, HttpMethod.GET, statusUri, String.class));
@@ -2325,7 +2329,7 @@ public class AuditReplayTest {
         List<Status> statuses = toStatuses(jwtRestTemplate.exchange(authUser, HttpMethod.GET, statusAllUri, String.class));
         
         Status status = statuses.stream().filter(s -> s.getId().equals(replayId1)).findAny().orElse(null);
-        Assertions.assertNotNull(status);
+        assertNotNull(status);
         // @formatter:off
         assertStatus(
                 Status.ReplayState.CREATED,
@@ -2337,7 +2341,7 @@ public class AuditReplayTest {
         // @formatter:on
         
         status = statuses.stream().filter(s -> s.getId().equals(replayId2)).findAny().orElse(null);
-        Assertions.assertNotNull(status);
+        assertNotNull(status);
         // @formatter:off
         assertStatus(
                 Status.ReplayState.CREATED,
@@ -2353,7 +2357,7 @@ public class AuditReplayTest {
                         .build();
         ResponseEntity<String> startResp = jwtRestTemplate.exchange(authUser, HttpMethod.PUT, startUri, String.class);
         
-        Assertions.assertEquals(200, startResp.getStatusCode().value());
+        assertEquals(200, startResp.getStatusCode().value());
         
         // Get the status of the audit replay requests
         statuses = toStatuses(jwtRestTemplate.exchange(authUser, HttpMethod.GET, statusAllUri, String.class));
@@ -2373,7 +2377,7 @@ public class AuditReplayTest {
         }
         
         status = statuses.stream().filter(s -> s.getId().equals(replayId1)).findAny().orElse(null);
-        Assertions.assertNotNull(status);
+        assertNotNull(status);
         // @formatter:off
         assertStatus(
                 Status.ReplayState.RUNNING,
@@ -2398,7 +2402,7 @@ public class AuditReplayTest {
         // @formatter:on
         
         status = statuses.stream().filter(s -> s.getId().equals(replayId2)).findAny().orElse(null);
-        Assertions.assertNotNull(status);
+        assertNotNull(status);
         // @formatter:off
         assertStatus(
                 Status.ReplayState.RUNNING,
@@ -2443,7 +2447,7 @@ public class AuditReplayTest {
         }
         
         status = statuses.stream().filter(s -> s.getId().equals(replayId1)).findAny().orElse(null);
-        Assertions.assertNotNull(status);
+        assertNotNull(status);
         // @formatter:off
         assertStatus(
                 Status.ReplayState.FINISHED,
@@ -2468,7 +2472,7 @@ public class AuditReplayTest {
         // @formatter:on
         
         status = statuses.stream().filter(s -> s.getId().equals(replayId2)).findAny().orElse(null);
-        Assertions.assertNotNull(status);
+        assertNotNull(status);
         // @formatter:off
         assertStatus(
                 Status.ReplayState.FINISHED,
@@ -2547,7 +2551,7 @@ public class AuditReplayTest {
         }
         
         Status status = statuses.stream().filter(s -> s.getId().equals(replayId1)).findAny().orElse(null);
-        Assertions.assertNotNull(status);
+        assertNotNull(status);
         // @formatter:off
         assertStatus(
                 Status.ReplayState.RUNNING,
@@ -2572,7 +2576,7 @@ public class AuditReplayTest {
         // @formatter:on
         
         status = statuses.stream().filter(s -> s.getId().equals(replayId2)).findAny().orElse(null);
-        Assertions.assertNotNull(status);
+        assertNotNull(status);
         // @formatter:off
         assertStatus(
                 Status.ReplayState.RUNNING,
@@ -2603,7 +2607,7 @@ public class AuditReplayTest {
         statuses = toStatuses(jwtRestTemplate.exchange(authUser, HttpMethod.GET, statusAllUri, String.class));
         
         status = statuses.stream().filter(s -> s.getId().equals(replayId1)).findAny().orElse(null);
-        Assertions.assertNotNull(status);
+        assertNotNull(status);
         // @formatter:off
         assertStatus(
                 Status.ReplayState.STOPPED,
@@ -2628,7 +2632,7 @@ public class AuditReplayTest {
         // @formatter:on
         
         status = statuses.stream().filter(s -> s.getId().equals(replayId2)).findAny().orElse(null);
-        Assertions.assertNotNull(status);
+        assertNotNull(status);
         // @formatter:off
         assertStatus(
                 Status.ReplayState.STOPPED,
@@ -2655,34 +2659,34 @@ public class AuditReplayTest {
     
     private static void assertStatus(Status.ReplayState expectedState, String expectedPath, long expectedSendRate, int expectedNumFiles,
                     boolean expectedReplayUnfinishedFiles, Status actual) {
-        Assertions.assertEquals(expectedState, actual.getState());
-        Assertions.assertEquals(expectedPath, actual.getPathUri());
-        Assertions.assertEquals(expectedSendRate, actual.getSendRate());
-        Assertions.assertEquals(expectedNumFiles, actual.getFiles().size());
-        Assertions.assertEquals(expectedReplayUnfinishedFiles, actual.isReplayUnfinishedFiles());
+        assertEquals(expectedState, actual.getState());
+        assertEquals(expectedPath, actual.getPathUri());
+        assertEquals(expectedSendRate, actual.getSendRate());
+        assertEquals(expectedNumFiles, actual.getFiles().size());
+        assertEquals(expectedReplayUnfinishedFiles, actual.isReplayUnfinishedFiles());
     }
     
     private static void assertFileStatus(Status.FileState expectedState, String expectedFilename, long expectedLinesRead, long expectedAuditsSent,
                     long expectedAuditsFailed, long expectedParseFailures, boolean expectedEncounteredError, Status.FileStatus actual) {
-        Assertions.assertEquals(expectedState, actual.getState());
-        Assertions.assertTrue(actual.getPathUri().endsWith(expectedFilename));
-        Assertions.assertEquals(expectedLinesRead, actual.getLinesRead());
-        Assertions.assertEquals(expectedAuditsSent, actual.getAuditsSent());
-        Assertions.assertEquals(expectedAuditsFailed, actual.getAuditsFailed());
-        Assertions.assertEquals(expectedParseFailures, actual.getParseFailures());
-        Assertions.assertEquals(expectedEncounteredError, actual.isEncounteredError());
+        assertEquals(expectedState, actual.getState());
+        assertTrue(actual.getPathUri().endsWith(expectedFilename));
+        assertEquals(expectedLinesRead, actual.getLinesRead());
+        assertEquals(expectedAuditsSent, actual.getAuditsSent());
+        assertEquals(expectedAuditsFailed, actual.getAuditsFailed());
+        assertEquals(expectedParseFailures, actual.getParseFailures());
+        assertEquals(expectedEncounteredError, actual.isEncounteredError());
     }
     
     private static void assertAuditMessage(String expectedAuditId, String expectedUserDN, String expectedQueryDate, String expectedAuths, String expectedQuery,
                     String expectedAuditType, String expectedQueryLogic, String expectedColViz, Map<String,String> actual) {
-        Assertions.assertEquals(expectedAuditId, actual.get(AUDIT_ID));
-        Assertions.assertEquals(expectedUserDN, actual.get(USER_DN));
-        Assertions.assertEquals(expectedQueryDate, actual.get(QUERY_DATE));
-        Assertions.assertEquals(expectedAuths, actual.get(QUERY_AUTHORIZATIONS));
-        Assertions.assertEquals(expectedQuery, actual.get(QUERY_STRING));
-        Assertions.assertEquals(expectedAuditType, actual.get(QUERY_AUDIT_TYPE));
-        Assertions.assertEquals(expectedQueryLogic, actual.get(QUERY_LOGIC_CLASS));
-        Assertions.assertEquals(expectedColViz, actual.get(QUERY_SECURITY_MARKING_COLVIZ));
+        assertEquals(expectedAuditId, actual.get(AUDIT_ID));
+        assertEquals(expectedUserDN, actual.get(USER_DN));
+        assertEquals(expectedQueryDate, actual.get(QUERY_DATE));
+        assertEquals(expectedAuths, actual.get(QUERY_AUTHORIZATIONS));
+        assertEquals(expectedQuery, actual.get(QUERY_STRING));
+        assertEquals(expectedAuditType, actual.get(QUERY_AUDIT_TYPE));
+        assertEquals(expectedQueryLogic, actual.get(QUERY_LOGIC_CLASS));
+        assertEquals(expectedColViz, actual.get(QUERY_SECURITY_MARKING_COLVIZ));
     }
     
     private static List<Status> toStatuses(ResponseEntity<String> responseEntity) throws IOException, ParseException {

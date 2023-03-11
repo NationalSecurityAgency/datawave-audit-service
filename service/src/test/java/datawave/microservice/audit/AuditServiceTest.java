@@ -68,6 +68,7 @@ import static datawave.security.authorization.DatawaveUser.UserType.USER;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 //@Category(IntegrationTest.class)
@@ -128,7 +129,7 @@ public class AuditServiceTest {
         RequestEntity requestEntity = jwtRestTemplate.createRequestEntity(authUser, map, null, HttpMethod.POST, uri);
         
         try {
-            Assertions.assertThrows(HttpServerErrorException.class, () -> jwtRestTemplate.exchange(requestEntity, String.class));
+            assertThrows(HttpServerErrorException.class, () -> jwtRestTemplate.exchange(requestEntity, String.class));
         } finally {
             assertTrue(auditMessages.isEmpty());
         }
@@ -151,7 +152,7 @@ public class AuditServiceTest {
         RequestEntity requestEntity = jwtRestTemplate.createRequestEntity(authUser, map, null, HttpMethod.POST, uri);
         
         try {
-            Assertions.assertThrows(HttpServerErrorException.class, () -> jwtRestTemplate.exchange(requestEntity, String.class));
+            assertThrows(HttpServerErrorException.class, () -> jwtRestTemplate.exchange(requestEntity, String.class));
         } finally {
             assertTrue(auditMessages.isEmpty());
         }
@@ -174,7 +175,7 @@ public class AuditServiceTest {
         RequestEntity requestEntity = jwtRestTemplate.createRequestEntity(authUser, map, null, HttpMethod.POST, uri);
         
         try {
-            Assertions.assertThrows(HttpServerErrorException.class, () -> jwtRestTemplate.exchange(requestEntity, String.class));
+            assertThrows(HttpServerErrorException.class, () -> jwtRestTemplate.exchange(requestEntity, String.class));
         } finally {
             assertTrue(auditMessages.isEmpty());
         }
@@ -198,7 +199,7 @@ public class AuditServiceTest {
         RequestEntity requestEntity = jwtRestTemplate.createRequestEntity(authUser, map, null, HttpMethod.POST, uri);
         
         try {
-            Assertions.assertThrows(HttpClientErrorException.class, () -> jwtRestTemplate.exchange(requestEntity, String.class));
+            assertThrows(HttpClientErrorException.class, () -> jwtRestTemplate.exchange(requestEntity, String.class));
         } finally {
             assertTrue(auditMessages.isEmpty());
         }
@@ -263,7 +264,7 @@ public class AuditServiceTest {
         
         RequestEntity requestEntity = jwtRestTemplate.createRequestEntity(authUser, map, null, HttpMethod.POST, uri);
         
-        Assertions.assertThrows(HttpServerErrorException.class, () -> jwtRestTemplate.exchange(requestEntity, String.class));
+        assertThrows(HttpServerErrorException.class, () -> jwtRestTemplate.exchange(requestEntity, String.class));
     }
     
     @DirtiesContext
@@ -352,7 +353,7 @@ public class AuditServiceTest {
         RequestEntity requestEntity = jwtRestTemplate.createRequestEntity(authUser, map, null, HttpMethod.POST, uri);
         
         long startTimeMillis = System.currentTimeMillis();
-        Assertions.assertThrows(HttpServerErrorException.class, () -> jwtRestTemplate.exchange(requestEntity, String.class));
+        assertThrows(HttpServerErrorException.class, () -> jwtRestTemplate.exchange(requestEntity, String.class));
         long stopTimeMillis = System.currentTimeMillis();
         
         assertTrue((stopTimeMillis - startTimeMillis) >= ((maxAttempts - 1) * backoffIntervalMillis));
@@ -449,7 +450,7 @@ public class AuditServiceTest {
         RequestEntity requestEntity = jwtRestTemplate.createRequestEntity(authUser, map, null, HttpMethod.POST, uri);
         
         long startTimeMillis = System.currentTimeMillis();
-        Assertions.assertThrows(HttpServerErrorException.class, () -> jwtRestTemplate.exchange(requestEntity, String.class));
+        assertThrows(HttpServerErrorException.class, () -> jwtRestTemplate.exchange(requestEntity, String.class));
         long stopTimeMillis = System.currentTimeMillis();
         
         assertTrue((stopTimeMillis - startTimeMillis) >= failTimeoutMillis);

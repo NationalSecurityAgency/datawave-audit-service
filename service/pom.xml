@@ -8,19 +8,19 @@
         <relativePath />
     </parent>
     <artifactId>audit-service</artifactId>
-    <version>2.1.1-SNAPSHOT</version>
+    <version>2.1.1</version>
     <description>DATAWAVE Auditing Microservice</description>
     <url>https://code.nsa.gov/datawave-audit-service</url>
     <scm>
         <connection>scm:git:https://github.com/NationalSecurityAgency/datawave-audit-service.git</connection>
         <developerConnection>scm:git:git@github.com:NationalSecurityAgency/datawave-audit-service.git</developerConnection>
-        <tag>HEAD</tag>
+        <tag>2.1.1</tag>
         <url>https://github.com/NationalSecurityAgency/datawave-audit-service</url>
     </scm>
     <properties>
         <version.commons>3.9</version.commons>
         <version.hadoop>3.3.4</version.hadoop>
-        <version.microservice.audit-api>2.1.1-SNAPSHOT</version.microservice.audit-api>
+        <version.microservice.audit-api>2.1.1</version.microservice.audit-api>
         <version.microservice.hazelcast-client>2.1.1</version.microservice.hazelcast-client>
         <version.microservice.starter>2.1.1</version.microservice.starter>
         <version.zookeeper>3.8.0</version.zookeeper>

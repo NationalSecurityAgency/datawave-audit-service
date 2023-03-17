@@ -16,7 +16,6 @@ import datawave.microservice.authorization.user.DatawaveUserDetails;
 import datawave.security.authorization.DatawaveUser;
 import datawave.security.authorization.SubjectIssuerDNPair;
 import org.apache.commons.io.FileUtils;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -46,8 +45,11 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.File;
 import java.io.IOException;
+import java.sql.Date;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -105,6 +107,9 @@ public class AuditReplayTest {
     private String userDN = "userDn";
     
     private static Boolean isHealthy = Boolean.TRUE;
+    
+    private static DateTimeFormatter dateTimeFormatter = new DateTimeFormatterBuilder().appendPattern("yyyy-MM-dd'T'HH:mm:ss.SSS").parseLenient()
+                    .appendOffset("+HH:MM", "Z").toFormatter();
     
     @BeforeAll
     public static void classSetup() {
@@ -2720,7 +2725,7 @@ public class AuditReplayTest {
         status.setState(Status.ReplayState.valueOf((String) map.get("state")));
         status.setPathUri((String) map.get("pathUri"));
         status.setSendRate(Integer.toUnsignedLong((int) map.get("sendRate")));
-        status.setLastUpdated(new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS").parse((String) map.get("lastUpdated")));
+        status.setLastUpdated(Date.from(ZonedDateTime.parse((String) map.get("lastUpdated"), dateTimeFormatter).toInstant()));
         status.setReplayUnfinishedFiles((boolean) map.get("replayUnfinishedFiles"));
         
         if (map.get("files") != null) {

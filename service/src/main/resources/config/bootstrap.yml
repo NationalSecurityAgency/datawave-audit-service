@@ -25,6 +25,12 @@ management:
       order: DOWN, OUT_OF_SERVICE, UNKNOWN, RABBITMQ_UNHEALTHY, UP
       http-mapping:
         RABBITMQ_UNHEALTHY: 200
+
+audit:
+  auditors:
+    accumulo:
+      concurrency: "${spring.cloud.stream.bindings.accumuloAuditSink.consumer.concurrency:1}"
+
 ---
 
 # For the dev profile, check localhost for the config server by default

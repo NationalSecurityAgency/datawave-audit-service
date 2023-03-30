@@ -15,6 +15,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.text.SimpleDateFormat;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
@@ -31,6 +33,8 @@ public class AccumuloAuditor implements Auditor {
     private String tableName;
     
     private AccumuloClient accumuloClient;
+    
+    private ConcurrentHashMap<String,Long> auditTimers = new ConcurrentHashMap<>();
     
     public AccumuloAuditor(String tableName, AccumuloClient client) {
         this.tableName = tableName;
@@ -51,14 +55,29 @@ public class AccumuloAuditor implements Auditor {
     
     @Override
     public void audit(AuditParameters msg) throws Exception {
-        if (!msg.getAuditType().equals(AuditType.NONE)) {
-            try (BatchWriter writer = accumuloClient.createBatchWriter(tableName,
-                            new BatchWriterConfig().setMaxLatency(10, TimeUnit.SECONDS).setMaxMemory(10240L).setMaxWriteThreads(1))) {
-                Mutation m = new Mutation(formatter.format(msg.getQueryDate()));
-                m.put(new Text(msg.getUserDn()), new Text(""), msg.getColviz(), new Value(msg.toString().getBytes(UTF_8)));
-                writer.addMutation(m);
-                writer.flush();
-            }
+        String auditId = msg.getAuditId();
+        if (auditId == null) {
+            auditId = UUID.randomUUID().toString();
         }
+        
+        // save the start time of the audit call
+        auditTimers.put(auditId, System.currentTimeMillis());
+        try {
+            if (!msg.getAuditType().equals(AuditType.NONE)) {
+                try (BatchWriter writer = accumuloClient.createBatchWriter(tableName,
+                                new BatchWriterConfig().setMaxLatency(10, TimeUnit.SECONDS).setMaxMemory(10240L).setMaxWriteThreads(1))) {
+                    Mutation m = new Mutation(formatter.format(msg.getQueryDate()));
+                    m.put(new Text(msg.getUserDn()), new Text(""), msg.getColviz(), new Value(msg.toString().getBytes(UTF_8)));
+                    writer.addMutation(m);
+                    writer.flush();
+                }
+            }
+        } finally {
+            auditTimers.remove(auditId);
+        }
+    }
+    
+    public ConcurrentHashMap<String,Long> getAuditTimers() {
+        return auditTimers;
     }
 }

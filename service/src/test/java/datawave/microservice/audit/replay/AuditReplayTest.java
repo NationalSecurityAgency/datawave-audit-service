@@ -54,9 +54,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.concurrent.TimeUnit;
 
 import static datawave.security.authorization.DatawaveUser.UserType.USER;
@@ -90,7 +90,7 @@ public class AuditReplayTest {
     private JWTRestTemplate jwtRestTemplate;
     
     @Autowired
-    public LinkedList<AuditMessage> auditMessages;
+    public ConcurrentLinkedDeque<AuditMessage> auditMessages;
     
     @Autowired
     private AuditProperties auditProperties;
@@ -458,7 +458,7 @@ public class AuditReplayTest {
                 received);
         // @formatter:on
         
-        received = auditMessages.remove(0).getAuditParameters();
+        received = auditMessages.removeFirst().getAuditParameters();
         
         // @formatter:off
         assertAuditMessage(
@@ -2771,13 +2771,13 @@ public class AuditReplayTest {
         }
         
         @Bean
-        public LinkedList<AuditMessage> auditMessages() {
-            return new LinkedList<>();
+        public ConcurrentLinkedDeque<AuditMessage> auditMessages() {
+            return new ConcurrentLinkedDeque<>();
         }
         
         @Primary
         @Bean
-        public AuditMessageSupplier testAuditSource(LinkedList<AuditMessage> auditMessages) {
+        public AuditMessageSupplier testAuditSource(ConcurrentLinkedDeque<AuditMessage> auditMessages) {
             return new AuditMessageSupplier() {
                 @Override
                 public boolean send(Message<AuditMessage> auditMessage) {

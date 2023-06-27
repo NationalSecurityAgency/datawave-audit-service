@@ -1,19 +1,22 @@
 package datawave.microservice.audit.replay;
 
-import datawave.microservice.audit.AuditController;
-import datawave.microservice.audit.config.AuditProperties;
-import datawave.microservice.audit.replay.config.ReplayProperties;
-import datawave.microservice.audit.replay.remote.Request;
-import datawave.microservice.audit.replay.runner.ReplayTask;
-import datawave.microservice.audit.replay.runner.RunningReplay;
-import datawave.microservice.audit.replay.status.Status;
-import datawave.microservice.audit.replay.status.StatusCache;
-import datawave.webservice.common.audit.AuditParameters;
-import io.swagger.v3.oas.annotations.ExternalDocumentation;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.tags.Tag;
+import static datawave.microservice.audit.replay.status.Status.ReplayState.CREATED;
+import static datawave.microservice.audit.replay.status.Status.ReplayState.RUNNING;
+import static datawave.microservice.audit.replay.status.Status.ReplayState.STOPPED;
+import static io.undertow.util.StatusCodes.UNPROCESSABLE_ENTITY;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.UUID;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+
+import javax.servlet.http.HttpServletResponse;
+
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
 import org.slf4j.Logger;
@@ -33,21 +36,20 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.UUID;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
-
-import static datawave.microservice.audit.replay.status.Status.ReplayState.CREATED;
-import static datawave.microservice.audit.replay.status.Status.ReplayState.RUNNING;
-import static datawave.microservice.audit.replay.status.Status.ReplayState.STOPPED;
-import static io.undertow.util.StatusCodes.UNPROCESSABLE_ENTITY;
+import datawave.microservice.audit.AuditController;
+import datawave.microservice.audit.config.AuditProperties;
+import datawave.microservice.audit.replay.config.ReplayProperties;
+import datawave.microservice.audit.replay.remote.Request;
+import datawave.microservice.audit.replay.runner.ReplayTask;
+import datawave.microservice.audit.replay.runner.RunningReplay;
+import datawave.microservice.audit.replay.status.Status;
+import datawave.microservice.audit.replay.status.StatusCache;
+import datawave.webservice.common.audit.AuditParameters;
+import io.swagger.v3.oas.annotations.ExternalDocumentation;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 /**
  * The ReplayController presents the REST endpoints for audit replay.

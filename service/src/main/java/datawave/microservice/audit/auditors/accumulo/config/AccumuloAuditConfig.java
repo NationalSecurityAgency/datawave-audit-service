@@ -1,11 +1,7 @@
 package datawave.microservice.audit.auditors.accumulo.config;
 
-import datawave.microservice.audit.auditors.accumulo.AccumuloAuditor;
-import datawave.microservice.audit.auditors.accumulo.config.AccumuloAuditProperties.Accumulo;
-import datawave.microservice.audit.auditors.accumulo.health.AccumuloHealthChecker;
-import datawave.microservice.audit.common.AuditMessageConsumer;
-import datawave.webservice.common.audit.AuditParameters;
-import datawave.webservice.common.audit.Auditor;
+import javax.annotation.Resource;
+
 import org.apache.accumulo.core.client.AccumuloClient;
 import org.apache.accumulo.core.client.security.tokens.PasswordToken;
 import org.slf4j.Logger;
@@ -16,7 +12,12 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import javax.annotation.Resource;
+import datawave.microservice.audit.auditors.accumulo.AccumuloAuditor;
+import datawave.microservice.audit.auditors.accumulo.config.AccumuloAuditProperties.Accumulo;
+import datawave.microservice.audit.auditors.accumulo.health.AccumuloHealthChecker;
+import datawave.microservice.audit.common.AuditMessageConsumer;
+import datawave.webservice.common.audit.AuditParameters;
+import datawave.webservice.common.audit.Auditor;
 
 /**
  * Configures the AccumuloAuditor to process messages received by the audit service. This configuration is activated via the 'audit.auditors.accumulo.enabled'

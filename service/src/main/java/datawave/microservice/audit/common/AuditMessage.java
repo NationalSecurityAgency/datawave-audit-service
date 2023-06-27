@@ -1,8 +1,8 @@
 package datawave.microservice.audit.common;
 
-import datawave.webservice.common.audit.AuditParameters;
-
 import java.util.Map;
+
+import datawave.webservice.common.audit.AuditParameters;
 
 /**
  * This class represents a message sent from the audit service via messaging to the various queues that are receiving audit events (e.g., log auditor, Accumulo

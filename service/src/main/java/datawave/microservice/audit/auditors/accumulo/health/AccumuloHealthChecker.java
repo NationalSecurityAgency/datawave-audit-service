@@ -1,12 +1,13 @@
 package datawave.microservice.audit.auditors.accumulo.health;
 
-import datawave.microservice.audit.auditors.accumulo.AccumuloAuditor;
-import datawave.microservice.audit.auditors.accumulo.config.AccumuloAuditProperties;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.springframework.boot.actuate.health.Health;
 import org.springframework.boot.actuate.health.HealthIndicator;
 
-import java.util.HashMap;
-import java.util.Map;
+import datawave.microservice.audit.auditors.accumulo.AccumuloAuditor;
+import datawave.microservice.audit.auditors.accumulo.config.AccumuloAuditProperties;
 
 public class AccumuloHealthChecker implements HealthIndicator {
     

@@ -1,15 +1,16 @@
 package datawave.microservice.audit.common;
 
-import datawave.webservice.common.audit.AuditParameters;
-import datawave.webservice.common.audit.Auditor;
-import datawave.webservice.common.audit.Auditor.AuditType;
-import org.apache.accumulo.core.security.ColumnVisibility;
-import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Date;
 import java.util.Map;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import org.apache.accumulo.core.security.ColumnVisibility;
+import org.junit.jupiter.api.Test;
+
+import datawave.webservice.common.audit.AuditParameters;
+import datawave.webservice.common.audit.Auditor;
+import datawave.webservice.common.audit.Auditor.AuditType;
 
 public class AuditMessageConsumerTest {
     

@@ -1,11 +1,7 @@
 package datawave.microservice.audit.replay.config;
 
-import com.hazelcast.spring.cache.HazelcastCacheManager;
-import datawave.microservice.audit.replay.status.StatusCache;
-import datawave.microservice.cached.CacheInspector;
-import datawave.microservice.cached.LockableCacheInspector;
-import datawave.microservice.cached.LockableHazelcastCacheInspector;
-import datawave.microservice.cached.UniversalLockableCacheInspector;
+import java.util.function.Function;
+
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cache.CacheManager;
@@ -15,7 +11,13 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
-import java.util.function.Function;
+import com.hazelcast.spring.cache.HazelcastCacheManager;
+
+import datawave.microservice.audit.replay.status.StatusCache;
+import datawave.microservice.cached.CacheInspector;
+import datawave.microservice.cached.LockableCacheInspector;
+import datawave.microservice.cached.LockableHazelcastCacheInspector;
+import datawave.microservice.cached.UniversalLockableCacheInspector;
 
 @Configuration
 @EnableCaching

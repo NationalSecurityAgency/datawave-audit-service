@@ -1,7 +1,8 @@
 package datawave.webservice.common.audit;
 
-import org.apache.accumulo.core.security.ColumnVisibility;
-import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -12,9 +13,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import org.apache.accumulo.core.security.ColumnVisibility;
+import org.junit.jupiter.api.Test;
 
 public class AuditParametersTest {
     

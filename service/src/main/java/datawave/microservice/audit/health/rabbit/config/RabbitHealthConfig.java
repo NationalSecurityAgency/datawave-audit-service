@@ -1,7 +1,13 @@
 package datawave.microservice.audit.health.rabbit.config;
 
-import datawave.microservice.audit.health.HealthChecker;
-import datawave.microservice.audit.health.rabbit.RabbitHealthChecker;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
+
+import javax.annotation.Resource;
+
 import org.springframework.amqp.rabbit.connection.CachingConnectionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -13,12 +19,8 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.SchedulingConfigurer;
 import org.springframework.scheduling.config.ScheduledTaskRegistrar;
 
-import javax.annotation.Resource;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
+import datawave.microservice.audit.health.HealthChecker;
+import datawave.microservice.audit.health.rabbit.RabbitHealthChecker;
 
 /**
  * Configuration for the RabbitMQ Health Checker. This configuration is activated via the 'audit.health.rabbit.enabled' property.

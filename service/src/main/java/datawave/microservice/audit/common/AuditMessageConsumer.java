@@ -1,11 +1,12 @@
 package datawave.microservice.audit.common;
 
-import datawave.webservice.common.audit.AuditParameters;
-import datawave.webservice.common.audit.Auditor;
+import java.util.function.Consumer;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.function.Consumer;
+import datawave.webservice.common.audit.AuditParameters;
+import datawave.webservice.common.audit.Auditor;
 
 public class AuditMessageConsumer implements Consumer<AuditMessage> {
     private final Logger log = LoggerFactory.getLogger(this.getClass());

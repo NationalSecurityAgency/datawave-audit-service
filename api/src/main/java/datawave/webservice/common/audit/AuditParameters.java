@@ -1,11 +1,6 @@
 package datawave.webservice.common.audit;
 
-import com.google.common.base.Preconditions;
-import com.google.common.base.Splitter;
-import datawave.webservice.common.audit.Auditor.AuditType;
-import org.apache.accumulo.core.security.ColumnVisibility;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.builder.ToStringBuilder;
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -16,7 +11,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
+import org.apache.accumulo.core.security.ColumnVisibility;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+
+import com.google.common.base.Preconditions;
+import com.google.common.base.Splitter;
+
+import datawave.webservice.common.audit.Auditor.AuditType;
 
 public class AuditParameters {
     

@@ -1,21 +1,20 @@
 package datawave.microservice.audit;
 
-import datawave.microservice.audit.common.AuditMessage;
-import datawave.microservice.audit.common.AuditMessageSupplier;
-import datawave.microservice.audit.config.AuditProperties;
-import datawave.microservice.audit.config.AuditProperties.Retry;
-import datawave.microservice.audit.health.HealthChecker;
-import datawave.webservice.common.audit.AuditParameters;
-import datawave.webservice.common.audit.Auditor;
-import io.swagger.v3.oas.annotations.ExternalDocumentation;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.Parameters;
-import io.swagger.v3.oas.annotations.enums.ParameterIn;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.tags.Tag;
+import static datawave.webservice.common.audit.AuditParameters.AUDIT_ID;
+import static datawave.webservice.common.audit.AuditParameters.QUERY_AUDIT_TYPE;
+import static datawave.webservice.common.audit.AuditParameters.QUERY_AUTHORIZATIONS;
+import static datawave.webservice.common.audit.AuditParameters.QUERY_DATE;
+import static datawave.webservice.common.audit.AuditParameters.QUERY_LOGIC_CLASS;
+import static datawave.webservice.common.audit.AuditParameters.QUERY_SECURITY_MARKING_COLVIZ;
+import static datawave.webservice.common.audit.AuditParameters.QUERY_SELECTORS;
+import static datawave.webservice.common.audit.AuditParameters.QUERY_STRING;
+import static datawave.webservice.common.audit.AuditParameters.USER_DN;
+
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,20 +32,22 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
-
-import static datawave.webservice.common.audit.AuditParameters.AUDIT_ID;
-import static datawave.webservice.common.audit.AuditParameters.QUERY_AUDIT_TYPE;
-import static datawave.webservice.common.audit.AuditParameters.QUERY_AUTHORIZATIONS;
-import static datawave.webservice.common.audit.AuditParameters.QUERY_DATE;
-import static datawave.webservice.common.audit.AuditParameters.QUERY_LOGIC_CLASS;
-import static datawave.webservice.common.audit.AuditParameters.QUERY_SECURITY_MARKING_COLVIZ;
-import static datawave.webservice.common.audit.AuditParameters.QUERY_SELECTORS;
-import static datawave.webservice.common.audit.AuditParameters.QUERY_STRING;
-import static datawave.webservice.common.audit.AuditParameters.USER_DN;
+import datawave.microservice.audit.common.AuditMessage;
+import datawave.microservice.audit.common.AuditMessageSupplier;
+import datawave.microservice.audit.config.AuditProperties;
+import datawave.microservice.audit.config.AuditProperties.Retry;
+import datawave.microservice.audit.health.HealthChecker;
+import datawave.webservice.common.audit.AuditParameters;
+import datawave.webservice.common.audit.Auditor;
+import io.swagger.v3.oas.annotations.ExternalDocumentation;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.Parameters;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 /**
  * The AuditController presents the REST endpoints for the audit service.

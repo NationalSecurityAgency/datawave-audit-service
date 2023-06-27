@@ -1,9 +1,10 @@
 package datawave.microservice.audit.auditors.log;
 
-import datawave.webservice.common.audit.AuditParameters;
-import datawave.webservice.common.audit.Auditor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import datawave.webservice.common.audit.AuditParameters;
+import datawave.webservice.common.audit.Auditor;
 
 /**
  * An implementation for {@link Auditor}, which writes audit messages to the log.

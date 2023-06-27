@@ -1,10 +1,11 @@
 package datawave.microservice.audit.auditors.file.config;
 
-import org.springframework.validation.annotation.Validated;
+import java.util.List;
 
 import javax.validation.constraints.DecimalMin;
 import javax.validation.constraints.NotEmpty;
-import java.util.List;
+
+import org.springframework.validation.annotation.Validated;
 
 @Validated
 public class FileAuditProperties {

@@ -1,8 +1,8 @@
 package datawave.microservice.audit.replay.runner;
 
-import datawave.microservice.audit.replay.status.Status;
-
 import java.util.concurrent.Future;
+
+import datawave.microservice.audit.replay.status.Status;
 
 /**
  * This provides access the status and worker task for an audit replay which is currently running.

@@ -1,27 +1,5 @@
 package datawave.microservice.audit.health.rabbit;
 
-import com.rabbitmq.http.client.Client;
-import com.rabbitmq.http.client.domain.BindingInfo;
-import com.rabbitmq.http.client.domain.ExchangeInfo;
-import com.rabbitmq.http.client.domain.NodeInfo;
-import com.rabbitmq.http.client.domain.QueueInfo;
-import datawave.microservice.audit.AuditController;
-import datawave.microservice.audit.health.HealthChecker;
-import datawave.microservice.audit.health.rabbit.config.RabbitHealthProperties;
-import datawave.microservice.audit.health.rabbit.config.RabbitHealthProperties.BindingProperties;
-import datawave.microservice.audit.health.rabbit.config.RabbitHealthProperties.ClusterProperties;
-import datawave.microservice.audit.health.rabbit.config.RabbitHealthProperties.ExchangeProperties;
-import datawave.microservice.audit.health.rabbit.config.RabbitHealthProperties.ManagementProperties;
-import datawave.microservice.audit.health.rabbit.config.RabbitHealthProperties.QueueProperties;
-import org.apache.http.client.utils.URIBuilder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.amqp.core.Binding;
-import org.springframework.amqp.rabbit.connection.CachingConnectionFactory;
-import org.springframework.boot.actuate.health.Health;
-import org.springframework.boot.actuate.health.HealthIndicator;
-import org.springframework.boot.actuate.health.Status;
-
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -33,6 +11,30 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
+
+import org.apache.http.client.utils.URIBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.amqp.core.Binding;
+import org.springframework.amqp.rabbit.connection.CachingConnectionFactory;
+import org.springframework.boot.actuate.health.Health;
+import org.springframework.boot.actuate.health.HealthIndicator;
+import org.springframework.boot.actuate.health.Status;
+
+import com.rabbitmq.http.client.Client;
+import com.rabbitmq.http.client.domain.BindingInfo;
+import com.rabbitmq.http.client.domain.ExchangeInfo;
+import com.rabbitmq.http.client.domain.NodeInfo;
+import com.rabbitmq.http.client.domain.QueueInfo;
+
+import datawave.microservice.audit.AuditController;
+import datawave.microservice.audit.health.HealthChecker;
+import datawave.microservice.audit.health.rabbit.config.RabbitHealthProperties;
+import datawave.microservice.audit.health.rabbit.config.RabbitHealthProperties.BindingProperties;
+import datawave.microservice.audit.health.rabbit.config.RabbitHealthProperties.ClusterProperties;
+import datawave.microservice.audit.health.rabbit.config.RabbitHealthProperties.ExchangeProperties;
+import datawave.microservice.audit.health.rabbit.config.RabbitHealthProperties.ManagementProperties;
+import datawave.microservice.audit.health.rabbit.config.RabbitHealthProperties.QueueProperties;
 
 /**
  * An implementation for {@link HealthChecker}, which can be used to monitor the RabbitMQ messaging infrastructure.

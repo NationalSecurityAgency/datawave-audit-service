@@ -1,6 +1,5 @@
 package datawave.microservice.audit.replay.event.listener;
 
-import datawave.microservice.audit.replay.ReplayController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +9,8 @@ import org.springframework.cloud.bus.ServiceMatcher;
 import org.springframework.cloud.bus.event.AuditReplayRemoteRequestEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Component;
+
+import datawave.microservice.audit.replay.ReplayController;
 
 /**
  * Listens for remote request events from other audit service instances, and forwards the requests to the replay controller.

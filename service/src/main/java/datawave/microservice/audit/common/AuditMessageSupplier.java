@@ -1,11 +1,12 @@
 package datawave.microservice.audit.common;
 
+import java.util.function.Supplier;
+
 import org.springframework.messaging.Message;
+
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Sinks;
 import reactor.core.scheduler.Schedulers;
-
-import java.util.function.Supplier;
 
 public class AuditMessageSupplier implements Supplier<Flux<Message<AuditMessage>>> {
     private final Sinks.Many<Message<AuditMessage>> messagingSink = Sinks.many().multicast().onBackpressureBuffer();

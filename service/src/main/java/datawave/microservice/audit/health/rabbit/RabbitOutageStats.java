@@ -1,10 +1,5 @@
 package datawave.microservice.audit.health.rabbit;
 
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Multimap;
-import datawave.microservice.audit.health.OutageStats;
-import datawave.webservice.common.audit.Auditor;
-
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashSet;
@@ -12,6 +7,12 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
+
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Multimap;
+
+import datawave.microservice.audit.health.OutageStats;
+import datawave.webservice.common.audit.Auditor;
 
 /**
  * An implementation for {@link OutageStats}, which provides useful information about RabbitMQ outages encountered by the audit service.

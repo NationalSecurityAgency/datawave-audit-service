@@ -1,17 +1,19 @@
 package datawave.microservice.audit.replay.status;
 
-import datawave.microservice.cached.LockableCacheInspector;
-import org.springframework.cache.annotation.CacheConfig;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.CachePut;
+import static datawave.microservice.audit.replay.status.StatusCache.CACHE_NAME;
 
-import javax.annotation.CheckReturnValue;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
-import static datawave.microservice.audit.replay.status.StatusCache.CACHE_NAME;
+import javax.annotation.CheckReturnValue;
+
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+
+import datawave.microservice.cached.LockableCacheInspector;
 
 /**
  * The StatusCache is used to cache the status of every audit replay. By default, this will operate as a local concurrent map cache, but if the Hazelcast client

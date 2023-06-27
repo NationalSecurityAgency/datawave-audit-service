@@ -1,16 +1,10 @@
 package datawave.microservice.audit.replay.runner;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import datawave.microservice.audit.replay.config.ReplayProperties;
-import datawave.microservice.audit.replay.status.Status;
-import datawave.microservice.audit.replay.status.StatusCache;
-import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.fs.FileStatus;
-import org.apache.hadoop.fs.FileSystem;
-import org.apache.hadoop.fs.Path;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import static java.nio.charset.StandardCharsets.UTF_8;
+
+import static datawave.microservice.audit.replay.status.Status.FileState;
+import static datawave.microservice.audit.replay.status.Status.ReplayState;
+import static datawave.webservice.common.audit.AuditParameters.AUDIT_ID;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -26,10 +20,19 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static datawave.microservice.audit.replay.status.Status.FileState;
-import static datawave.microservice.audit.replay.status.Status.ReplayState;
-import static datawave.webservice.common.audit.AuditParameters.AUDIT_ID;
-import static java.nio.charset.StandardCharsets.UTF_8;
+import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.fs.FileStatus;
+import org.apache.hadoop.fs.FileSystem;
+import org.apache.hadoop.fs.Path;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import datawave.microservice.audit.replay.config.ReplayProperties;
+import datawave.microservice.audit.replay.status.Status;
+import datawave.microservice.audit.replay.status.StatusCache;
 
 /**
  * The replay task is responsible for reading the audit messages from disk, parsing them from JSON, and processing them through the audit controller.

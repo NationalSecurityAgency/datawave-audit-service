@@ -1,21 +1,29 @@
 package datawave.microservice.audit;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.io.Files;
-import datawave.microservice.audit.auditors.file.FileAuditor;
-import datawave.microservice.audit.auditors.file.config.FileAuditProperties;
-import datawave.microservice.audit.common.AuditMessage;
-import datawave.microservice.audit.common.AuditMessageSupplier;
-import datawave.microservice.audit.config.AuditProperties;
-import datawave.microservice.audit.health.HealthChecker;
-import datawave.microservice.authorization.jwt.JWTRestTemplate;
-import datawave.microservice.authorization.user.DatawaveUserDetails;
-import datawave.security.authorization.DatawaveUser;
-import datawave.security.authorization.SubjectIssuerDNPair;
-import datawave.webservice.common.audit.AuditParameters;
-import datawave.webservice.common.audit.Auditor;
-import datawave.webservice.common.audit.Auditor.AuditType;
+import static datawave.security.authorization.DatawaveUser.UserType.USER;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.UUID;
+import java.util.stream.Collectors;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -45,29 +53,23 @@ import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.UUID;
-import java.util.stream.Collectors;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.io.Files;
 
-import static datawave.security.authorization.DatawaveUser.UserType.USER;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import datawave.microservice.audit.auditors.file.FileAuditor;
+import datawave.microservice.audit.auditors.file.config.FileAuditProperties;
+import datawave.microservice.audit.common.AuditMessage;
+import datawave.microservice.audit.common.AuditMessageSupplier;
+import datawave.microservice.audit.config.AuditProperties;
+import datawave.microservice.audit.health.HealthChecker;
+import datawave.microservice.authorization.jwt.JWTRestTemplate;
+import datawave.microservice.authorization.user.DatawaveUserDetails;
+import datawave.security.authorization.DatawaveUser;
+import datawave.security.authorization.SubjectIssuerDNPair;
+import datawave.webservice.common.audit.AuditParameters;
+import datawave.webservice.common.audit.Auditor;
+import datawave.webservice.common.audit.Auditor.AuditType;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)

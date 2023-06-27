@@ -1,9 +1,9 @@
 package datawave.microservice.audit.auditors.accumulo.config;
 
+import java.util.concurrent.TimeUnit;
+
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-
-import java.util.concurrent.TimeUnit;
 
 @EnableConfigurationProperties(AccumuloAuditProperties.class)
 @ConfigurationProperties(prefix = "audit.auditors.accumulo")

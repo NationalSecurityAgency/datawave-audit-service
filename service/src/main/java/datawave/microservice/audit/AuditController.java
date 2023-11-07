@@ -61,7 +61,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
                 externalDocs = @ExternalDocumentation(description = "Audit Service Documentation",
                                 url = "https://github.com/NationalSecurityAgency/datawave-audit-service"))
 @RestController
-@RequestMapping(path = "/v1", produces = MediaType.TEXT_PLAIN_VALUE)
+@RequestMapping(path = "/v1", produces = MediaType.APPLICATION_JSON_VALUE)
 public class AuditController {
     // Note: This must match 'confirmAckChannel' in the service configuration. Default set in bootstrap.yml.
     public static final String CONFIRM_ACK_CHANNEL = "confirmAckChannel";

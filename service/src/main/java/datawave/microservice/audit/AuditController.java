@@ -104,8 +104,9 @@ public class AuditController {
             String correlationId = headerObj.toString();
             if (correlationLatchMap.containsKey(correlationId)) {
                 correlationLatchMap.get(correlationId).countDown();
-            } else
+            } else {
                 log.warn("Unable to decrement latch for audit ID [{}]", correlationId);
+            }
         } else {
             log.warn("No correlation ID found in confirm ack message");
         }
@@ -116,7 +117,7 @@ public class AuditController {
      * <p>
      * The audit ID is used as a correlation ID in order to ensure that a producer confirm ack is received. If a producer confirm ack is not received within the
      * specified amount of time, a 500 Internal Server Error will be returned to the caller.
-     * 
+     *
      * @param parameters
      *            The audit parameters to be sent
      */

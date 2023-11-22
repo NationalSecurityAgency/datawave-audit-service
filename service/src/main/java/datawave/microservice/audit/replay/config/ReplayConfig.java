@@ -2,6 +2,7 @@ package datawave.microservice.audit.replay.config;
 
 import java.util.function.Function;
 
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cache.CacheManager;
@@ -39,7 +40,8 @@ public class ReplayConfig {
     }
     
     @Bean
-    public StatusCache replayStatusCache(Function<CacheManager,CacheInspector> cacheInspectorFactory, CacheManager cacheManager) {
+    public StatusCache replayStatusCache(@Qualifier("cacheInspectorFactory") Function<CacheManager,CacheInspector> cacheInspectorFactory,
+                    CacheManager cacheManager) {
         LockableCacheInspector lockableCacheInspector = null;
         if (cacheManager instanceof HazelcastCacheManager)
             lockableCacheInspector = new LockableHazelcastCacheInspector(cacheManager);

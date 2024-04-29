@@ -91,14 +91,14 @@ public class AccumuloAuditProperties {
     public static class Health {
         private Long hungTimeout = 5L;
         
-        private TimeUnit hungTimeUnit = TimeUnit.MINUTES;
+        private TimeUnit hungTimeoutUnit = TimeUnit.MINUTES;
         
         // The minimum percentage of hung audit consumers (expressed as a number
         // between 0 and 1, inclusive) required to mark the service as down
         private double percentHungFailureThreshold = 0.5;
         
         public Long getHungAuditTimeoutMillis() {
-            return hungTimeUnit.toMillis(hungTimeout);
+            return hungTimeoutUnit.toMillis(hungTimeout);
         }
         
         public Long getHungTimeout() {
@@ -109,12 +109,12 @@ public class AccumuloAuditProperties {
             this.hungTimeout = hungTimeout;
         }
         
-        public TimeUnit getHungTimeUnit() {
-            return hungTimeUnit;
+        public TimeUnit getHungTimeoutUnit() {
+            return hungTimeoutUnit;
         }
         
-        public void setHungTimeUnit(TimeUnit hungTimeUnit) {
-            this.hungTimeUnit = hungTimeUnit;
+        public void setHungTimeoutUnit(TimeUnit hungTimeoutUnit) {
+            this.hungTimeoutUnit = hungTimeoutUnit;
         }
         
         public double getPercentHungFailureThreshold() {

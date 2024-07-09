@@ -18,11 +18,11 @@
         <url>https://github.com/NationalSecurityAgency/datawave-audit-service</url>
     </scm>
     <properties>
-        <version.audit-api>4.0.0</version.audit-api>
+        <version.datawave.audit-api>4.0.0</version.datawave.audit-api>
         <version.commons>3.9</version.commons>
         <version.hadoop>3.3.4</version.hadoop>
-        <version.hazelcast-client>4.0.0</version.hazelcast-client>
-        <version.starter>4.0.0</version.starter>
+        <version.datawave.hazelcast-client>4.0.0</version.datawave.hazelcast-client>
+        <version.datawave.starter>4.0.0</version.datawave.starter>
         <version.zookeeper>3.8.0</version.zookeeper>
     </properties>
     <dependencyManagement>
@@ -30,17 +30,17 @@
             <dependency>
                 <groupId>gov.nsa.datawave.microservice</groupId>
                 <artifactId>audit-api</artifactId>
-                <version>${version.audit-api}</version>
+                <version>${version.datawave.audit-api}</version>
             </dependency>
             <dependency>
                 <groupId>gov.nsa.datawave.microservice</groupId>
                 <artifactId>hazelcast-client</artifactId>
-                <version>${version.hazelcast-client}</version>
+                <version>${version.datawave.hazelcast-client}</version>
             </dependency>
             <dependency>
                 <groupId>gov.nsa.datawave.microservice</groupId>
                 <artifactId>spring-boot-starter-datawave</artifactId>
-                <version>${version.starter}</version>
+                <version>${version.datawave.starter}</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.commons</groupId>
@@ -135,7 +135,7 @@
             <dependency>
                 <groupId>gov.nsa.datawave.microservice</groupId>
                 <artifactId>spring-boot-starter-datawave</artifactId>
-                <version>${version.starter}</version>
+                <version>${version.datawave.starter}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>

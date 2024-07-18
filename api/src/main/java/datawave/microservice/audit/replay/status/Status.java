@@ -10,7 +10,8 @@ import java.util.stream.Collectors;
  * Represents the status of an audit replay. File status is listed on a per-file basis.
  */
 public class Status implements Serializable {
-    
+    private static final long serialVersionUID = 5090967818014506871L;
+
     public enum ReplayState {
         CREATED, RUNNING, STOPPED, FINISHED, FAILED
     }
@@ -91,6 +92,8 @@ public class Status implements Serializable {
     }
     
     public static final class FileStatus implements Serializable {
+        private static final long serialVersionUID = 3057248386635077592L;
+
         private FileState state;
         private String pathUri;
         private long linesRead;

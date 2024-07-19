@@ -21,7 +21,7 @@
         <version.commons>3.9</version.commons>
         <version.hadoop>3.3.4</version.hadoop>
         <version.microservice.audit-api>4.0.1</version.microservice.audit-api>
-        <version.microservice.hazelcast-client>4.0.22</version.microservice.hazelcast-client>
+        <version.microservice.hazelcast-client>4.0.2</version.microservice.hazelcast-client>
         <version.microservice.starter>4.0.3-SNAPSHOT</version.microservice.starter>
         <version.zookeeper>3.8.0</version.zookeeper>
     </properties>

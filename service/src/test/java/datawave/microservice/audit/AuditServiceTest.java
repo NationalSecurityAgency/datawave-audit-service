@@ -13,6 +13,8 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.file.attribute.FileAttribute;
+import java.nio.file.attribute.PosixFilePermission;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -21,6 +23,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -625,7 +628,12 @@ public class AuditServiceTest {
         public FileAuditProperties fileAuditProperties() {
             FileAuditProperties fileAuditProperties = new FileAuditProperties();
             @SuppressWarnings("UnstableApiUsage")
-            File tempDir = Files.createTempDir();
+            File tempDir;
+            try {
+                tempDir = java.nio.file.Files.createTempDirectory("tempDir").toFile();
+            } catch (IOException e) {
+                throw new RuntimeException("Failed to create temporary directory", e);
+            }
             tempDir.deleteOnExit();
             fileAuditProperties.setPathUri(tempDir.toURI().toString());
             fileAuditProperties.setSubPath("audit");

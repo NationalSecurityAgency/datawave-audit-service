@@ -27,6 +27,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.concurrent.TimeUnit;
 
@@ -127,7 +128,7 @@ public class AuditReplayTest {
         
         // Copy replay files before each test
         File dataDir = new File("src/test/resources/data");
-        for (File file : dataDir.listFiles())
+        for (File file : Objects.requireNonNull(dataDir.listFiles()))
             FileUtils.copyFileToDirectory(file, tempDir);
         
         isHealthy = true;

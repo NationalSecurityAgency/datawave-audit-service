@@ -13,3 +13,4 @@ jobs:
     uses: nationalsecurityagency/datawave-accumulo-service/.github/workflows/build-image.yaml@docker-images
     secrets:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      

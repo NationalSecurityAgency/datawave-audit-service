@@ -10,6 +10,6 @@ on:
     workflow_dispatch:
 jobs:
   call-reusable-workflow:
-    uses: nationalsecurotyagency/datawave-accumulo-service/.github/workflows/build-image.yaml@docker-images
+    uses: nationalsecurityagency/datawave-accumulo-service/.github/workflows/build-image.yaml@docker-images
     secrets:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

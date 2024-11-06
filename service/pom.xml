@@ -19,10 +19,10 @@
     </scm>
     <properties>
         <version.commons>3.9</version.commons>
+        <version.datawave.audit-api>4.0.1</version.datawave.audit-api>
+        <version.datawave.hazelcast-client>4.0.2</version.datawave.hazelcast-client>
+        <version.datawave.starter>4.0.2</version.datawave.starter>
         <version.hadoop>3.3.4</version.hadoop>
-        <version.microservice.audit-api>4.0.1</version.microservice.audit-api>
-        <version.microservice.hazelcast-client>4.0.2</version.microservice.hazelcast-client>
-        <version.microservice.starter>4.0.2</version.microservice.starter>
         <version.zookeeper>3.8.0</version.zookeeper>
     </properties>
     <dependencyManagement>
@@ -30,17 +30,17 @@
             <dependency>
                 <groupId>gov.nsa.datawave.microservice</groupId>
                 <artifactId>audit-api</artifactId>
-                <version>${version.microservice.audit-api}</version>
+                <version>${version.datawave.audit-api}</version>
             </dependency>
             <dependency>
                 <groupId>gov.nsa.datawave.microservice</groupId>
                 <artifactId>hazelcast-client</artifactId>
-                <version>${version.microservice.hazelcast-client}</version>
+                <version>${version.datawave.hazelcast-client}</version>
             </dependency>
             <dependency>
                 <groupId>gov.nsa.datawave.microservice</groupId>
                 <artifactId>spring-boot-starter-datawave</artifactId>
-                <version>${version.microservice.starter}</version>
+                <version>${version.datawave.starter}</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.commons</groupId>
@@ -135,7 +135,7 @@
             <dependency>
                 <groupId>gov.nsa.datawave.microservice</groupId>
                 <artifactId>spring-boot-starter-datawave</artifactId>
-                <version>${version.microservice.starter}</version>
+                <version>${version.datawave.starter}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>

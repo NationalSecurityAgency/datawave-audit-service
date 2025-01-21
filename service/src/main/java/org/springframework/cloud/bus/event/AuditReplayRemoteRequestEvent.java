@@ -20,7 +20,7 @@ public class AuditReplayRemoteRequestEvent extends RemoteApplicationEvent {
     }
     
     public AuditReplayRemoteRequestEvent(Object source, String originService, String destinationService, Request request) {
-        super(source, originService, destinationService);
+        super(source, originService, DEFAULT_DESTINATION_FACTORY.getDestination(destinationService));
         this.request = request;
     }
     

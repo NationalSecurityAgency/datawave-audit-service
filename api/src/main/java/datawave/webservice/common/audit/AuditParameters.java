@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import org.apache.accumulo.access.AccessExpression;
 import org.apache.accumulo.core.security.ColumnVisibility;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -192,7 +193,7 @@ public class AuditParameters {
         }
         map.put(QUERY_AUTHORIZATIONS, this.auths);
         map.put(QUERY_AUDIT_TYPE, this.auditType.name());
-        map.put(QUERY_SECURITY_MARKING_COLVIZ, new String(this.colviz.flatten(), UTF_8));
+        map.put(QUERY_SECURITY_MARKING_COLVIZ, AccessExpression.of(this.colviz.getExpression()).getExpression());
         map.put(AUDIT_ID, this.auditId);
         if (this.logicClass != null) {
             map.put(QUERY_LOGIC_CLASS, this.logicClass);

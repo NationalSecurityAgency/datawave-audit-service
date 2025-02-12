@@ -8,7 +8,7 @@
         <relativePath>../../../microservice-parent/pom.xml</relativePath>
     </parent>
     <artifactId>audit-api</artifactId>
-    <version>4.0.2-accumulo4</version>
+    <version>4.0.3-accumulo4</version>
     <url>https://code.nsa.gov/datawave-audit-service</url>
     <scm>
         <connection>scm:git:https://github.com/NationalSecurityAgency/datawave-audit-service.git</connection>
@@ -17,7 +17,7 @@
         <url>https://github.com/NationalSecurityAgency/datawave-audit-service</url>
     </scm>
     <properties>
-        <version.accumulo>4.0.0-datawave-1</version.accumulo>
+        <version.accumulo>4.0.0-datawave-3</version.accumulo>
         <version.commons>3.9</version.commons>
         <version.guava>31.1-jre</version.guava>
     </properties>

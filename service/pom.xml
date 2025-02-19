@@ -4,11 +4,11 @@
     <parent>
         <groupId>gov.nsa.datawave.microservice</groupId>
         <artifactId>datawave-microservice-service-parent</artifactId>
-        <version>5.0.1-depfix</version>
+        <version>5.0.0</version>
         <relativePath>../../../microservice-service-parent/pom.xml</relativePath>
     </parent>
     <artifactId>audit-service</artifactId>
-    <version>4.0.3-depfix</version>
+    <version>4.0.3-SNAPHSOT</version>
     <description>DATAWAVE Auditing Microservice</description>
     <url>https://code.nsa.gov/datawave-audit-service</url>
     <scm>
@@ -20,9 +20,9 @@
     <properties>
         <version.accumulo>2.1.2</version.accumulo>
         <version.commons>3.9</version.commons>
-        <version.datawave.audit-api>4.0.2-depfix</version.datawave.audit-api>
-        <version.datawave.hazelcast-client>4.0.3-depfix</version.datawave.hazelcast-client>
-        <version.datawave.starter>4.0.5-depfix</version.datawave.starter>
+        <version.datawave.audit-api>4.0.1</version.datawave.audit-api>
+        <version.datawave.hazelcast-client>4.0.2</version.datawave.hazelcast-client>
+        <version.datawave.starter>4.0.2</version.datawave.starter>
         <version.guava>31.1-jre</version.guava>
         <version.hadoop>3.3.6</version.hadoop>
         <version.rabbitmq>2.1.0.RELEASE</version.rabbitmq>

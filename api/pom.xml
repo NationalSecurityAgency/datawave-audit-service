@@ -4,11 +4,11 @@
     <parent>
         <groupId>gov.nsa.datawave.microservice</groupId>
         <artifactId>datawave-microservice-parent</artifactId>
-        <version>4.0.1-depfix</version>
+        <version>4.0.0</version>
         <relativePath>../../../microservice-parent/pom.xml</relativePath>
     </parent>
     <artifactId>audit-api</artifactId>
-    <version>4.0.2-depfix</version>
+    <version>4.0.2-SNAPHSOT</version>
     <url>https://code.nsa.gov/datawave-audit-service</url>
     <scm>
         <connection>scm:git:https://github.com/NationalSecurityAgency/datawave-audit-service.git</connection>
@@ -76,6 +76,10 @@
                     <exclusion>
                         <artifactId>*</artifactId>
                         <groupId>ch.qos.logback</groupId>
+                    </exclusion>
+                    <exclusion>
+                        <artifactId>javax.el</artifactId>
+                        <groupId>javax.el</groupId>
                     </exclusion>
                 </exclusions>
             </dependency>

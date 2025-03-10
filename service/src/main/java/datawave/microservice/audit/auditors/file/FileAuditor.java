@@ -1,10 +1,13 @@
 package datawave.microservice.audit.auditors.file;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URISyntaxException;
+import java.nio.charset.StandardCharsets;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -105,7 +108,7 @@ public class FileAuditor implements Auditor {
     protected void writeAudit(String jsonAuditParams) throws Exception {
         OutputStream appendStream = (fileSystem instanceof LocalFileSystem) ? new FileOutputStream(new File(currentFile.toUri()), true)
                         : fileSystem.append(currentFile);
-        appendStream.write(jsonAuditParams.getBytes("UTF8"));
+        appendStream.write(jsonAuditParams.getBytes(UTF_8));
         appendStream.close();
     }
     
